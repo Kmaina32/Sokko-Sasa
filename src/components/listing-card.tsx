@@ -51,7 +51,8 @@ export function ListingCard({ listing }: ListingCardProps) {
     }).format(price);
   };
   
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent link navigation
     if (!user) {
         toast({
             variant: "destructive",
@@ -80,7 +81,8 @@ export function ListingCard({ listing }: ListingCardProps) {
     }
   }
 
-  const handleSaveToggle = async () => {
+  const handleSaveToggle = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent link navigation
     if (!user) {
         toast({
             variant: "destructive",
