@@ -23,10 +23,12 @@ import {
   Car,
   Shield,
   BarChart2,
+  Megaphone,
 } from "lucide-react";
 import { usePathname } from 'next/navigation';
 
 const adminLinks = [
+    { href: "/admin#advertisements", label: "Ads", icon: Megaphone },
     { href: "/admin#users", label: "Users", icon: Users },
     { href: "/admin#products", label: "Products", icon: Package },
     { href: "/admin#food", label: "Food Delivery", icon: Utensils },

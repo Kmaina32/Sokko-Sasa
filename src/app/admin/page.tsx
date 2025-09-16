@@ -20,7 +20,7 @@ import {
   Trash2,
   FilePenLine,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 
 // Mock Data Removed
 
@@ -55,6 +55,22 @@ export default function AdminPage() {
         <h1 className="font-headline text-4xl font-bold">Admin Dashboard</h1>
         <p className="text-muted-foreground">Manage your marketplace with ease.</p>
       </div>
+
+      <AdminSection id="advertisements" title="Manage Advertisements" description="Control the promotional content displayed on the homepage slideshow.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Image</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {/* Mock data removed. Add data fetching and mapping here. */}
+          </TableBody>
+        </Table>
+      </AdminSection>
 
       <AdminSection id="users" title="Manage Users" description="Oversee all clients, vendors, and drivers on the platform.">
         <Table>

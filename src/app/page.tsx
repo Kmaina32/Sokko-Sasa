@@ -8,12 +8,14 @@ import {
   Building,
   HeartPulse,
   Wrench,
+  Megaphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/listing-card";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const categories = [
   {
@@ -61,6 +63,7 @@ const categories = [
 ];
 
 const mockFeaturedListings: any[] = [];
+const mockAdvertisements: any[] = [];
 
 
 export default function Home() {
@@ -102,8 +105,47 @@ export default function Home() {
               </div>
           </div>
       </section>
-      
+
       <section className="bg-muted/30 py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8">Featured Promotions</h2>
+          {mockAdvertisements.length > 0 ? (
+            <Carousel opts={{ loop: true }}>
+              <CarouselContent>
+                {mockAdvertisements.map((ad) => (
+                  <CarouselItem key={ad.id}>
+                    <div className="relative aspect-[16/7] w-full overflow-hidden rounded-lg">
+                      <Image
+                        src={ad.imageUrl}
+                        alt={ad.title}
+                        fill
+                        className="object-cover"
+                        data-ai-hint={ad.imageHint}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                      <div className="absolute bottom-0 left-0 p-8 text-white">
+                        <h3 className="text-4xl font-bold">{ad.title}</h3>
+                        <p className="mt-2 max-w-lg text-lg opacity-90">{ad.description}</p>
+                        <Button className="mt-4" size="lg">Learn More</Button>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-4" />
+              <CarouselNext className="right-4" />
+            </Carousel>
+          ) : (
+            <Card className="text-center p-12">
+              <Megaphone className="mx-auto h-12 w-12 text-muted-foreground"/>
+              <h3 className="mt-4 text-xl font-semibold">No Promotions Currently</h3>
+              <p className="mt-2 text-muted-foreground">Check back soon for exciting deals and announcements.</p>
+            </Card>
+          )}
+        </div>
+      </section>
+      
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold">Featured Listings</h2>

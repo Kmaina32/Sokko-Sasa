@@ -50,3 +50,13 @@ export interface AdminUser {
   joinedDate: string;
   status: "Active" | "Suspended";
 }
+
+export interface Advertisement {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  imageHint: string;
+  link?: string;
+  isActive: boolean;
+}
