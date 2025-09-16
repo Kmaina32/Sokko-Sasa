@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import {
   Carousel,
@@ -10,13 +14,33 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Bed, Bath, Car, Phone, MessageSquare, Building } from "lucide-react";
+import { MapPin, Bed, Bath, Car, Phone, MessageSquare, Building, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { getPropertyById } from "@/lib/firestore";
 
 
-export default async function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const property = await getPropertyById(params.id);
+export default function PropertyDetailPage({ params }: { params: { id: string } }) {
+  const [property, setProperty] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      const propData = await getPropertyById(params.id);
+      setProperty(propData);
+      setLoading(false);
+    }
+    fetchProperty();
+  }, [params.id]);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
 
   if (!property) {
     return (

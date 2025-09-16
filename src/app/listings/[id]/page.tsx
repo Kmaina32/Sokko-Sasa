@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import {
   Carousel,
@@ -11,13 +15,33 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Tag, MessageSquare, Package } from "lucide-react";
+import { MapPin, Tag, MessageSquare, Package, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { getListingById } from "@/lib/firestore";
+import type { Listing } from '@/lib/types';
 
 
-export default async function ListingDetailPage({ params }: { params: { id: string } }) {
-  const listing = await getListingById(params.id);
+export default function ListingDetailPage({ params }: { params: { id: string } }) {
+  const [listing, setListing] = useState<Listing | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchListing = async () => {
+        const listingData = await getListingById(params.id);
+        setListing(listingData);
+        setLoading(false);
+    };
+    fetchListing();
+  }, [params.id]);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
 
   if (!listing) {
     return (

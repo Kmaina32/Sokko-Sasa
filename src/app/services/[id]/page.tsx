@@ -1,14 +1,37 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Star, MapPin, Phone, MessageSquare, Wrench } from "lucide-react";
+import { Star, MapPin, Phone, MessageSquare, Wrench, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getServiceById } from "@/lib/firestore";
 
-export default async function ServiceProviderProfilePage({ params }: { params: { id: string } }) {
-  const provider = await getServiceById(params.id);
+export default function ServiceProviderProfilePage({ params }: { params: { id: string } }) {
+  const [provider, setProvider] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProvider = async () => {
+        const data = await getServiceById(params.id);
+        setProvider(data);
+        setLoading(false);
+    }
+    fetchProvider();
+  }, [params.id]);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!provider) {
     return (
