@@ -54,9 +54,9 @@ export default function MedicalPage() {
             <div className="mb-12">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {medicalServices.map((service) => (
-                        <Card key={service.name} className="flex flex-col items-center justify-center p-6 text-center hover:bg-muted/50 cursor-pointer hover:shadow-lg transition-all">
+                        <Card key={service.name} className="flex flex-col items-center justify-center p-6 text-center bg-muted/40 hover:bg-muted/80 cursor-pointer transition-colors duration-200">
                             <service.icon className="w-10 h-10 text-primary mb-3"/>
-                            <h3 className="font-semibold text-center">{service.name}</h3>
+                            <h3 className="font-semibold text-center text-foreground/90">{service.name}</h3>
                         </Card>
                     ))}
                 </div>
