@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -42,18 +43,22 @@ export default function SignupPage() {
     setError(null);
     try {
       const userCredential = await signup(email, password);
-      await addUserData(userCredential.user, { name });
-      toast({
-        title: "Account Created!",
-        description: "You have been successfully signed up.",
-      });
-      router.push("/");
+      if (userCredential && userCredential.user) {
+        await addUserData(userCredential.user, { name });
+        toast({
+          title: "Account Created!",
+          description: "You have been successfully signed up.",
+        });
+        router.push("/");
+      } else {
+        throw new Error("Signup failed, user not created.");
+      }
     } catch (err: any) {
       setError(err.message);
       toast({
         variant: "destructive",
         title: "Signup Failed",
-        description: err.message,
+        description: err.code === 'auth/email-already-in-use' ? 'This email is already registered.' : err.message,
       });
     } finally {
       setIsLoading(false);
