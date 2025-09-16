@@ -10,29 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Trash2, Minus, Plus, ShoppingCart, ArrowLeft } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingCart, ArrowLeft, CreditCard } from "lucide-react";
 import { placeholderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
 
 
-const cartItems = [
-    {
-        id: 'prod1',
-        name: 'Hand-carved Wooden Elephant',
-        price: 2500,
-        quantity: 1,
-        imageUrl: placeholderImages.product1.imageUrl,
-        imageHint: placeholderImages.product1.imageHint,
-    },
-    {
-        id: 'prod2',
-        name: 'Sisal Kiondo Basket',
-        price: 1200,
-        quantity: 2,
-        imageUrl: placeholderImages.product2.imageUrl,
-        imageHint: placeholderImages.product2.imageHint,
-    }
-];
+const cartItems: any[] = [];
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -127,8 +110,11 @@ export default function CartPage() {
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button size="lg" className="w-full" disabled={cartItems.length === 0}>
-                        Proceed to Checkout
+                    <Button asChild size="lg" className="w-full" disabled={cartItems.length === 0}>
+                        <Link href="/checkout">
+                           <CreditCard className="mr-2 h-4 w-4"/>
+                           Proceed to Checkout
+                        </Link>
                     </Button>
                 </CardFooter>
             </Card>
