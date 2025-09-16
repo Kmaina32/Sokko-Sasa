@@ -149,9 +149,6 @@ const seedDatabase = async () => {
 
 };
 
-seedDatabase();
-
-
 // USERS
 export const addUserData = async (user: FirebaseUser, additionalData: any) => {
   const userRef = doc(db, "users", user.uid);
