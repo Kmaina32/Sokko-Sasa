@@ -26,90 +26,10 @@ import {
 } from "@/components/ui/select";
 import { ListingCard } from "@/components/listing-card";
 import type { Listing } from "@/lib/types";
-import { Filter, ListFilter } from "lucide-react";
+import { Filter, ListFilter, Package } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
-const mockListings: Omit<Listing, "seller" | "postedAt">[] = [
-  {
-    id: "1",
-    title: "Hand-carved Wooden Elephant",
-    price: 3500,
-    category: "Product",
-    location: "Nairobi",
-    imageUrl: "https://picsum.photos/seed/1/600/400",
-    imageHint: "wooden elephant",
-    description: "A beautiful, intricately carved wooden elephant statue, perfect for home decor. Made from sustainably sourced jacaranda wood by local artisans. It stands 12 inches tall and adds a touch of Kenyan craftsmanship to any room."
-  },
-  {
-    id: "5",
-    title: "Authentic Sisal Kiondo Basket",
-    price: 1200,
-    category: "Product",
-    location: "Mombasa",
-    imageUrl: "https://picsum.photos/seed/5/600/400",
-    imageHint: "sisal basket",
-    description: "Authentic sisal Kiondo basket, durable and stylish. Available in multiple colors."
-  },
-  {
-    id: "7",
-    title: "Classic Brown Leather Jacket",
-    price: 4500,
-    category: "Product",
-    location: "Nakuru",
-    imageUrl: "https://picsum.photos/seed/7/600/400",
-    imageHint: "leather jacket",
-    description: "Classic brown leather jacket in excellent condition. A timeless piece."
-  },
-    {
-    id: "2",
-    title: "Graphic Design Services",
-    price: 5000,
-    category: "Service",
-    location: "Mombasa",
-    imageUrl: "https://picsum.photos/seed/2/600/400",
-    imageHint: "design portfolio",
-    description: "Professional graphic design for logos, flyers, and more. Quick turnaround."
-  },
-  {
-    id: "3",
-    title: "2-Bedroom Apartment in Kilimani",
-    price: 85000,
-    category: "Property",
-    location: "Nairobi",
-    imageUrl: "https://picsum.photos/seed/3/600/400",
-    imageHint: "modern apartment",
-    description: "Modern and spacious 2-bedroom apartment for rent in a prime location."
-  },
-  {
-    id: "4",
-    title: "Sales Executive Position",
-    price: 0,
-    category: "Job",
-    location: "Nairobi",
-    imageUrl: "https://picsum.photos/seed/4/600/400",
-    imageHint: "office handshake",
-    description: "We are hiring an experienced Sales Executive to join our dynamic team."
-  },
-  {
-    id: "6",
-    title: "Reliable Plumbing Services",
-    price: 2500,
-    category: "Service",
-    location: "Kisumu",
-    imageUrl: "https://picsum.photos/seed/6/600/400",
-    imageHint: "plumbing tools",
-    description: "Reliable plumbing services for residential and commercial properties."
-  },
-  {
-    id: "8",
-    title: "Prime 1-Acre Beachfront Plot",
-    price: 12000000,
-    category: "Property",
-    location: "Diani",
-    imageUrl: "https://picsum.photos/seed/8/600/400",
-    imageHint: "beachfront property",
-    description: "Prime 1-acre beachfront plot with stunning ocean views. Perfect for development."
-  },
-];
+const mockListings: Omit<Listing, 'seller' | 'postedAt'>[] = [];
 
 
 export default function ShopPage() {
@@ -174,35 +94,45 @@ export default function ShopPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {mockListings.map((listing) => (
-          <ListingCard key={listing.id} listing={listing} />
-        ))}
-      </div>
-      <Pagination className="mt-12">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              1
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">2</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      {mockListings.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {mockListings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+          <Pagination className="mt-12">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious href="#" />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#" isActive>
+                  1
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">2</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">3</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext href="#" />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </>
+      ) : (
+        <Card className="text-center p-12 col-span-full">
+          <Package className="mx-auto h-12 w-12 text-muted-foreground"/>
+          <h3 className="mt-4 text-xl font-semibold">No Listings Found</h3>
+          <p className="mt-2 text-muted-foreground">Try adjusting your search or filters to find what you're looking for.</p>
+        </Card>
+      )}
     </div>
   );
 }

@@ -22,50 +22,7 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Mock Data
-const mockUsers = [
-  { id: 'U001', name: 'John Doe', email: 'john@example.com', type: 'Client', status: 'Active', avatar: 'https://picsum.photos/seed/user1/100/100' },
-  { id: 'U002', name: 'Jane Smith', email: 'jane@example.com', type: 'Client', status: 'Active', avatar: 'https://picsum.photos/seed/user2/100/100' },
-  { id: 'U003', name: 'Kamau Plumbers', email: 'contact@kamau.co.ke', type: 'Vendor', status: 'Suspended', avatar: 'https://picsum.photos/seed/provider1/100/100' },
-  { id: 'U004', name: 'Peter Kariuki', email: 'pete@drivers.com', type: 'Driver', status: 'Active', avatar: 'https://picsum.photos/seed/driver1/100/100' },
-];
-
-const mockProducts = [
-    { id: 'P001', name: 'Wooden Elephant', seller: 'Artisans Collective', price: 3500, active: true },
-    { id: 'P002', name: 'Sisal Kiondo Basket', seller: 'Mombasa Weavers', price: 1200, active: true },
-    { id: 'P003', name: 'Leather Jacket', seller: 'Nakuru Leathers', price: 4500, active: false },
-];
-
-const mockRestaurants = [
-    { id: 'R001', name: 'Java House', location: 'Nairobi', cuisine: 'Cafe', active: true },
-    { id: 'R002', name: 'Artcaffe', location: 'Nairobi', cuisine: 'Bakery', active: true },
-    { id: 'R003', name: 'Mama Oliech', location: 'Nairobi', cuisine: 'Fish', active: false },
-];
-
-const mockEvents = [
-    { id: 'E001', name: 'Safaricom Jazz Festival', location: 'Nairobi', date: '2025-02-23', active: true },
-    { id: 'E002', name: 'Hakuna Matata Festival', location: 'Naivasha', date: '2025-04-12', active: true },
-];
-
-const mockProperties = [
-    { id: 'PR001', name: 'Modern Apartment in Kilimani', type: 'Rent', price: '85,000/mo', active: true },
-    { id: 'PR002', name: 'Spacious Villa in Karen', type: 'Sale', price: '45,000,000', active: false },
-];
-
-const mockJobs = [
-    { id: 'J001', title: 'Senior Frontend Developer', company: 'Tech Solutions Ltd.', type: 'Full-time', active: true },
-    { id: 'J002', title: 'Marketing Manager', company: 'Creative Agency Inc.', type: 'Full-time', active: true },
-];
-
-const mockServices = [
-    { id: 'S001', name: 'Kamau Plumbers', category: 'Plumbing', rating: 4.8, active: true },
-    { id: 'S002', name: 'FixIt Appliance Masters', category: 'Appliance Repair', rating: 4.7, active: false },
-];
-
-const mockDrivers = [
-    { id: 'D001', name: 'Peter Kariuki', vehicle: 'Toyota Vitz KDA 123B', rating: 4.9, active: true },
-    { id: 'D002', name: 'Aisha Omar', vehicle: 'Suzuki Swift KDB 456C', rating: 4.7, active: true },
-];
+// Mock Data Removed
 
 const AdminSection = ({ id, title, description, children }: { id: string, title: string, description: string, children: React.ReactNode}) => (
     <Card id={id} className="scroll-mt-20">
@@ -112,31 +69,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar} alt={user.name}/>
-                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span>{user.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell><Badge variant="secondary">{user.type}</Badge></TableCell>
-                <TableCell>
-                  <Badge
-                    variant={user.status === 'Active' ? 'default' : 'destructive'}
-                    className={user.status === 'Active' ? 'bg-green-500/20 text-green-700 border-green-500/30' : ''}
-                  >
-                    {user.status}
-                  </Badge>
-                </TableCell>
-                <TableCell><Switch defaultChecked={user.status === 'Active'} /></TableCell>
-                <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>
@@ -153,15 +86,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockProducts.map((item) => (
-              <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.seller}</TableCell>
-                  <TableCell>{item.price.toLocaleString()}</TableCell>
-                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                  <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>
@@ -178,15 +103,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockRestaurants.map((item) => (
-              <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.location}</TableCell>
-                  <TableCell>{item.cuisine}</TableCell>
-                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                  <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>
@@ -203,15 +120,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockEvents.map((item) => (
-              <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.location}</TableCell>
-                  <TableCell>{item.date}</TableCell>
-                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                  <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>
@@ -228,15 +137,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockProperties.map((item) => (
-              <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.type}</TableCell>
-                  <TableCell>{item.price}</TableCell>
-                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                  <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>
@@ -253,15 +154,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockJobs.map((item) => (
-              <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.title}</TableCell>
-                  <TableCell>{item.company}</TableCell>
-                  <TableCell>{item.type}</TableCell>
-                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                  <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>
@@ -278,15 +171,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockServices.map((item) => (
-              <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>{item.rating} ★</TableCell>
-                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                  <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>
@@ -303,15 +188,7 @@ export default function AdminPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockDrivers.map((item) => (
-              <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.vehicle}</TableCell>
-                  <TableCell>{item.rating} ★</TableCell>
-                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                  <TableCell className="text-right"><CrudActions /></TableCell>
-              </TableRow>
-            ))}
+            {/* Mock data removed. Add data fetching and mapping here. */}
           </TableBody>
         </Table>
       </AdminSection>

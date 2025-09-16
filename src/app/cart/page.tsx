@@ -10,26 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Trash2, Minus, Plus } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingCart } from "lucide-react";
 
-const cartItems = [
-  {
-    id: 1,
-    name: "Hand-carved Wooden Elephant",
-    price: 3500,
-    quantity: 1,
-    imageUrl: "https://picsum.photos/seed/1/200/200",
-    imageHint: "wooden elephant"
-  },
-  {
-    id: 2,
-    name: "Authentic Sisal Kiondo Basket",
-    price: 1200,
-    quantity: 2,
-    imageUrl: "https://picsum.photos/seed/5/200/200",
-    imageHint: "sisal basket"
-  },
-];
+const cartItems: any[] = [];
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -41,7 +24,7 @@ const formatCurrency = (amount: number) => {
 
 export default function CartPage() {
     const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const shipping = 250;
+    const shipping = cartItems.length > 0 ? 250 : 0;
     const total = subtotal + shipping;
 
   return (
@@ -51,37 +34,46 @@ export default function CartPage() {
         <div className="lg:col-span-2">
             <Card>
                 <CardContent className="p-0">
-                    <div className="divide-y divide-border">
-                        {cartItems.map((item) => (
-                            <div key={item.id} className="flex items-center gap-4 p-4">
-                                <Image 
-                                    src={item.imageUrl}
-                                    alt={item.name}
-                                    width={100}
-                                    height={100}
-                                    className="rounded-md object-cover"
-                                    data-ai-hint={item.imageHint}
-                                />
-                                <div className="flex-1">
-                                    <p className="font-semibold">{item.name}</p>
-                                    <p className="text-muted-foreground">{formatCurrency(item.price)}</p>
-                                </div>
-                                <div className="flex items-center gap-2 border rounded-md p-1">
-                                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                                        <Minus className="w-4 h-4"/>
+                    {cartItems.length > 0 ? (
+                        <div className="divide-y divide-border">
+                            {cartItems.map((item) => (
+                                <div key={item.id} className="flex items-center gap-4 p-4">
+                                    <Image 
+                                        src={item.imageUrl}
+                                        alt={item.name}
+                                        width={100}
+                                        height={100}
+                                        className="rounded-md object-cover"
+                                        data-ai-hint={item.imageHint}
+                                    />
+                                    <div className="flex-1">
+                                        <p className="font-semibold">{item.name}</p>
+                                        <p className="text-muted-foreground">{formatCurrency(item.price)}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2 border rounded-md p-1">
+                                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                                            <Minus className="w-4 h-4"/>
+                                        </Button>
+                                        <span className="w-8 text-center font-bold">{item.quantity}</span>
+                                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                                            <Plus className="w-4 h-4"/>
+                                        </Button>
+                                    </div>
+                                    <p className="font-bold w-24 text-right">{formatCurrency(item.price * item.quantity)}</p>
+                                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                                        <Trash2 className="w-5 h-5"/>
                                     </Button>
-                                    <span className="w-8 text-center font-bold">{item.quantity}</span>
-                                     <Button variant="ghost" size="icon" className="h-6 w-6">
-                                        <Plus className="w-4 h-4"/>
-                                    </Button>
                                 </div>
-                                <p className="font-bold w-24 text-right">{formatCurrency(item.price * item.quantity)}</p>
-                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
-                                    <Trash2 className="w-5 h-5"/>
-                                </Button>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                         <div className="flex flex-col items-center justify-center p-16 text-center">
+                            <ShoppingCart className="w-16 h-16 text-muted-foreground mb-4" />
+                            <h3 className="text-xl font-semibold">Your cart is empty</h3>
+                            <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
+                            <Button className="mt-6">Continue Shopping</Button>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>
@@ -100,8 +92,8 @@ export default function CartPage() {
                         <span className="font-medium">{formatCurrency(shipping)}</span>
                     </div>
                      <div className="flex items-center space-x-2">
-                        <Input placeholder="Discount code" />
-                        <Button variant="outline">Apply</Button>
+                        <Input placeholder="Discount code" disabled={cartItems.length === 0} />
+                        <Button variant="outline" disabled={cartItems.length === 0}>Apply</Button>
                     </div>
                     <Separator />
                      <div className="flex justify-between font-bold text-lg">
@@ -110,7 +102,7 @@ export default function CartPage() {
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button size="lg" className="w-full">
+                    <Button size="lg" className="w-full" disabled={cartItems.length === 0}>
                         Proceed to Checkout
                     </Button>
                 </CardFooter>

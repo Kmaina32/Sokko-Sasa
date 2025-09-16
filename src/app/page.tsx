@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/listing-card";
+import { Card } from "@/components/ui/card";
 
 const categories = [
   {
@@ -59,48 +60,7 @@ const categories = [
   },
 ];
 
-const mockFeaturedListings = [
-  {
-    id: "1",
-    title: "Hand-carved Wooden Elephant",
-    price: 3500,
-    category: "Product",
-    location: "Nairobi",
-    imageUrl: "https://picsum.photos/seed/1/600/400",
-    imageHint: "wooden elephant",
-    description: "A beautiful, intricately carved wooden elephant statue."
-  },
-  {
-    id: "5",
-    title: "Authentic Sisal Kiondo Basket",
-    price: 1200,
-    category: "Product",
-    location: "Mombasa",
-    imageUrl: "https://picsum.photos/seed/5/600/400",
-    imageHint: "sisal basket",
-    description: "Authentic sisal Kiondo basket, durable and stylish."
-  },
-    {
-    id: "3",
-    title: "2-Bedroom Apartment in Kilimani",
-    price: 85000,
-    category: "Property",
-    location: "Nairobi",
-    imageUrl: "https://picsum.photos/seed/3/600/400",
-    imageHint: "modern apartment",
-    description: "Modern and spacious 2-bedroom apartment for rent."
-  },
-  {
-    id: "6",
-    title: "Reliable Plumbing Services",
-    price: 2500,
-    category: "Service",
-    location: "Kisumu",
-    imageUrl: "https://picsum.photos/seed/6/600/400",
-    imageHint: "plumbing tools",
-    description: "Reliable plumbing services for residential and commercial properties."
-  },
-];
+const mockFeaturedListings: any[] = [];
 
 
 export default function Home() {
@@ -151,11 +111,19 @@ export default function Home() {
                 <Link href="/shop">View All &rarr;</Link>
             </Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockFeaturedListings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
+          {mockFeaturedListings.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {mockFeaturedListings.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+                ))}
+            </div>
+          ) : (
+            <Card className="text-center p-12">
+              <Package className="mx-auto h-12 w-12 text-muted-foreground"/>
+              <h3 className="mt-4 text-xl font-semibold">No Featured Listings</h3>
+              <p className="mt-2 text-muted-foreground">Check back later to see what's new and trending.</p>
+            </Card>
+          )}
         </div>
       </section>
     </div>

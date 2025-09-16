@@ -14,14 +14,28 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Tag, MessageSquare } from "lucide-react";
 
 // Mock data - in a real app, this would be fetched from a database
-const mockListings = [
-    { id: "1", title: "Hand-carved Wooden Elephant", price: 3500, category: "Product", location: "Nairobi", description: "A beautiful, intricately carved wooden elephant statue, perfect for home decor. Made from sustainably sourced jacaranda wood by local artisans. It stands 12 inches tall and adds a touch of Kenyan craftsmanship to any room.", images: ["https://picsum.photos/seed/1/800/600", "https://picsum.photos/seed/11/800/600", "https://picsum.photos/seed/12/800/600"], seller: { name: "Artisans Collective", avatar: "https://picsum.photos/seed/seller1/100/100" } },
-    { id: "2", title: "Graphic Design Services", price: 5000, category: "Service", location: "Mombasa", description: "Professional graphic design for logos, flyers, and more. Quick turnaround and unlimited revisions. We specialize in creating modern and impactful branding for businesses of all sizes.", images: ["https://picsum.photos/seed/2/800/600"], seller: { name: "Creative Minds", avatar: "https://picsum.photos/seed/seller2/100/100" } },
-    // Add other listings for completeness...
-];
+const mockListings: any[] = [];
+const listing = mockListings[0]; // This will be undefined, but we'll handle it
 
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
-  const listing = mockListings.find(l => l.id === params.id) ?? mockListings[0];
+  // In a real app, you would fetch the listing based on `params.id`
+  // const listing = await fetchListing(params.id);
+
+  if (!listing) {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <Card className="text-center p-12">
+                <CardTitle className="text-2xl">Listing Not Found</CardTitle>
+                <CardContent>
+                    <p className="mt-4 text-muted-foreground">Sorry, we couldn't find the listing you're looking for.</p>
+                    <Button asChild className="mt-6">
+                        <a href="/shop">Back to Marketplace</a>
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
+    )
+  }
 
   const formatPrice = (price: number) => {
     if (price === 0) return "Not specified";
@@ -39,7 +53,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
             <CardContent className="p-0">
               <Carousel className="w-full">
                 <CarouselContent>
-                  {listing.images.map((src, index) => (
+                  {listing.images.map((src: string, index: number) => (
                     <CarouselItem key={index}>
                       <Image
                         src={src}

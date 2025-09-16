@@ -25,15 +25,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
-const upcomingAppointments = [
-  { id: 1, client: "Jane Doe", service: "Plumbing Leak Fix", time: "10:00 AM", status: "Confirmed" },
-  { id: 2, client: "John Smith", service: "AC Maintenance", time: "2:00 PM", status: "Confirmed" },
-];
-
-const recentJobs = [
-    {id: 1, title: 'Bathroom Renovation', earnings: 25000, status: 'Completed'},
-    {id: 2, title: 'Kitchen Cabinet Install', earnings: 15000, status: 'Completed'},
-]
+const upcomingAppointments: any[] = [];
+const recentJobs: any[] = [];
 
 export default function ServiceHubPage() {
   return (
@@ -52,9 +45,9 @@ export default function ServiceHubPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">KSh 45,231.89</div>
+            <div className="text-2xl font-bold">KSh 0.00</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              +0% from last month
             </p>
           </CardContent>
         </Card>
@@ -64,7 +57,7 @@ export default function ServiceHubPage() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+12</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
               Appointments this week
             </p>
@@ -76,7 +69,7 @@ export default function ServiceHubPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+23</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
               Potential clients this month
             </p>
@@ -88,7 +81,7 @@ export default function ServiceHubPage() {
             <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
               Unread messages & alerts
             </p>
@@ -114,18 +107,26 @@ export default function ServiceHubPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {recentJobs.map(job => (
-                                <TableRow key={job.id}>
-                                    <TableCell className="font-medium">{job.title}</TableCell>
-                                    <TableCell>{job.earnings.toLocaleString()}</TableCell>
-                                    <TableCell>
-                                        <Badge className="bg-green-500/20 text-green-700 border-green-500/30">{job.status}</Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button variant="outline" size="sm">View</Button>
+                            {recentJobs.length > 0 ? (
+                                recentJobs.map(job => (
+                                    <TableRow key={job.id}>
+                                        <TableCell className="font-medium">{job.title}</TableCell>
+                                        <TableCell>{job.earnings.toLocaleString()}</TableCell>
+                                        <TableCell>
+                                            <Badge className="bg-green-500/20 text-green-700 border-green-500/30">{job.status}</Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="outline" size="sm">View</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                             ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="h-24 text-center">
+                                        No recent jobs.
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                             )}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -137,17 +138,21 @@ export default function ServiceHubPage() {
                     <CardTitle>Upcoming Appointments</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {upcomingAppointments.map(appt => (
-                        <div key={appt.id} className="flex items-center gap-4 p-2 rounded-md bg-muted/50">
-                            <div className="p-3 rounded-full bg-background">
-                                <Calendar className="w-5 h-5 text-primary"/>
-                            </div>
-                            <div>
-                                <p className="font-semibold">{appt.service}</p>
-                                <p className="text-sm text-muted-foreground">{appt.client} at {appt.time}</p>
-                            </div>
-                        </div>
-                    ))}
+                    {upcomingAppointments.length > 0 ? (
+                      upcomingAppointments.map(appt => (
+                          <div key={appt.id} className="flex items-center gap-4 p-2 rounded-md bg-muted/50">
+                              <div className="p-3 rounded-full bg-background">
+                                  <Calendar className="w-5 h-5 text-primary"/>
+                              </div>
+                              <div>
+                                  <p className="font-semibold">{appt.service}</p>
+                                  <p className="text-sm text-muted-foreground">{appt.client} at {appt.time}</p>
+                              </div>
+                          </div>
+                      ))
+                    ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">No upcoming appointments.</p>
+                    )}
                      <Button className="w-full">View Full Calendar</Button>
                 </CardContent>
             </Card>

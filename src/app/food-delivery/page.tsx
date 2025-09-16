@@ -9,16 +9,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Star, Search } from "lucide-react";
+import { Star, Search, Utensils } from "lucide-react";
 
-const mockRestaurants = [
-  { id: "1", name: "Java House", cuisine: "Cafe, Kenyan", rating: 4.5, imageUrl: "https://picsum.photos/seed/resto1/600/400", imageHint: "modern cafe interior" },
-  { id: "2", name: "Artcaffe", cuisine: "Bakery, Continental", rating: 4.6, imageUrl: "https://picsum.photos/seed/resto2/600/400", imageHint: "artisan bakery display" },
-  { id: "3", name: "Mama Oliech's", cuisine: "Fish, African", rating: 4.8, imageUrl: "https://picsum.photos/seed/resto3/600/400", imageHint: "grilled fish dish" },
-  { id: "4", name: "The Talisman", cuisine: "Fusion, Fine Dining", rating: 4.7, imageUrl: "https://picsum.photos/seed/resto4/600/400", imageHint: "elegant restaurant garden" },
-  { id: "5", name: "Nyama Mama", cuisine: "Kenyan, Grill", rating: 4.4, imageUrl: "https://picsum.photos/seed/resto5/600/400", imageHint: "modern african restaurant" },
-  { id: "6", name: "About Thyme", cuisine: "International", rating: 4.6, imageUrl: "https://picsum.photos/seed/resto6/600/400", imageHint: "cozy restaurant patio" },
-];
+const mockRestaurants: any[] = [];
 
 export default function FoodDeliveryPage() {
   return (
@@ -39,32 +32,40 @@ export default function FoodDeliveryPage() {
 
       <div>
         <h2 className="text-2xl font-bold tracking-tight mb-4">Popular Restaurants</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockRestaurants.map((resto) => (
-            <Card key={resto.id} className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
-                <CardHeader className="p-0">
-                    <Image
-                        src={resto.imageUrl}
-                        alt={resto.name}
-                        width={600}
-                        height={400}
-                        className="aspect-video w-full object-cover"
-                        data-ai-hint={resto.imageHint}
-                    />
-                </CardHeader>
-                <CardContent className="p-4">
-                    <CardTitle className="text-xl group-hover:text-primary">{resto.name}</CardTitle>
-                    <CardDescription>{resto.cuisine}</CardDescription>
-                </CardContent>
-                <CardFooter className="p-4 pt-0">
-                    <Badge variant="default" className="flex items-center gap-1 bg-accent hover:bg-accent/90">
-                        <Star className="w-4 h-4 text-white fill-white"/>
-                        <span className="text-white font-bold">{resto.rating}</span>
-                    </Badge>
-                </CardFooter>
-            </Card>
-          ))}
-        </div>
+        {mockRestaurants.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockRestaurants.map((resto) => (
+              <Card key={resto.id} className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                  <CardHeader className="p-0">
+                      <Image
+                          src={resto.imageUrl}
+                          alt={resto.name}
+                          width={600}
+                          height={400}
+                          className="aspect-video w-full object-cover"
+                          data-ai-hint={resto.imageHint}
+                      />
+                  </CardHeader>
+                  <CardContent className="p-4">
+                      <CardTitle className="text-xl group-hover:text-primary">{resto.name}</CardTitle>
+                      <CardDescription>{resto.cuisine}</CardDescription>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0">
+                      <Badge variant="default" className="flex items-center gap-1 bg-accent hover:bg-accent/90">
+                          <Star className="w-4 h-4 text-white fill-white"/>
+                          <span className="text-white font-bold">{resto.rating}</span>
+                      </Badge>
+                  </CardFooter>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card className="text-center p-12">
+            <Utensils className="mx-auto h-12 w-12 text-muted-foreground"/>
+            <h3 className="mt-4 text-xl font-semibold">No Restaurants Found</h3>
+            <p className="mt-2 text-muted-foreground">We couldn't find any restaurants. Please try a different search or check back later.</p>
+          </Card>
+        )}
       </div>
     </div>
   );

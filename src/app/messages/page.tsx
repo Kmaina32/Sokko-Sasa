@@ -6,43 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Search, Send } from "lucide-react";
+import { Search, Send, Inbox } from "lucide-react";
 
-const conversations = [
-  {
-    id: 1,
-    name: "Jane Smith",
-    avatar: "https://picsum.photos/seed/seller1/100/100",
-    lastMessage: "Is it still available?",
-    time: "10:42 AM",
-    unread: 2,
-    listing: "Hand-carved Wooden Elephant",
-  },
-  {
-    id: 2,
-    name: "Creative Minds",
-    avatar: "https://picsum.photos/seed/seller2/100/100",
-    lastMessage: "Sure, I can start tomorrow.",
-    time: "Yesterday",
-    unread: 0,
-    listing: "Graphic Design Services",
-  },
-  {
-    id: 3,
-    name: "Taka Services",
-    avatar: "https://picsum.photos/seed/seller3/100/100",
-    lastMessage: "Okay, see you then.",
-    time: "3d ago",
-    unread: 0,
-    listing: "Plumbing & Repair",
-  },
-];
-
-const messages = [
-  { id: 1, sender: "other", text: "Is the wooden elephant still available?", time: "10:40 AM" },
-  { id: 2, sender: "me", text: "Yes, it is!", time: "10:41 AM" },
-  { id: 3, sender: "other", text: "Great! Can I come see it this afternoon?", time: "10:42 AM" },
-];
+const conversations: any[] = [];
+const messages: any[] = [];
 
 export default function MessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState(
@@ -61,106 +28,124 @@ export default function MessagesPage() {
             </div>
           </div>
           <ScrollArea className="flex-1">
-            {conversations.map((convo) => (
-              <button
-                key={convo.id}
-                onClick={() => setSelectedConversation(convo)}
-                className={cn(
-                  "flex w-full items-start gap-4 p-4 text-left transition-colors hover:bg-muted/50",
-                  selectedConversation.id === convo.id && "bg-muted"
-                )}
-              >
-                <Avatar>
-                  <AvatarImage src={convo.avatar} alt={convo.name} />
-                  <AvatarFallback>{convo.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 overflow-hidden">
-                  <div className="flex items-baseline justify-between">
-                    <p className="font-semibold truncate">{convo.name}</p>
-                    <p className="text-xs text-muted-foreground">{convo.time}</p>
+            {conversations.length > 0 ? (
+              conversations.map((convo) => (
+                <button
+                  key={convo.id}
+                  onClick={() => setSelectedConversation(convo)}
+                  className={cn(
+                    "flex w-full items-start gap-4 p-4 text-left transition-colors hover:bg-muted/50",
+                    selectedConversation?.id === convo.id && "bg-muted"
+                  )}
+                >
+                  <Avatar>
+                    <AvatarImage src={convo.avatar} alt={convo.name} />
+                    <AvatarFallback>{convo.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 overflow-hidden">
+                    <div className="flex items-baseline justify-between">
+                      <p className="font-semibold truncate">{convo.name}</p>
+                      <p className="text-xs text-muted-foreground">{convo.time}</p>
+                    </div>
+                    <p className="text-sm text-muted-foreground truncate">{convo.listing}</p>
+                    <div className="flex justify-between items-center mt-1">
+                       <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
+                       {convo.unread > 0 && (
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">{convo.unread}</span>
+                       )}
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground truncate">{convo.listing}</p>
-                  <div className="flex justify-between items-center mt-1">
-                     <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
-                     {convo.unread > 0 && (
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">{convo.unread}</span>
-                     )}
-                  </div>
+                </button>
+              ))
+            ) : (
+                <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                    <Inbox className="w-12 h-12 text-muted-foreground mb-4"/>
+                    <h3 className="text-lg font-semibold">No Conversations</h3>
+                    <p className="text-sm text-muted-foreground">Your message history will appear here.</p>
                 </div>
-              </button>
-            ))}
+            )}
           </ScrollArea>
         </aside>
 
         <main className="flex flex-col">
-          <header className="flex items-center gap-4 border-b p-4 bg-card">
-            <Avatar>
-              <AvatarImage
-                src={selectedConversation.avatar}
-                alt={selectedConversation.name}
-              />
-              <AvatarFallback>
-                {selectedConversation.name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h3 className="font-semibold">{selectedConversation.name}</h3>
-              <p className="text-sm text-muted-foreground">
-                Regarding: {selectedConversation.listing}
-              </p>
-            </div>
-          </header>
-
-          <ScrollArea className="flex-1 p-4 lg:p-6">
-            <div className="space-y-6">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={cn(
-                    "flex items-end gap-2",
-                    message.sender === "me" && "justify-end"
-                  )}
-                >
-                  {message.sender === "other" && (
-                     <Avatar className="h-8 w-8">
-                       <AvatarImage src={selectedConversation.avatar} />
-                       <AvatarFallback>{selectedConversation.name.charAt(0)}</AvatarFallback>
-                     </Avatar>
-                  )}
-                  <div
-                    className={cn(
-                      "max-w-xs rounded-lg p-3 lg:max-w-md",
-                      message.sender === "me"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    )}
-                  >
-                    <p>{message.text}</p>
-                    <p className={cn("text-xs mt-1", message.sender === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
-                        {message.time}
+            {selectedConversation ? (
+                <>
+                <header className="flex items-center gap-4 border-b p-4 bg-card">
+                    <Avatar>
+                    <AvatarImage
+                        src={selectedConversation.avatar}
+                        alt={selectedConversation.name}
+                    />
+                    <AvatarFallback>
+                        {selectedConversation.name.charAt(0)}
+                    </AvatarFallback>
+                    </Avatar>
+                    <div>
+                    <h3 className="font-semibold">{selectedConversation.name}</h3>
+                    <p className="text-sm text-muted-foreground">
+                        Regarding: {selectedConversation.listing}
                     </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+                    </div>
+                </header>
 
-          <footer className="border-t p-4 bg-card">
-            <div className="relative">
-              <Input
-                placeholder="Type your message..."
-                className="pr-12 text-base"
-              />
-              <Button
-                type="submit"
-                size="icon"
-                className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 bg-accent hover:bg-accent/90"
-              >
-                <Send className="h-4 w-4" />
-                <span className="sr-only">Send</span>
-              </Button>
-            </div>
-          </footer>
+                <ScrollArea className="flex-1 p-4 lg:p-6">
+                    <div className="space-y-6">
+                    {messages.map((message) => (
+                        <div
+                        key={message.id}
+                        className={cn(
+                            "flex items-end gap-2",
+                            message.sender === "me" && "justify-end"
+                        )}
+                        >
+                        {message.sender === "other" && (
+                            <Avatar className="h-8 w-8">
+                            <AvatarImage src={selectedConversation.avatar} />
+                            <AvatarFallback>{selectedConversation.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                        )}
+                        <div
+                            className={cn(
+                            "max-w-xs rounded-lg p-3 lg:max-w-md",
+                            message.sender === "me"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted"
+                            )}
+                        >
+                            <p>{message.text}</p>
+                            <p className={cn("text-xs mt-1", message.sender === 'me' ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
+                                {message.time}
+                            </p>
+                        </div>
+                        </div>
+                    ))}
+                    </div>
+                </ScrollArea>
+
+                <footer className="border-t p-4 bg-card">
+                    <div className="relative">
+                    <Input
+                        placeholder="Type your message..."
+                        className="pr-12 text-base"
+                    />
+                    <Button
+                        type="submit"
+                        size="icon"
+                        className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 bg-accent hover:bg-accent/90"
+                    >
+                        <Send className="h-4 w-4" />
+                        <span className="sr-only">Send</span>
+                    </Button>
+                    </div>
+                </footer>
+                </>
+            ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                    <Inbox className="w-16 h-16 text-muted-foreground mb-4"/>
+                    <h2 className="text-2xl font-bold">Select a conversation</h2>
+                    <p className="text-muted-foreground mt-2">Choose a conversation from the left panel to view messages.</p>
+                </div>
+            )}
         </main>
       </div>
     </div>

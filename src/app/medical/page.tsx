@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Stethoscope, Pill, Microscope, HeartPulse } from "lucide-react";
+import { Search, Stethoscope, Pill, Microscope, HeartPulse, Hospital } from "lucide-react";
 
 const medicalServices = [
     { name: "Consult a Doctor", icon: Stethoscope },
@@ -17,12 +17,7 @@ const medicalServices = [
     { name: "Wellness Checks", icon: HeartPulse },
 ];
 
-const mockClinics = [
-    { id: "1", name: "Nairobi Hospital", specialty: "General Hospital", imageUrl: "https://picsum.photos/seed/clinic1/600/400", imageHint: "modern hospital exterior" },
-    { id: "2", name: "Aga Khan University Hospital", specialty: "Multi-Specialty", imageUrl: "https://picsum.photos/seed/clinic2/600/400", imageHint: "hospital reception area" },
-    { id: "3", name: "Karen Hospital", specialty: "Cardiac Care", imageUrl: "https://picsum.photos/seed/clinic3/600/400", imageHint: "hospital building" },
-    { id: "4", name: "M.P. Shah Hospital", specialty: "General & Maternity", imageUrl: "https://picsum.photos/seed/clinic4/600/400", imageHint: "hospital corridor" },
-]
+const mockClinics: any[] = [];
 
 export default function MedicalPage() {
     return (
@@ -52,20 +47,28 @@ export default function MedicalPage() {
 
             <div>
                 <h2 className="text-2xl font-bold tracking-tight mb-4">Featured Hospitals & Clinics</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {mockClinics.map((clinic) => (
-                        <Card key={clinic.id} className="group overflow-hidden">
-                            <CardHeader className="p-0">
-                                <Image src={clinic.imageUrl} alt={clinic.name} width={600} height={400} data-ai-hint={clinic.imageHint} className="aspect-video object-cover"/>
-                            </CardHeader>
-                            <CardContent className="p-4">
-                                <CardTitle className="text-lg group-hover:text-primary">{clinic.name}</CardTitle>
-                                <CardDescription>{clinic.specialty}</CardDescription>
-                                <Button className="w-full mt-4">Book Appointment</Button>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                {mockClinics.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {mockClinics.map((clinic) => (
+                          <Card key={clinic.id} className="group overflow-hidden">
+                              <CardHeader className="p-0">
+                                  <Image src={clinic.imageUrl} alt={clinic.name} width={600} height={400} data-ai-hint={clinic.imageHint} className="aspect-video object-cover"/>
+                              </CardHeader>
+                              <CardContent className="p-4">
+                                  <CardTitle className="text-lg group-hover:text-primary">{clinic.name}</CardTitle>
+                                  <CardDescription>{clinic.specialty}</CardDescription>
+                                  <Button className="w-full mt-4">Book Appointment</Button>
+                              </CardContent>
+                          </Card>
+                      ))}
+                  </div>
+                ) : (
+                  <Card className="text-center p-12">
+                    <Hospital className="mx-auto h-12 w-12 text-muted-foreground"/>
+                    <h3 className="mt-4 text-xl font-semibold">No Hospitals or Clinics Found</h3>
+                    <p className="mt-2 text-muted-foreground">We couldn't find any healthcare providers. Please try a different search or check back later.</p>
+                  </Card>
+                )}
             </div>
         </div>
     );

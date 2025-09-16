@@ -10,14 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 
-const mockJobs = [
-  { id: "1", title: "Senior Frontend Developer", company: "Tech Solutions Ltd.", location: "Nairobi", type: "Full-time", logoUrl: "https://picsum.photos/seed/logo1/100/100" },
-  { id: "2", title: "Marketing Manager", company: "Creative Agency Inc.", location: "Mombasa", type: "Full-time", logoUrl: "https://picsum.photos/seed/logo2/100/100" },
-  { id: "3", title: "Human Resources Intern", company: "Corporate Group", location: "Nairobi", type: "Internship", logoUrl: "https://picsum.photos/seed/logo3/100/100" },
-  { id: "4", title: "Customer Service Representative", company: "Sokko Sasa", location: "Remote", type: "Part-time", logoUrl: "https://picsum.photos/seed/logo4/100/100" },
-  { id: "5", title: "Lead Backend Engineer", company: "Fintech Innovators", location: "Nairobi", type: "Full-time", logoUrl: "https://picsum.photos/seed/logo5/100/100" },
-];
+const mockJobs: any[] = [];
 
 export default function JobsPage() {
     return (
@@ -54,35 +49,38 @@ export default function JobsPage() {
             </Card>
 
             <div className="space-y-4">
-                {mockJobs.map(job => (
-                    <Card key={job.id} className="transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary">
-                        <CardHeader className="flex flex-row items-start gap-4">
-                            <img src={job.logoUrl} alt={`${job.company} logo`} className="w-16 h-16 rounded-md"/>
-                            <div className="flex-1">
-                                <CardTitle>{job.title}</CardTitle>
-                                <CardDescription className="text-base">{job.company}</CardDescription>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                                    <MapPin className="w-4 h-4" />
-                                    <span>{job.location}</span>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <Badge variant={job.type === 'Full-time' ? 'default' : 'secondary'}>{job.type}</Badge>
-                                <p className="text-sm text-muted-foreground mt-2">2d ago</p>
-                            </div>
-                        </CardHeader>
-                        <CardFooter>
-                            <Button variant="outline" className="mr-2">Save Job</Button>
-                            <Button>Apply Now</Button>
-                        </CardFooter>
-                    </Card>
-                ))}
+                {mockJobs.length > 0 ? (
+                  mockJobs.map(job => (
+                      <Card key={job.id} className="transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary">
+                          <CardHeader className="flex flex-row items-start gap-4">
+                              <img src={job.logoUrl} alt={`${job.company} logo`} className="w-16 h-16 rounded-md"/>
+                              <div className="flex-1">
+                                  <CardTitle>{job.title}</CardTitle>
+                                  <CardDescription className="text-base">{job.company}</CardDescription>
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                                      <MapPin className="w-4 h-4" />
+                                      <span>{job.location}</span>
+                                  </div>
+                              </div>
+                              <div className="text-right">
+                                  <Badge variant={job.type === 'Full-time' ? 'default' : 'secondary'}>{job.type}</Badge>
+                                  <p className="text-sm text-muted-foreground mt-2">2d ago</p>
+                              </div>
+                          </CardHeader>
+                          <CardFooter>
+                              <Button variant="outline" className="mr-2">Save Job</Button>
+                              <Button>Apply Now</Button>
+                          </CardFooter>
+                      </Card>
+                  ))
+                ) : (
+                  <Card className="text-center p-12">
+                    <Briefcase className="mx-auto h-12 w-12 text-muted-foreground"/>
+                    <h3 className="mt-4 text-xl font-semibold">No Jobs Found</h3>
+                    <p className="mt-2 text-muted-foreground">Try adjusting your search filters or check back later for new job postings.</p>
+                  </Card>
+                )}
             </div>
         </div>
     );
 }
-
-// Minimal Label component for use within this page
-const Label = (props: React.LabelHTMLAttributes<HTMLLabelElement>) => (
-  <label className="text-sm font-medium text-muted-foreground" {...props} />
-);

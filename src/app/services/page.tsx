@@ -17,12 +17,7 @@ const serviceCategories = [
   { name: "Handyman", icon: Hammer, hint: "toolbox" },
 ];
 
-const mockProviders = [
-    { id: "1", name: "Kamau Plumbers", service: "Plumbing", rating: 4.8, imageUrl: "https://picsum.photos/seed/provider1/100/100", imageHint: "plumber working" },
-    { id: "2", name: "FixIt Appliance Masters", service: "Appliance Repair", rating: 4.7, imageUrl: "https://picsum.photos/seed/provider2/100/100", imageHint: "technician repairing washing machine" },
-    { id: "3", name: "AutoCare Experts", service: "Mechanics", rating: 4.9, imageUrl: "https://picsum.photos/seed/provider3/100/100", imageHint: "mechanic at work" },
-    { id: "4", name: "General Handyman", service: "Handyman", rating: 4.6, imageUrl: "https://picsum.photos/seed/provider4/100/100", imageHint: "man assembling furniture" },
-];
+const mockProviders: any[] = [];
 
 export default function ServicesPage() {
   return (
@@ -56,19 +51,27 @@ export default function ServicesPage() {
 
       <div>
         <h2 className="text-2xl font-bold tracking-tight mb-4">Top Rated Providers</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockProviders.map((provider) => (
-                <Card key={provider.id} className="text-center">
-                    <CardContent className="p-6">
-                        <Image src={provider.imageUrl} alt={provider.name} width={100} height={100} data-ai-hint={provider.imageHint} className="rounded-full mx-auto mb-4 border-4 border-muted"/>
-                        <CardTitle className="text-lg">{provider.name}</CardTitle>
-                        <CardDescription>{provider.service}</CardDescription>
-                        <p className="font-bold text-accent mt-2">{provider.rating} ★</p>
-                        <Button className="mt-4 w-full">View Profile</Button>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
+        {mockProviders.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {mockProviders.map((provider) => (
+                  <Card key={provider.id} className="text-center">
+                      <CardContent className="p-6">
+                          <Image src={provider.imageUrl} alt={provider.name} width={100} height={100} data-ai-hint={provider.imageHint} className="rounded-full mx-auto mb-4 border-4 border-muted"/>
+                          <CardTitle className="text-lg">{provider.name}</CardTitle>
+                          <CardDescription>{provider.service}</CardDescription>
+                          <p className="font-bold text-accent mt-2">{provider.rating} ★</p>
+                          <Button className="mt-4 w-full">View Profile</Button>
+                      </CardContent>
+                  </Card>
+              ))}
+          </div>
+        ) : (
+          <Card className="text-center p-12">
+            <Wrench className="mx-auto h-12 w-12 text-muted-foreground"/>
+            <h3 className="mt-4 text-xl font-semibold">No Service Providers Found</h3>
+            <p className="mt-2 text-muted-foreground">Try a different search to find professionals in your area.</p>
+          </Card>
+        )}
       </div>
     </div>
   );
