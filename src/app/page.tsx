@@ -1,62 +1,163 @@
 import Link from "next/link";
 import {
   Package,
+  Search,
+  ShoppingBag,
+  Utensils,
+  Car,
+  Building,
+  HeartPulse,
+  Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { ListingCard } from "@/components/listing-card";
+
+const categories = [
+  {
+    name: "Products",
+    icon: ShoppingBag,
+    href: "/shop",
+    bgColor: "bg-orange-100",
+    textColor: "text-orange-600",
+  },
+  {
+    name: "Food",
+    icon: Utensils,
+    href: "/food-delivery",
+    bgColor: "bg-red-100",
+    textColor: "text-red-600",
+  },
+  {
+    name: "Rides",
+    icon: Car,
+    href: "/rides",
+    bgColor: "bg-blue-100",
+    textColor: "text-blue-600",
+  },
+  {
+    name: "Real Estate",
+    icon: Building,
+    href: "/real-estate",
+    bgColor: "bg-green-100",
+    textColor: "text-green-600",
+  },
+  {
+    name: "Health",
+    icon: HeartPulse,
+    href: "/medical",
+    bgColor: "bg-pink-100",
+    textColor: "text-pink-600",
+  },
+  {
+    name: "Services",
+    icon: Wrench,
+    href: "/services",
+    bgColor: "bg-indigo-100",
+    textColor: "text-indigo-600",
+  },
+];
+
+const mockFeaturedListings = [
+  {
+    id: "1",
+    title: "Hand-carved Wooden Elephant",
+    price: 3500,
+    category: "Product",
+    location: "Nairobi",
+    imageUrl: "https://picsum.photos/seed/1/600/400",
+    imageHint: "wooden elephant",
+    description: "A beautiful, intricately carved wooden elephant statue."
+  },
+  {
+    id: "5",
+    title: "Authentic Sisal Kiondo Basket",
+    price: 1200,
+    category: "Product",
+    location: "Mombasa",
+    imageUrl: "https://picsum.photos/seed/5/600/400",
+    imageHint: "sisal basket",
+    description: "Authentic sisal Kiondo basket, durable and stylish."
+  },
+    {
+    id: "3",
+    title: "2-Bedroom Apartment in Kilimani",
+    price: 85000,
+    category: "Property",
+    location: "Nairobi",
+    imageUrl: "https://picsum.photos/seed/3/600/400",
+    imageHint: "modern apartment",
+    description: "Modern and spacious 2-bedroom apartment for rent."
+  },
+  {
+    id: "6",
+    title: "Reliable Plumbing Services",
+    price: 2500,
+    category: "Service",
+    location: "Kisumu",
+    imageUrl: "https://picsum.photos/seed/6/600/400",
+    imageHint: "plumbing tools",
+    description: "Reliable plumbing services for residential and commercial properties."
+  },
+];
+
 
 export default function Home() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="relative rounded-lg overflow-hidden mb-8">
-        <Image 
-          src="https://picsum.photos/seed/hero/1200/400"
-          alt="Marketplace items"
-          width={1200}
-          height={400}
-          className="w-full h-auto object-cover"
-          data-ai-hint="marketplace items"
-        />
-        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
-          <div className="mb-4 bg-background/20 backdrop-blur-sm p-3 rounded-full">
-            <Package className="h-10 w-10 text-white"/>
-          </div>
-          <h1 className="font-headline text-4xl md:text-6xl font-bold tracking-tight">
-            Everything You Need, <br /> All in One Place
-          </h1>
-          <p className="mt-4 text-lg max-w-2xl">
-            Shop products, book services, find rides, discover properties, and much more. Your complete marketplace solution powered by Sokko Sasa.
-          </p>
+    <div className="flex-1">
+      <section className="relative bg-muted/20">
+        <div className="container mx-auto px-4 py-16 md:py-24 text-center">
+            <div className="mb-4 bg-primary/10 backdrop-blur-sm p-3 rounded-full inline-block">
+                <Package className="h-10 w-10 text-primary"/>
+            </div>
+            <h1 className="font-headline text-4xl md:text-6xl font-bold tracking-tight">
+                Everything You Need, <br /> All in One Place
+            </h1>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Shop products, book services, find rides, discover properties, and much more. Your complete marketplace solution.
+            </p>
+            <div className="mt-8 max-w-xl mx-auto">
+                <div className="relative">
+                    <Input placeholder="Search everything..." className="h-14 pl-12 rounded-full text-lg shadow-lg"/>
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground"/>
+                    <Button className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-24 text-base" size="lg">Search</Button>
+                </div>
+            </div>
         </div>
-      </div>
+      </section>
 
-      <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-lg p-8 grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-        <div className="text-white">
-          <div className="flex gap-2 mb-4">
-            <span className="inline-block bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full">PRODUCT</span>
-            <span className="inline-block bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full">Automotive</span>
+      <section className="py-16">
+          <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-8">Explore Sokko Sasa</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                  {categories.map((cat) => (
+                      <Link href={cat.href} key={cat.name} className="group text-center">
+                          <div className={`flex items-center justify-center h-24 w-24 rounded-full mx-auto mb-2 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg ${cat.bgColor}`}>
+                              <cat.icon className={`h-10 w-10 ${cat.textColor}`} />
+                          </div>
+                          <p className="font-semibold text-muted-foreground group-hover:text-primary">{cat.name}</p>
+                      </Link>
+                  ))}
+              </div>
           </div>
-          <h2 className="text-5xl font-bold mb-2">Spectra Fuel Tank GM51C</h2>
-          <p className="text-lg mb-6">
-            Innovative engineering, manufacturing technology and quality control ensure that Spectra Premium fuel tanks meet or exce...
-          </p>
-          <p className="text-4xl font-extrabold mb-8">KSh 17,030</p>
-          <div className="flex gap-4">
-            <Button size="lg" variant="secondary" className="bg-white text-orange-600 hover:bg-gray-100">Explore Now &rarr;</Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">More Ads</Button>
+      </section>
+      
+      <section className="bg-muted/30 py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold">Featured Listings</h2>
+            <Button variant="outline" asChild>
+                <Link href="/shop">View All &rarr;</Link>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {mockFeaturedListings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
           </div>
         </div>
-        <div className="flex justify-center">
-          <Image
-            src="https://picsum.photos/seed/fueltank/500/500"
-            alt="Spectra Fuel Tank"
-            width={500}
-            height={500}
-            className="rounded-lg object-cover"
-            data-ai-hint="fuel tank"
-          />
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
