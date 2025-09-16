@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,13 +30,25 @@ import {
 } from "@/components/ui/select";
 import { ListingCard } from "@/components/listing-card";
 import type { Listing } from "@/lib/types";
-import { Filter, ListFilter, Package } from "lucide-react";
+import { Filter, ListFilter, Package, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { getListings } from "@/lib/firestore";
 
 
-export default async function ShopPage() {
-  const listings: Listing[] = await getListings();
+export default function ShopPage() {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true);
+      const fetchedListings = await getListings();
+      setListings(fetchedListings);
+      setLoading(false);
+    };
+    fetchListings();
+  }, []);
+  
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -95,7 +111,11 @@ export default async function ShopPage() {
         </div>
       </div>
 
-      {listings.length > 0 ? (
+      {loading ? (
+        <div className="flex justify-center items-center p-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary"/>
+        </div>
+      ) : listings.length > 0 ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {listings.map((listing) => (
