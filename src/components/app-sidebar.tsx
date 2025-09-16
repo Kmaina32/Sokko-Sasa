@@ -28,6 +28,7 @@ import {
   User,
   LogIn,
   LogOut,
+  Bookmark,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
@@ -86,6 +87,21 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+             {user && (
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/wishlist'}
+                  className="[&[data-active=true]]:bg-orange-100 [&[data-active=true]]:text-orange-600 [&[data-active=true]]:font-semibold"
+                  tooltip="Wishlist"
+                >
+                  <a href="/wishlist">
+                    <Bookmark className="h-5 w-5" />
+                    <span>Wishlist</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>

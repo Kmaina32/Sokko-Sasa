@@ -436,6 +436,32 @@ export const createOrder = async (userId: string, items: CartItemForOrder[], tot
     return newOrderRef.id;
 }
 
+// WISHLIST
+export const addToWishlist = async (userId: string, listingId: string) => {
+    const wishlistRef = doc(db, 'users', userId, 'wishlist', listingId);
+    await setDoc(wishlistRef, {
+        listingId: listingId,
+        addedAt: serverTimestamp()
+    });
+};
+
+export const removeFromWishlist = async (userId: string, listingId: string) => {
+    const wishlistRef = doc(db, 'users', userId, 'wishlist', listingId);
+    await deleteDoc(wishlistRef);
+};
+
+export const getWishlistItems = (userId: string, callback: (itemIds: Set<string>) => void) => {
+    const wishlistRef = collection(db, 'users', userId, 'wishlist');
+    return onSnapshot(wishlistRef, (snapshot) => {
+        if (snapshot.empty) {
+            callback(new Set());
+            return;
+        }
+        const itemIds = new Set(snapshot.docs.map(doc => doc.id));
+        callback(itemIds);
+    });
+};
+
 
 // GENERIC GETTERS for seeded data
 export const getEvents = async (): Promise<any[]> => {
