@@ -108,30 +108,6 @@ export function HomePageClient({ featuredListings, activeAdvertisements }: HomeP
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold">Featured Listings</h2>
-            <Button variant="outline" asChild>
-                <Link href="/shop">View All &rarr;</Link>
-            </Button>
-          </div>
-          {featuredListings.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredListings.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-                ))}
-            </div>
-          ) : (
-            <Card className="text-center p-12">
-              <Package className="mx-auto h-12 w-12 text-muted-foreground"/>
-              <h3 className="mt-4 text-xl font-semibold">No Featured Listings</h3>
-              <p className="mt-2 text-muted-foreground">Check back later to see what's new and trending.</p>
-            </Card>
-          )}
-        </div>
-      </section>
-
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Featured Promotions</h2>
@@ -166,6 +142,30 @@ export function HomePageClient({ featuredListings, activeAdvertisements }: HomeP
               <Megaphone className="mx-auto h-12 w-12 text-muted-foreground"/>
               <h3 className="mt-4 text-xl font-semibold">No Promotions Currently</h3>
               <p className="mt-2 text-muted-foreground">Check back soon for exciting deals and announcements.</p>
+            </Card>
+          )}
+        </div>
+      </section>
+
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold">Featured Listings</h2>
+            <Button variant="outline" asChild>
+                <Link href="/shop">View All &rarr;</Link>
+            </Button>
+          </div>
+          {featuredListings.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {featuredListings.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+                ))}
+            </div>
+          ) : (
+            <Card className="text-center p-12">
+              <Package className="mx-auto h-12 w-12 text-muted-foreground"/>
+              <h3 className="mt-4 text-xl font-semibold">No Featured Listings</h3>
+              <p className="mt-2 text-muted-foreground">Check back later to see what's new and trending.</p>
             </Card>
           )}
         </div>
