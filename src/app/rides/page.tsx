@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -9,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MapPin, LocateFixed, Car, Users } from "lucide-react";
-import Image from "next/image";
+import { Map } from "@/components/map";
+
 
 export default function RidesPage() {
     return (
@@ -39,14 +41,8 @@ export default function RidesPage() {
                 </form>
             </div>
             <div className="lg:col-span-2 bg-muted/30 flex items-center justify-center relative overflow-hidden">
-                <Image 
-                    src="https://images.unsplash.com/photo-1593902784915-77943a13d397?q=80&w=2940&auto=format&fit=crop"
-                    alt="Map of a city"
-                    fill
-                    className="object-cover opacity-20"
-                    data-ai-hint="city map"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent"></div>
+                <Map />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent pointer-events-none"></div>
                 <Card className="absolute bottom-8 left-8 right-8 shadow-lg">
                     <CardHeader>
                         <CardTitle>Choose Your Ride</CardTitle>
