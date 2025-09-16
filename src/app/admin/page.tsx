@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +25,6 @@ import {
   Wrench,
   Car,
   User,
-  MoreVertical,
   Trash2,
   FilePenLine,
 } from "lucide-react";
@@ -77,8 +75,8 @@ const mockDrivers = [
     { id: 'D002', name: 'Aisha Omar', vehicle: 'Suzuki Swift KDB 456C', rating: 4.7, active: true },
 ];
 
-const AdminSection = ({ title, description, children }: { title: string, description: string, children: React.ReactNode}) => (
-    <Card>
+const AdminSection = ({ id, title, description, children }: { id: string, title: string, description: string, children: React.ReactNode}) => (
+    <Card id={id} className="scroll-mt-20">
         <CardHeader>
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
@@ -103,257 +101,228 @@ const CrudActions = () => (
 
 export default function AdminPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+    <div className="container mx-auto px-4 py-8 space-y-8">
+      <div className="mb-4">
         <h1 className="font-headline text-4xl font-bold">Admin Dashboard</h1>
         <p className="text-muted-foreground">Manage your marketplace with ease.</p>
       </div>
-      <Tabs defaultValue="users" orientation="vertical">
-        <TabsList className="h-auto min-w-[200px] flex-col items-start justify-start p-2 gap-1 bg-muted/50 mr-6">
-          <TabsTrigger value="users" className="w-full justify-start gap-2"><User /> Users</TabsTrigger>
-          <TabsTrigger value="products" className="w-full justify-start gap-2"><Package /> Products</TabsTrigger>
-          <TabsTrigger value="food" className="w-full justify-start gap-2"><Utensils /> Food Delivery</TabsTrigger>
-          <TabsTrigger value="events" className="w-full justify-start gap-2"><Calendar /> Events</TabsTrigger>
-          <TabsTrigger value="real_estate" className="w-full justify-start gap-2"><Building /> Real Estate</TabsTrigger>
-          <TabsTrigger value="jobs" className="w-full justify-start gap-2"><Briefcase /> Jobs</TabsTrigger>
-          <TabsTrigger value="services" className="w-full justify-start gap-2"><Wrench /> Services</TabsTrigger>
-          <TabsTrigger value="rides" className="w-full justify-start gap-2"><Car /> Rides</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="users">
-            <AdminSection title="Manage Users" description="Oversee all clients, vendors, and drivers on the platform.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                                <AvatarImage src={user.avatar} alt={user.name}/>
-                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span>{user.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell><Badge variant="secondary">{user.type}</Badge></TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={user.status === 'Active' ? 'default' : 'destructive'}
-                          className={user.status === 'Active' ? 'bg-green-500/20 text-green-700 border-green-500/30' : ''}
-                        >
-                          {user.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell><Switch defaultChecked={user.status === 'Active'} /></TableCell>
-                      <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
 
-        <TabsContent value="products">
-            <AdminSection title="Manage Products" description="Monitor and manage all product listings.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product Name</TableHead>
-                    <TableHead>Seller</TableHead>
-                    <TableHead>Price (KSh)</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockProducts.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>{item.seller}</TableCell>
-                        <TableCell>{item.price.toLocaleString()}</TableCell>
-                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                        <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
+      <AdminSection id="users" title="Manage Users" description="Oversee all clients, vendors, and drivers on the platform.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>User</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockUsers.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.avatar} alt={user.name}/>
+                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span>{user.name}</span>
+                  </div>
+                </TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell><Badge variant="secondary">{user.type}</Badge></TableCell>
+                <TableCell>
+                  <Badge
+                    variant={user.status === 'Active' ? 'default' : 'destructive'}
+                    className={user.status === 'Active' ? 'bg-green-500/20 text-green-700 border-green-500/30' : ''}
+                  >
+                    {user.status}
+                  </Badge>
+                </TableCell>
+                <TableCell><Switch defaultChecked={user.status === 'Active'} /></TableCell>
+                <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
 
-        <TabsContent value="food">
-            <AdminSection title="Manage Restaurants" description="Add, edit, or disable restaurants in the food delivery section.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Restaurant Name</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Cuisine</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockRestaurants.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>{item.location}</TableCell>
-                        <TableCell>{item.cuisine}</TableCell>
-                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                        <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
-        
-        <TabsContent value="events">
-            <AdminSection title="Manage Events" description="Control all event listings on the platform.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Event Name</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockEvents.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>{item.location}</TableCell>
-                        <TableCell>{item.date}</TableCell>
-                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                        <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
+      <AdminSection id="products" title="Manage Products" description="Monitor and manage all product listings.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Product Name</TableHead>
+              <TableHead>Seller</TableHead>
+              <TableHead>Price (KSh)</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockProducts.map((item) => (
+              <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>{item.seller}</TableCell>
+                  <TableCell>{item.price.toLocaleString()}</TableCell>
+                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                  <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
 
-        <TabsContent value="real_estate">
-            <AdminSection title="Manage Real Estate" description="Oversee property sales and rental listings.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Property Title</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Price (KSh)</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockProperties.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>{item.type}</TableCell>
-                        <TableCell>{item.price}</TableCell>
-                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                        <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
+      <AdminSection id="food" title="Manage Restaurants" description="Add, edit, or disable restaurants in the food delivery section.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Restaurant Name</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Cuisine</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockRestaurants.map((item) => (
+              <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>{item.location}</TableCell>
+                  <TableCell>{item.cuisine}</TableCell>
+                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                  <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
+      
+      <AdminSection id="events" title="Manage Events" description="Control all event listings on the platform.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Event Name</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockEvents.map((item) => (
+              <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>{item.location}</TableCell>
+                  <TableCell>{item.date}</TableCell>
+                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                  <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
 
-        <TabsContent value="jobs">
-            <AdminSection title="Manage Jobs" description="Review and control all job postings.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Job Title</TableHead>
-                    <TableHead>Company</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockJobs.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.title}</TableCell>
-                        <TableCell>{item.company}</TableCell>
-                        <TableCell>{item.type}</TableCell>
-                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                        <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
+      <AdminSection id="real_estate" title="Manage Real Estate" description="Oversee property sales and rental listings.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Property Title</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Price (KSh)</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockProperties.map((item) => (
+              <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>{item.type}</TableCell>
+                  <TableCell>{item.price}</TableCell>
+                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                  <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
 
-        <TabsContent value="services">
-            <AdminSection title="Manage Service Providers" description="Control the directory of service professionals.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Provider Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Rating</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockServices.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>{item.category}</TableCell>
-                        <TableCell>{item.rating} ★</TableCell>
-                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                        <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
+      <AdminSection id="jobs" title="Manage Jobs" description="Review and control all job postings.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Job Title</TableHead>
+              <TableHead>Company</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockJobs.map((item) => (
+              <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.title}</TableCell>
+                  <TableCell>{item.company}</TableCell>
+                  <TableCell>{item.type}</TableCell>
+                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                  <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
 
-        <TabsContent value="rides">
-            <AdminSection title="Manage Drivers" description="Monitor drivers for the ride-hailing service.">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Driver Name</TableHead>
-                    <TableHead>Vehicle</TableHead>
-                    <TableHead>Rating</TableHead>
-                    <TableHead>Kill Switch</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockDrivers.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>{item.vehicle}</TableCell>
-                        <TableCell>{item.rating} ★</TableCell>
-                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
-                        <TableCell className="text-right"><CrudActions /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AdminSection>
-        </TabsContent>
+      <AdminSection id="services" title="Manage Service Providers" description="Control the directory of service professionals.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Provider Name</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Rating</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockServices.map((item) => (
+              <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>{item.category}</TableCell>
+                  <TableCell>{item.rating} ★</TableCell>
+                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                  <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
 
-      </Tabs>
+      <AdminSection id="rides" title="Manage Drivers" description="Monitor drivers for the ride-hailing service.">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Driver Name</TableHead>
+              <TableHead>Vehicle</TableHead>
+              <TableHead>Rating</TableHead>
+              <TableHead>Kill Switch</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockDrivers.map((item) => (
+              <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>{item.vehicle}</TableCell>
+                  <TableCell>{item.rating} ★</TableCell>
+                  <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                  <TableCell className="text-right"><CrudActions /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AdminSection>
     </div>
   );
 }
