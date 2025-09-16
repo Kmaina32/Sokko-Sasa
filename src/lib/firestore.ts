@@ -527,3 +527,5 @@ export const getServiceById = async (id: string): Promise<any | null> => {
     const docSnap = await getDoc(docRef);
     return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
 };
+
+seedDatabase();

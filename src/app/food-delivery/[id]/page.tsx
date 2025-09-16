@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import {
   Card,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Utensils, PlusCircle, ArrowLeft, MinusCircle, Trash2 } from "lucide-react";
+import { Star, Utensils, PlusCircle, ArrowLeft, MinusCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { getRestaurantById } from "@/lib/firestore";
 import { Separator } from '@/components/ui/separator';
@@ -36,20 +36,19 @@ interface CartItem extends MenuItem {
     quantity: number;
 }
 
-// This is a client page now, so we fetch data on the client
 export default function RestaurantMenuPage({ params }: { params: { id: string } }) {
   const [restaurant, setRestaurant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  useState(() => {
+  useEffect(() => {
     const fetchRestaurant = async () => {
         const data = await getRestaurantById(params.id);
         setRestaurant(data);
         setLoading(false);
     }
     fetchRestaurant();
-  });
+  }, [params.id]);
 
   const handleAddToCart = (item: MenuItem) => {
     setCart(prevCart => {
@@ -87,7 +86,11 @@ export default function RestaurantMenuPage({ params }: { params: { id: string } 
 
 
   if (loading) {
-      return <div>Loading...</div>
+      return (
+        <div className="flex justify-center items-center h-screen">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      );
   }
 
   if (!restaurant) {
