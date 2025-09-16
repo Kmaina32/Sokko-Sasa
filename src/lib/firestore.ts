@@ -163,6 +163,14 @@ export const getAllUsers = async (): Promise<User[]> => {
     return users;
 };
 
+export const deleteUserAccount = async (userId: string) => {
+    // This is a simplified deletion. In a real-world scenario,
+    // you would need a Cloud Function to delete the user from Firebase Auth
+    // and handle their associated data (listings, cart, etc.)
+    const userDocRef = doc(db, 'users', userId);
+    await deleteDoc(userDocRef);
+}
+
 
 // LISTINGS
 const uploadImage = async (file: File, path: string): Promise<string> => {
@@ -241,6 +249,12 @@ export const getListingById = async (id: string): Promise<Listing | null> => {
     return null;
   }
 };
+
+export const deleteListing = async (listingId: string) => {
+    const listingDocRef = doc(db, 'listings', listingId);
+    await deleteDoc(listingDocRef);
+    // Note: In a real app, you might also want to delete associated images from storage.
+}
 
 
 // CART

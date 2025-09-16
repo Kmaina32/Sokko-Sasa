@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -14,10 +18,23 @@ import {
 import {
   Trash2,
   FilePenLine,
-  Package
+  Package,
+  Loader2
 } from "lucide-react";
-import { getListings } from "@/lib/firestore";
+import { getListings, deleteListing } from "@/lib/firestore";
 import type { Listing } from "@/lib/types";
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -27,20 +44,69 @@ const formatCurrency = (amount: number) => {
     }).format(amount);
 }
 
-const CrudActions = () => (
+
+export default function ManageProductsPage() {
+  const [products, setProducts] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchProducts = async () => {
+      setLoading(true);
+      const productList = await getListings();
+      setProducts(productList);
+      setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleDelete = async (productId: string) => {
+    try {
+        await deleteListing(productId);
+        toast({
+            title: "Success",
+            description: "Product has been deleted.",
+        });
+        fetchProducts(); // Refresh the list
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to delete product.",
+        });
+    }
+  }
+
+
+  const CrudActions = ({ product } : { product: Listing}) => (
     <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
             <FilePenLine className="h-4 w-4"/>
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
-            <Trash2 className="h-4 w-4"/>
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-4 w-4"/>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the product
+                "{product.title}".
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleDelete(product.id)}>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
     </div>
 );
 
-
-export default async function ManageProductsPage() {
-  const products: Listing[] = await getListings();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -50,7 +116,11 @@ export default async function ManageProductsPage() {
         </div>
         <Card>
             <CardContent>
-              {products.length > 0 ? (
+              {loading ? (
+                <div className="flex justify-center items-center p-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary"/>
+                </div>
+              ) : products.length > 0 ? (
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -67,7 +137,7 @@ export default async function ManageProductsPage() {
                                 <TableCell>{product.seller?.name ?? 'N/A'}</TableCell>
                                 <TableCell>{formatCurrency(product.price)}</TableCell>
                                 <TableCell>
-                                    <CrudActions />
+                                    <CrudActions product={product} />
                                 </TableCell>
                             </TableRow>
                         ))}

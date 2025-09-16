@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,9 +20,18 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { CreditCard, Smartphone } from "lucide-react";
+import { CreditCard, Smartphone, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useAuth } from '@/context/auth-context';
+import { getCartItems } from '@/lib/firestore';
+import type { Listing } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
+
+interface CartItem extends Listing {
+  quantity: number;
+}
 
 const MpesaIcon = () => (
   <svg
@@ -65,8 +78,31 @@ const PaypalIcon = () => (
 
 
 export default function CheckoutPage() {
-  const subtotal = 3700;
-  const shipping = 250;
+  const { user } = useAuth();
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
+
+
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = getCartItems(user.uid, (items) => {
+        setCartItems(items as CartItem[]);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+  const shipping = cartItems.length > 0 ? 250 : 0;
   const total = subtotal + shipping;
 
   const formatCurrency = (amount: number) => {
@@ -76,6 +112,21 @@ export default function CheckoutPage() {
       minimumFractionDigits: 2,
     }).format(amount);
   };
+  
+  const handlePlaceOrder = () => {
+    setIsProcessing(true);
+    // In a real app, this would trigger the payment processing.
+    // For this demo, we'll just simulate a successful order.
+    setTimeout(() => {
+        toast({
+            title: "Order Placed!",
+            description: "Your order has been successfully placed. Thank you for shopping with us!"
+        });
+        // Here you would typically clear the cart.
+        setIsProcessing(false);
+        router.push('/');
+    }, 2000);
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -90,7 +141,7 @@ export default function CheckoutPage() {
               <form className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" placeholder="John Doe" />
+                  <Input id="name" placeholder="John Doe" defaultValue={user?.displayName || ''}/>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="address">Delivery Address</Label>
@@ -99,7 +150,7 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="john@example.com" />
+                    <Input id="email" type="email" placeholder="john@example.com" defaultValue={user?.email || ''}/>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
@@ -184,36 +235,33 @@ export default function CheckoutPage() {
               <CardTitle>Order Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center gap-4">
-                  <Image
-                    src="https://picsum.photos/seed/p1/600/400"
-                    alt="Wooden Elephant"
-                    width={64}
-                    height={64}
-                    className="rounded-md"
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium">Hand-carved Wooden Elephant</p>
-                    <p className="text-sm text-muted-foreground">Qty: 1</p>
-                  </div>
-                  <p className="font-medium">{formatCurrency(2500)}</p>
+             {loading ? (
+                <div className="flex justify-center p-8">
+                    <Loader2 className="w-6 h-6 animate-spin"/>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Image
-                    src="https://picsum.photos/seed/p2/600/400"
-                    alt="Sisal Basket"
-                    width={64}
-                    height={64}
-                    className="rounded-md"
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium">Sisal Kiondo Basket</p>
-                    <p className="text-sm text-muted-foreground">Qty: 2</p>
-                  </div>
-                  <p className="font-medium">{formatCurrency(1200 * 2)}</p>
+             ) : cartItems.length > 0 ? (
+                <div className="space-y-2">
+                    {cartItems.map(item => (
+                         <div key={item.id} className="flex items-center gap-4">
+                             <Image
+                                src={item.imageUrl}
+                                alt={item.title}
+                                width={64}
+                                height={64}
+                                className="rounded-md"
+                                data-ai-hint={item.imageHint}
+                            />
+                            <div className="flex-1">
+                                <p className="font-medium">{item.title}</p>
+                                <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                            </div>
+                            <p className="font-medium">{formatCurrency(item.price * item.quantity)}</p>
+                         </div>
+                    ))}
                 </div>
-              </div>
+             ) : (
+                <p className="text-muted-foreground text-center p-4">Your cart is empty.</p>
+             )}
               <Separator />
               <div className="space-y-1">
                 <div className="flex justify-between">
@@ -230,7 +278,8 @@ export default function CheckoutPage() {
                 <span>Total</span>
                 <span>{formatCurrency(total)}</span>
               </div>
-              <Button size="lg" className="w-full mt-4 font-bold text-base">
+              <Button size="lg" className="w-full mt-4 font-bold text-base" onClick={handlePlaceOrder} disabled={cartItems.length === 0 || isProcessing}>
+                {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                 Pay {formatCurrency(total)}
               </Button>
             </CardContent>

@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -16,25 +20,88 @@ import {
   Trash2,
   FilePenLine,
   Users as UsersIcon,
+  Loader2
 } from "lucide-react";
 import Image from "next/image";
-import { getAllUsers } from "@/lib/firestore";
+import { getAllUsers, deleteUserAccount } from "@/lib/firestore";
 import type { User } from "@/lib/types";
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
-const CrudActions = () => (
+
+export default function ManageUsersPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    const userList = await getAllUsers();
+    setUsers(userList);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleDelete = async (userId: string) => {
+    try {
+        // Note: This is a placeholder. Deleting users is a sensitive operation
+        // and requires a secure backend function. This will only delete the Firestore doc.
+        await deleteUserAccount(userId);
+        toast({
+            title: "Success",
+            description: "User has been deleted.",
+        });
+        fetchUsers(); // Refresh the list
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to delete user.",
+        });
+    }
+  }
+
+  const CrudActions = ({ user }: { user: User }) => (
     <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
             <FilePenLine className="h-4 w-4"/>
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
-            <Trash2 className="h-4 w-4"/>
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-4 w-4"/>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the user account
+                for "{user.name}".
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleDelete(user.id)}>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
     </div>
-);
+  );
 
-
-export default async function ManageUsersPage() {
-  const users: User[] = await getAllUsers();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -44,7 +111,11 @@ export default async function ManageUsersPage() {
         </div>
         <Card>
             <CardContent>
-              {users.length > 0 ? (
+              {loading ? (
+                 <div className="flex justify-center items-center p-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary"/>
+                </div>
+              ) : users.length > 0 ? (
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -72,7 +143,7 @@ export default async function ManageUsersPage() {
                                     <Badge variant={user.status === 'Active' ? 'default' : 'destructive'}>{user.status || 'Active'}</Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <CrudActions />
+                                    <CrudActions user={user} />
                                 </TableCell>
                             </TableRow>
                         ))}
