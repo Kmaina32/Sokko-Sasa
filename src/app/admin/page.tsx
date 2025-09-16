@@ -17,14 +17,6 @@ import {
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import {
-  Package,
-  Utensils,
-  Calendar,
-  Building,
-  Briefcase,
-  Wrench,
-  Car,
-  User,
   Trash2,
   FilePenLine,
 } from "lucide-react";
