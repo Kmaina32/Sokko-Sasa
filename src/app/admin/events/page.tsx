@@ -1,4 +1,6 @@
 
+'use client';
+
 import {
   Table,
   TableBody,
@@ -19,7 +21,10 @@ import {
   Calendar as CalendarIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
+// Mock data, in a real app this would come from a database
 const mockEvents: any[] = [];
 
 const CrudActions = () => (
@@ -35,6 +40,16 @@ const CrudActions = () => (
 
 
 export default function ManageEventsPage() {
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // In a real app, you'd fetch events from Firestore here.
+    // For now, we just use the mock data.
+    setEvents(mockEvents);
+    setLoading(false);
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
@@ -42,8 +57,8 @@ export default function ManageEventsPage() {
                 <h1 className="font-headline text-4xl font-bold">Manage Events</h1>
                 <p className="text-muted-foreground">Control all event listings.</p>
             </div>
-            <Button asChild disabled>
-                <Link href="#">
+            <Button asChild>
+                <Link href="/admin/products/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Event
                 </Link>
@@ -51,7 +66,11 @@ export default function ManageEventsPage() {
         </div>
         <Card>
             <CardContent className="p-0">
-                {mockEvents.length > 0 ? (
+                {loading ? (
+                    <div className="flex justify-center items-center p-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                ) : events.length > 0 ? (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -63,7 +82,7 @@ export default function ManageEventsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockEvents.map((event) => (
+                            {events.map((event) => (
                                 <TableRow key={event.id}>
                                     <TableCell className="font-medium">{event.name}</TableCell>
                                     <TableCell>{event.location}</TableCell>
@@ -81,8 +100,8 @@ export default function ManageEventsPage() {
                         <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                         <h3 className="mt-4 text-xl font-semibold">No Events Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Event" to create a listing.</p>
-                        <Button asChild className="mt-4" disabled>
-                            <Link href="#">
+                        <Button asChild className="mt-4">
+                            <Link href="/admin/products/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Event
                             </Link>

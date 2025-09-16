@@ -1,4 +1,6 @@
 
+'use client';
+
 import {
   Table,
   TableBody,
@@ -18,8 +20,10 @@ import {
   FilePenLine,
   Building,
   PlusCircle,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 const mockRealEstate: any[] = [];
 
@@ -44,6 +48,14 @@ const CrudActions = () => (
 
 
 export default function ManageRealEstatePage() {
+    const [properties, setProperties] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setProperties(mockRealEstate);
+        setLoading(false);
+    }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
@@ -51,8 +63,8 @@ export default function ManageRealEstatePage() {
                 <h1 className="font-headline text-4xl font-bold">Manage Real Estate</h1>
                 <p className="text-muted-foreground">Supervise all property listings.</p>
             </div>
-            <Button asChild disabled>
-                <Link href="#">
+            <Button asChild>
+                <Link href="/admin/products/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Property
                 </Link>
@@ -60,7 +72,11 @@ export default function ManageRealEstatePage() {
         </div>
         <Card>
             <CardContent className="p-0">
-                {mockRealEstate.length > 0 ? (
+                {loading ? (
+                    <div className="flex justify-center items-center p-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                ): properties.length > 0 ? (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -72,7 +88,7 @@ export default function ManageRealEstatePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockRealEstate.map((prop) => (
+                            {properties.map((prop) => (
                                 <TableRow key={prop.id}>
                                     <TableCell className="font-medium">{prop.title}</TableCell>
                                     <TableCell>
@@ -94,8 +110,8 @@ export default function ManageRealEstatePage() {
                         <Building className="mx-auto h-12 w-12 text-muted-foreground" />
                         <h3 className="mt-4 text-xl font-semibold">No Properties Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Property" to add a listing.</p>
-                        <Button asChild className="mt-4" disabled>
-                            <Link href="#">
+                        <Button asChild className="mt-4">
+                            <Link href="/admin/products/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Property
                             </Link>

@@ -1,4 +1,6 @@
 
+'use client';
+
 import {
   Table,
   TableBody,
@@ -17,8 +19,10 @@ import {
   FilePenLine,
   Wrench,
   PlusCircle,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 const mockServices: any[] = [];
 
@@ -35,6 +39,14 @@ const CrudActions = () => (
 
 
 export default function ManageServicesPage() {
+    const [services, setServices] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setServices(mockServices);
+        setLoading(false);
+    }, [])
+
   return (
     <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
@@ -42,8 +54,8 @@ export default function ManageServicesPage() {
                 <h1 className="font-headline text-4xl font-bold">Manage Services</h1>
                 <p className="text-muted-foreground">Oversee all service providers.</p>
             </div>
-            <Button asChild disabled>
-                <Link href="#">
+            <Button asChild>
+                <Link href="/admin/products/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Provider
                 </Link>
@@ -51,7 +63,11 @@ export default function ManageServicesPage() {
         </div>
         <Card>
             <CardContent className="p-0">
-                {mockServices.length > 0 ? (
+                {loading ? (
+                    <div className="flex justify-center items-center p-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                ) : services.length > 0 ? (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -62,7 +78,7 @@ export default function ManageServicesPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockServices.map((service) => (
+                            {services.map((service) => (
                                 <TableRow key={service.id}>
                                     <TableCell className="font-medium">{service.name}</TableCell>
                                     <TableCell>{service.category}</TableCell>
@@ -79,8 +95,8 @@ export default function ManageServicesPage() {
                         <Wrench className="mx-auto h-12 w-12 text-muted-foreground" />
                         <h3 className="mt-4 text-xl font-semibold">No Service Providers Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Provider" to add one.</p>
-                        <Button asChild className="mt-4" disabled>
-                            <Link href="#">
+                        <Button asChild className="mt-4">
+                            <Link href="/admin/products/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Provider
                             </Link>

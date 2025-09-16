@@ -1,4 +1,6 @@
 
+'use client';
+
 import {
   Table,
   TableBody,
@@ -18,8 +20,10 @@ import {
   FilePenLine,
   Car,
   PlusCircle,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 const mockDrivers: any[] = [];
 
@@ -36,6 +40,14 @@ const CrudActions = () => (
 
 
 export default function ManageRidesPage() {
+    const [drivers, setDrivers] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setDrivers(mockDrivers);
+        setLoading(false);
+    }, [])
+
   return (
     <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
@@ -43,8 +55,8 @@ export default function ManageRidesPage() {
                 <h1 className="font-headline text-4xl font-bold">Manage Rides</h1>
                 <p className="text-muted-foreground">Monitor driver partners and their status.</p>
             </div>
-            <Button asChild disabled>
-                <Link href="#">
+            <Button asChild>
+                <Link href="/admin/products/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Driver
                 </Link>
@@ -52,7 +64,11 @@ export default function ManageRidesPage() {
         </div>
         <Card>
             <CardContent className="p-0">
-                {mockDrivers.length > 0 ? (
+                {loading ? (
+                    <div className="flex justify-center items-center p-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                ) : drivers.length > 0 ? (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -64,7 +80,7 @@ export default function ManageRidesPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockDrivers.map((driver) => (
+                            {drivers.map((driver) => (
                                 <TableRow key={driver.id}>
                                     <TableCell className="font-medium">{driver.name}</TableCell>
                                     <TableCell>{driver.vehicle}</TableCell>
@@ -84,8 +100,8 @@ export default function ManageRidesPage() {
                         <Car className="mx-auto h-12 w-12 text-muted-foreground" />
                         <h3 className="mt-4 text-xl font-semibold">No Drivers Found</h3>
                         <p className="mt-2 text-muted-foreground">Driver partner data will appear here.</p>
-                        <Button asChild className="mt-4" disabled>
-                            <Link href="#">
+                        <Button asChild className="mt-4">
+                            <Link href="/admin/products/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Driver
                             </Link>
