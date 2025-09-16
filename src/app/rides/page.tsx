@@ -8,7 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Map, MapPin, LocateFixed, Car, Users } from "lucide-react";
+import { MapPin, LocateFixed, Car, Users } from "lucide-react";
+import Image from "next/image";
 
 export default function RidesPage() {
     return (
@@ -38,8 +39,13 @@ export default function RidesPage() {
                 </form>
             </div>
             <div className="lg:col-span-2 bg-muted/30 flex items-center justify-center relative overflow-hidden">
-                {/* Placeholder for map */}
-                <Map className="w-1/2 h-1/2 text-muted-foreground/20" strokeWidth={1}/>
+                <Image 
+                    src="https://images.unsplash.com/photo-1593902784915-77943a13d397?q=80&w=2940&auto=format&fit=crop"
+                    alt="Map of a city"
+                    fill
+                    className="object-cover opacity-20"
+                    data-ai-hint="city map"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent"></div>
                 <Card className="absolute bottom-8 left-8 right-8 shadow-lg">
                     <CardHeader>
