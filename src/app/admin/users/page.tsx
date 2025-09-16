@@ -37,12 +37,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useAuth } from '@/context/auth-context';
 
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { loading: authLoading } = useAuth();
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -52,8 +54,10 @@ export default function ManageUsersPage() {
   }
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (!authLoading) {
+      fetchUsers();
+    }
+  }, [authLoading]);
 
   const handleDelete = async (userId: string) => {
     try {
@@ -111,7 +115,7 @@ export default function ManageUsersPage() {
         </div>
         <Card>
             <CardContent>
-              {loading ? (
+              {loading || authLoading ? (
                  <div className="flex justify-center items-center p-12">
                     <Loader2 className="h-8 w-8 animate-spin text-primary"/>
                 </div>

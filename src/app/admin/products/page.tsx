@@ -37,6 +37,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import Link from 'next/link';
+import { useAuth } from '@/context/auth-context';
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -51,6 +52,7 @@ export default function ManageProductsPage() {
   const [products, setProducts] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { loading: authLoading } = useAuth();
 
   const fetchProducts = async () => {
       setLoading(true);
@@ -60,8 +62,10 @@ export default function ManageProductsPage() {
   }
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (!authLoading) {
+      fetchProducts();
+    }
+  }, [authLoading]);
 
   const handleDelete = async (productId: string) => {
     try {
@@ -126,7 +130,7 @@ export default function ManageProductsPage() {
         </div>
         <Card>
             <CardContent className="p-0">
-              {loading ? (
+              {loading || authLoading ? (
                 <div className="flex justify-center items-center p-12">
                     <Loader2 className="h-8 w-8 animate-spin text-primary"/>
                 </div>

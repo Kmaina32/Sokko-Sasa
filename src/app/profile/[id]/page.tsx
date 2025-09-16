@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import Link from "next/link";
 import { ListingCard } from "@/components/listing-card";
 import type { Listing, User } from "@/lib/types";
 import { getUserData, getListings } from "@/lib/firestore";
+import { useAuth } from "@/context/auth-context";
 
 
 const formatDate = (dateString: string) => {
@@ -21,6 +23,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   const [user, setUser] = useState<User | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+  const { loading: authLoading } = useAuth();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -33,11 +36,13 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
         }
         setLoading(false);
     }
-    fetchUserData();
-  }, [params.id]);
+    if (!authLoading) {
+      fetchUserData();
+    }
+  }, [params.id, authLoading]);
 
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
         <div className="flex justify-center items-center h-[50vh]">
             <Loader2 className="h-8 w-8 animate-spin text-primary"/>

@@ -40,12 +40,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from '@/context/auth-context';
 
 
 export default function ManageAdvertisementsPage() {
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { loading: authLoading } = useAuth();
 
   const fetchAdvertisements = async () => {
     setLoading(true);
@@ -55,8 +57,10 @@ export default function ManageAdvertisementsPage() {
   }
 
   useEffect(() => {
-    fetchAdvertisements();
-  }, []);
+    if (!authLoading) {
+      fetchAdvertisements();
+    }
+  }, [authLoading]);
 
   const handleStatusChange = async (adId: string, newStatus: boolean) => {
     try {
@@ -140,7 +144,7 @@ export default function ManageAdvertisementsPage() {
 
         <Card>
             <CardContent className="p-0">
-              {loading ? (
+              {loading || authLoading ? (
                 <div className="flex justify-center items-center p-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
