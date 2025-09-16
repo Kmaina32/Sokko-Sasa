@@ -18,7 +18,7 @@ import { usePathname } from 'next/navigation';
 const mainLinks = [
     { href: "/", label: "Home", icon: Home },
     { href: "/shop", label: "Shop", icon: ShoppingBag },
-    { href: "/food", label: "Food Delivery", icon: Utensils },
+    { href: "/food-delivery", label: "Food Delivery", icon: Utensils },
     { href: "/events", label: "Events", icon: Calendar },
     { href: "/messages", label: "Sokko Chat", icon: MessageSquare },
 ];
