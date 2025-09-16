@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/listing-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { getListings } from "@/lib/firestore";
+import type { Listing } from "@/lib/types";
 
 const categories = [
   {
@@ -62,11 +64,12 @@ const categories = [
   },
 ];
 
-const mockFeaturedListings: any[] = [];
 const mockAdvertisements: any[] = [];
 
 
-export default function Home() {
+export default async function Home() {
+  const mockFeaturedListings: Listing[] = await getListings({ limit: 4 });
+
   return (
     <div className="flex-1">
       <section className="relative bg-muted/20">

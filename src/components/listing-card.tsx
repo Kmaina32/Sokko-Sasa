@@ -14,7 +14,7 @@ import type { Listing } from "@/lib/types";
 import { Button } from "./ui/button";
 
 interface ListingCardProps {
-  listing: Omit<Listing, 'seller' | 'postedAt' | 'description'>;
+  listing: Listing;
 }
 
 export function ListingCard({ listing }: ListingCardProps) {

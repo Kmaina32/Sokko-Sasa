@@ -11,48 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Tag, MessageSquare } from "lucide-react";
-import { placeholderImages } from "@/lib/placeholder-images";
+import { MapPin, Tag, MessageSquare, Package } from "lucide-react";
 import Link from "next/link";
+import { getListingById } from "@/lib/firestore";
 
 
-// Mock data - in a real app, this would be fetched from a database
-const mockListings: any = {
-    'prod1': {
-        id: 'prod1',
-        title: 'Hand-carved Wooden Elephant',
-        description: `This beautiful hand-carved wooden elephant is a masterpiece of craftsmanship. Made from sustainably sourced jacaranda wood by skilled artisans in Kenya.
-
-- Height: 12 inches
-- Material: Jacaranda Wood
-- Finish: Natural wax polish
-
-A perfect decorative piece for your home or office, and a great conversation starter. Each piece is unique and may have slight variations in color and grain.`,
-        price: 2500,
-        category: 'Product',
-        location: 'Nairobi',
-        images: [
-            placeholderImages.product1.imageUrl,
-            "https://picsum.photos/seed/p1-2/800/600",
-            "https://picsum.photos/seed/p1-3/800/600",
-        ],
-        seller: {
-            id: 'seller1',
-            name: 'Artisan Co.',
-            avatar: 'https://picsum.photos/seed/seller1/100/100',
-        },
-    }
-};
-
-
-export default function ListingDetailPage({ params }: { params: { id: string } }) {
-  const listing = mockListings[params.id];
+export default async function ListingDetailPage({ params }: { params: { id: string } }) {
+  const listing = await getListingById(params.id);
 
   if (!listing) {
     return (
         <div className="container mx-auto px-4 py-8">
             <Card className="text-center p-12">
-                <CardTitle className="text-2xl">Listing Not Found</CardTitle>
+                 <Package className="mx-auto h-12 w-12 text-muted-foreground" />
+                <CardTitle className="text-2xl mt-4">Listing Not Found</CardTitle>
                 <CardContent>
                     <p className="mt-4 text-muted-foreground">Sorry, we couldn't find the listing you're looking for.</p>
                     <Button asChild className="mt-6">
@@ -80,18 +52,31 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
             <CardContent className="p-0">
               <Carousel className="w-full">
                 <CarouselContent>
-                  {listing.images.map((src: string, index: number) => (
-                    <CarouselItem key={index}>
+                  {listing.images && listing.images.length > 0 ? (
+                    listing.images.map((src: string, index: number) => (
+                      <CarouselItem key={index}>
+                        <Image
+                          src={src}
+                          alt={`${listing.title} image ${index + 1}`}
+                          width={800}
+                          height={600}
+                          className="w-full aspect-video object-cover"
+                          data-ai-hint="product image"
+                        />
+                      </CarouselItem>
+                    ))
+                  ) : (
+                     <CarouselItem>
                       <Image
-                        src={src}
-                        alt={`${listing.title} image ${index + 1}`}
+                        src={listing.imageUrl}
+                        alt={listing.title}
                         width={800}
                         height={600}
                         className="w-full aspect-video object-cover"
                         data-ai-hint="product image"
                       />
                     </CarouselItem>
-                  ))}
+                  )}
                 </CarouselContent>
                 <CarouselPrevious className="left-4"/>
                 <CarouselNext className="right-4"/>
@@ -127,32 +112,34 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Seller Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center gap-4">
-                        <Avatar className="h-16 w-16">
-                            <AvatarImage src={listing.seller.avatar} alt={listing.seller.name}/>
-                            <AvatarFallback>{listing.seller.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-bold text-lg">{listing.seller.name}</p>
-                            <Button variant="link" asChild className="p-0 h-auto">
-                               <Link href={`/profile/${listing.seller.id}`}>View Profile</Link>
-                            </Button>
-                        </div>
-                    </div>
-                    <Separator />
-                    <Button asChild size="lg" className="w-full bg-accent hover:bg-accent/90">
-                       <Link href="/messages">
-                           <MessageSquare className="mr-2 h-5 w-5"/>
-                           Contact Seller
-                       </Link>
-                    </Button>
-                </CardContent>
-            </Card>
+            {listing.seller && (
+              <Card>
+                  <CardHeader>
+                      <CardTitle>Seller Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                      <div className="flex items-center gap-4">
+                          <Avatar className="h-16 w-16">
+                              <AvatarImage src={listing.seller.avatarUrl} alt={listing.seller.name}/>
+                              <AvatarFallback>{listing.seller.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                              <p className="font-bold text-lg">{listing.seller.name}</p>
+                              <Button variant="link" asChild className="p-0 h-auto">
+                                <Link href={`/profile/${listing.seller.id}`}>View Profile</Link>
+                              </Button>
+                          </div>
+                      </div>
+                      <Separator />
+                      <Button asChild size="lg" className="w-full bg-accent hover:bg-accent/90">
+                        <Link href="/messages">
+                            <MessageSquare className="mr-2 h-5 w-5"/>
+                            Contact Seller
+                        </Link>
+                      </Button>
+                  </CardContent>
+              </Card>
+            )}
         </div>
       </div>
     </div>

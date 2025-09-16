@@ -11,6 +11,8 @@ export interface Listing {
   location: string;
   imageUrl: string;
   imageHint: string;
+  images?: string[];
+  sellerId: string;
   seller?: User;
   postedAt?: Date;
 }

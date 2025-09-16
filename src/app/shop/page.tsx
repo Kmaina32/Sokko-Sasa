@@ -28,48 +28,12 @@ import { ListingCard } from "@/components/listing-card";
 import type { Listing } from "@/lib/types";
 import { Filter, ListFilter, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { placeholderImages } from "@/lib/placeholder-images";
+import { getListings } from "@/lib/firestore";
 
-const mockListings: Omit<Listing, 'seller' | 'postedAt' | 'description'>[] = [
-    { 
-        id: 'prod1', 
-        title: 'Hand-carved Wooden Elephant', 
-        price: 2500, 
-        category: 'Product', 
-        location: 'Nairobi', 
-        imageUrl: placeholderImages.product1.imageUrl,
-        imageHint: placeholderImages.product1.imageHint,
-    },
-    { 
-        id: 'prod2', 
-        title: 'Sisal Kiondo Basket', 
-        price: 1200, 
-        category: 'Product', 
-        location: 'Mombasa',
-        imageUrl: placeholderImages.product2.imageUrl,
-        imageHint: placeholderImages.product2.imageHint,
-    },
-    { 
-        id: 'prod3', 
-        title: 'Maasai Shuka Blanket', 
-        price: 800, 
-        category: 'Product', 
-        location: 'Nakuru',
-        imageUrl: placeholderImages.product3.imageUrl,
-        imageHint: placeholderImages.product3.imageHint,
-    },
-    { 
-        id: 'prod4', 
-        title: 'Beaded Leather Sandals', 
-        price: 1800, 
-        category: 'Product', 
-        location: 'Diani',
-        imageUrl: placeholderImages.product4.imageUrl,
-        imageHint: placeholderImages.product4.imageHint,
-    },
-];
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const listings: Listing[] = await getListings();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -131,10 +95,10 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {mockListings.length > 0 ? (
+      {listings.length > 0 ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {mockListings.map((listing) => (
+            {listings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
