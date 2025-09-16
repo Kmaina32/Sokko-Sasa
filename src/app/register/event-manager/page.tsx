@@ -1,11 +1,38 @@
+
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Calendar, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 
 export default function EventManagerRegistrationPage() {
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // In a real app, you'd save this to a 'pendingRegistrations' collection in Firestore.
+    // We'll simulate an API call.
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    toast({
+      title: "Application Submitted!",
+      description: "Thank you for registering. Your application is under review.",
+    });
+
+    setIsSubmitting(false);
+    router.push('/service-hub');
+  };
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="mb-8 text-center">
@@ -21,23 +48,23 @@ export default function EventManagerRegistrationPage() {
             <CardDescription>Tell us about you or your organization.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="organizer-name">Organizer/Company Name</Label>
-              <Input id="organizer-name" placeholder="e.g., Awesome Events Inc." />
+              <Input id="organizer-name" placeholder="e.g., Awesome Events Inc." required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="contact-person">Contact Person Name</Label>
-              <Input id="contact-person" />
+              <Input id="contact-person" required />
             </div>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" />
+                    <Input id="phone" type="tel" required />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" />
+                    <Input id="email" type="email" required />
                 </div>
             </div>
              <div className="space-y-2">
@@ -48,8 +75,12 @@ export default function EventManagerRegistrationPage() {
                 <Label htmlFor="about">About the Organizer</Label>
                 <Textarea id="about" placeholder="Describe the types of events you host..." />
             </div>
-            <div className="flex justify-end">
-                <Button type="submit">Submit Application</Button>
+            <div className="flex justify-end gap-2">
+                <Button variant="outline" type="button" onClick={() => router.back()} disabled={isSubmitting}>Cancel</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                    Submit Application
+                </Button>
             </div>
           </form>
         </CardContent>

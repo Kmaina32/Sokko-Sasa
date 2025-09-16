@@ -1,11 +1,37 @@
+
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Car } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Car, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DriverRegistrationPage() {
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // In a real app, you'd save this to a 'pendingRegistrations' collection in Firestore.
+    // We'll simulate an API call.
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    toast({
+      title: "Application Submitted!",
+      description: "Thank you for registering. Your application is under review and we will contact you shortly.",
+    });
+
+    setIsSubmitting(false);
+    router.push('/service-hub');
+  };
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="mb-8 text-center">
@@ -21,25 +47,25 @@ export default function DriverRegistrationPage() {
             <CardDescription>Please provide accurate information for a quick approval.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                 <Label htmlFor="full-name">Full Name</Label>
-                <Input id="full-name" />
+                <Input id="full-name" required />
                 </div>
                 <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" type="tel" />
+                <Input id="phone" type="tel" required />
                 </div>
             </div>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="license-number">Driving License Number</Label>
-                    <Input id="license-number" />
+                    <Input id="license-number" required />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="license-upload">Upload Driving License (Front & Back)</Label>
-                    <Input id="license-upload" type="file" multiple />
+                    <Input id="license-upload" type="file" multiple required />
                 </div>
             </div>
 
@@ -48,7 +74,7 @@ export default function DriverRegistrationPage() {
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="vehicle-type">Vehicle Type</Label>
-                        <Select>
+                        <Select required>
                             <SelectTrigger id="vehicle-type">
                                 <SelectValue placeholder="Select vehicle type" />
                             </SelectTrigger>
@@ -60,23 +86,27 @@ export default function DriverRegistrationPage() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="license-plate">License Plate Number</Label>
-                        <Input id="license-plate" placeholder="e.g., KDA 123X" />
+                        <Input id="license-plate" placeholder="e.g., KDA 123X" required />
                     </div>
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                      <div className="space-y-2">
                         <Label htmlFor="vehicle-model">Vehicle Make & Model</Label>
-                        <Input id="vehicle-model" placeholder="e.g., Toyota Vitz" />
+                        <Input id="vehicle-model" placeholder="e.g., Toyota Vitz" required />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="insurance-upload">Upload Vehicle Insurance Sticker</Label>
-                        <Input id="insurance-upload" type="file" />
+                        <Input id="insurance-upload" type="file" required />
                     </div>
                  </div>
             </div>
             
-            <div className="flex justify-end">
-                <Button type="submit">Submit for Verification</Button>
+            <div className="flex justify-end gap-2">
+                <Button variant="outline" type="button" onClick={() => router.back()} disabled={isSubmitting}>Cancel</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                  Submit for Verification
+                </Button>
             </div>
           </form>
         </CardContent>

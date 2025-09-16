@@ -1,11 +1,38 @@
+
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Building } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Building, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 
 export default function RealEstateAgentRegistrationPage() {
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // In a real app, you'd save this to a 'pendingRegistrations' collection in Firestore.
+    // We'll simulate an API call.
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    toast({
+      title: "Application Submitted!",
+      description: "Thank you for registering. Your profile is now under review.",
+    });
+
+    setIsSubmitting(false);
+    router.push('/service-hub');
+  };
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="mb-8 text-center">
@@ -21,19 +48,19 @@ export default function RealEstateAgentRegistrationPage() {
             <CardDescription>Set up your profile to start listing properties.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="agent-name">Agent or Agency Name</Label>
-              <Input id="agent-name" />
+              <Input id="agent-name" required />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" />
+                    <Input id="phone" type="tel" required />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" />
+                    <Input id="email" type="email" required />
                 </div>
             </div>
             <div className="space-y-2">
@@ -46,14 +73,18 @@ export default function RealEstateAgentRegistrationPage() {
             </div>
             <div className="space-y-2">
                 <Label htmlFor="about">About</Label>
-                <Textarea id="about" placeholder="Tell potential clients about your experience and focus areas..." />
+                <Textarea id="about" placeholder="Tell potential clients about your experience and focus areas..." required />
             </div>
              <div className="space-y-2">
                 <Label htmlFor="agent-photo">Profile Photo or Agency Logo</Label>
-                <Input id="agent-photo" type="file" accept="image/*" />
+                <Input id="agent-photo" type="file" accept="image/*" required />
             </div>
-            <div className="flex justify-end">
-                <Button type="submit">Join as an Agent</Button>
+            <div className="flex justify-end gap-2">
+                <Button variant="outline" type="button" onClick={() => router.back()} disabled={isSubmitting}>Cancel</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                  Join as an Agent
+                </Button>
             </div>
           </form>
         </CardContent>
