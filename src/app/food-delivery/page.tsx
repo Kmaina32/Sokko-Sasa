@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Star, Search, Utensils } from "lucide-react";
 import { placeholderImages } from "@/lib/placeholder-images";
+import Link from "next/link";
 
 const mockRestaurants = [
     { 
@@ -61,28 +62,30 @@ export default function FoodDeliveryPage() {
         {mockRestaurants.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {mockRestaurants.map((resto) => (
-              <Card key={resto.id} className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
-                  <CardHeader className="p-0">
-                      <Image
-                          src={resto.imageUrl}
-                          alt={resto.name}
-                          width={600}
-                          height={400}
-                          className="aspect-video w-full object-cover"
-                          data-ai-hint={resto.imageHint}
-                      />
-                  </CardHeader>
-                  <CardContent className="p-4">
-                      <CardTitle className="text-xl group-hover:text-primary">{resto.name}</CardTitle>
-                      <CardDescription>{resto.cuisine}</CardDescription>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                      <Badge variant="default" className="flex items-center gap-1 bg-accent hover:bg-accent/90">
-                          <Star className="w-4 h-4 text-white fill-white"/>
-                          <span className="text-white font-bold">{resto.rating}</span>
-                      </Badge>
-                  </CardFooter>
-              </Card>
+              <Link href={`/food-delivery/${resto.id}`} key={resto.id}>
+                <Card className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 h-full">
+                    <CardHeader className="p-0">
+                        <Image
+                            src={resto.imageUrl}
+                            alt={resto.name}
+                            width={600}
+                            height={400}
+                            className="aspect-video w-full object-cover"
+                            data-ai-hint={resto.imageHint}
+                        />
+                    </CardHeader>
+                    <CardContent className="p-4">
+                        <CardTitle className="text-xl group-hover:text-primary">{resto.name}</CardTitle>
+                        <CardDescription>{resto.cuisine}</CardDescription>
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0">
+                        <Badge variant="default" className="flex items-center gap-1 bg-accent hover:bg-accent/90">
+                            <Star className="w-4 h-4 text-white fill-white"/>
+                            <span className="text-white font-bold">{resto.rating}</span>
+                        </Badge>
+                    </CardFooter>
+                </Card>
+              </Link>
             ))}
           </div>
         ) : (
