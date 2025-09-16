@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -15,6 +14,7 @@ import {
   Briefcase,
   ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
 
 const providerTypes = [
   {
@@ -81,8 +81,10 @@ export default function ServiceHubPage() {
                             <p className="text-muted-foreground">{provider.description}</p>
                         </CardContent>
                         <div className="p-6 pt-0">
-                            <Button className="w-full">
-                                Get Started <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"/>
+                            <Button asChild className="w-full">
+                                <Link href={provider.href}>
+                                    Get Started <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"/>
+                                </Link>
                             </Button>
                         </div>
                     </Card>
