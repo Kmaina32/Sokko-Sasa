@@ -1,10 +1,18 @@
 import data from './placeholder-images.json';
 
-export type ImagePlaceholder = {
+type ImagePlaceholder = {
   id: string;
   description: string;
   imageUrl: string;
   imageHint: string;
 };
 
-export const PlaceHolderImages: ImagePlaceholder[] = data.placeholderImages;
+type PlaceholderImagesData = {
+  [key: string]: ImagePlaceholder;
+};
+
+// Transform array into a key-value object for easier access
+export const placeholderImages = (data.placeholderImages as ImagePlaceholder[]).reduce((acc, current) => {
+    acc[current.id] = current;
+    return acc;
+}, {} as PlaceholderImagesData);

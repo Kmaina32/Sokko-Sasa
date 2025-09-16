@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Stethoscope, Pill, Microscope, HeartPulse, Hospital } from "lucide-react";
+import { placeholderImages } from "@/lib/placeholder-images";
 
 const medicalServices = [
     { name: "Consult a Doctor", icon: Stethoscope },
@@ -17,7 +18,22 @@ const medicalServices = [
     { name: "Wellness Checks", icon: HeartPulse },
 ];
 
-const mockClinics: any[] = [];
+const mockClinics = [
+    { 
+        id: 'clinic1', 
+        name: 'Nairobi Hospital', 
+        specialty: 'General Hospital', 
+        imageUrl: placeholderImages.clinic1.imageUrl,
+        imageHint: placeholderImages.clinic1.imageHint,
+    },
+    { 
+        id: 'clinic2', 
+        name: 'Aga Khan University Hospital', 
+        specialty: 'Multi-Specialty',
+        imageUrl: placeholderImages.clinic2.imageUrl,
+        imageHint: placeholderImages.clinic2.imageHint,
+    },
+];
 
 export default function MedicalPage() {
     return (

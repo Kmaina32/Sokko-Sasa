@@ -19,8 +19,32 @@ import {
 import { Search, MapPin, Bed, Bath, Car, Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { placeholderImages } from "@/lib/placeholder-images";
 
-const mockProperties: any[] = [];
+const mockProperties = [
+    { 
+        id: 're1', 
+        title: '2BR Apartment, Kilimani', 
+        type: 'Rent', 
+        price: "80,000",
+        beds: 2,
+        baths: 2,
+        parking: 1,
+        imageUrl: placeholderImages.property1.imageUrl,
+        imageHint: placeholderImages.property1.imageHint,
+    },
+    { 
+        id: 're2', 
+        title: '4BR Townhouse, Runda', 
+        type: 'Sale', 
+        price: "45,000,000",
+        beds: 4,
+        baths: 5,
+        parking: 4,
+        imageUrl: placeholderImages.property2.imageUrl,
+        imageHint: placeholderImages.property2.imageHint,
+    },
+];
 
 export default function RealEstatePage() {
   return (

@@ -28,9 +28,46 @@ import { ListingCard } from "@/components/listing-card";
 import type { Listing } from "@/lib/types";
 import { Filter, ListFilter, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { placeholderImages } from "@/lib/placeholder-images";
 
-const mockListings: Omit<Listing, 'seller' | 'postedAt'>[] = [];
-
+const mockListings: Omit<Listing, 'seller' | 'postedAt' | 'description'>[] = [
+    { 
+        id: 'prod1', 
+        title: 'Hand-carved Wooden Elephant', 
+        price: 2500, 
+        category: 'Product', 
+        location: 'Nairobi', 
+        imageUrl: placeholderImages.product1.imageUrl,
+        imageHint: placeholderImages.product1.imageHint,
+    },
+    { 
+        id: 'prod2', 
+        title: 'Sisal Kiondo Basket', 
+        price: 1200, 
+        category: 'Product', 
+        location: 'Mombasa',
+        imageUrl: placeholderImages.product2.imageUrl,
+        imageHint: placeholderImages.product2.imageHint,
+    },
+    { 
+        id: 'prod3', 
+        title: 'Maasai Shuka Blanket', 
+        price: 800, 
+        category: 'Product', 
+        location: 'Nakuru',
+        imageUrl: placeholderImages.product3.imageUrl,
+        imageHint: placeholderImages.product3.imageHint,
+    },
+    { 
+        id: 'prod4', 
+        title: 'Beaded Leather Sandals', 
+        price: 1800, 
+        category: 'Product', 
+        location: 'Diani',
+        imageUrl: placeholderImages.product4.imageUrl,
+        imageHint: placeholderImages.product4.imageHint,
+    },
+];
 
 export default function ShopPage() {
   return (

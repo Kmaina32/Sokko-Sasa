@@ -10,8 +10,34 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Star, Search, Utensils } from "lucide-react";
+import { placeholderImages } from "@/lib/placeholder-images";
 
-const mockRestaurants: any[] = [];
+const mockRestaurants = [
+    { 
+        id: 'resto1', 
+        name: "Mama's Kitchen", 
+        cuisine: 'Kenyan', 
+        rating: 4.5, 
+        imageUrl: placeholderImages.food1.imageUrl,
+        imageHint: placeholderImages.food1.imageHint,
+    },
+    { 
+        id: 'resto2', 
+        name: "Pizza Inn", 
+        cuisine: 'Pizza', 
+        rating: 4.2,
+        imageUrl: placeholderImages.food2.imageUrl,
+        imageHint: placeholderImages.food2.imageHint,
+    },
+    { 
+        id: 'resto3', 
+        name: "Shanghai Kitchen", 
+        cuisine: 'Chinese', 
+        rating: 4.8,
+        imageUrl: placeholderImages.food3.imageUrl,
+        imageHint: placeholderImages.food3.imageHint,
+    },
+];
 
 export default function FoodDeliveryPage() {
   return (

@@ -11,8 +11,26 @@ import { Input } from "@/components/ui/input";
 import { Search, MapPin, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { placeholderImages } from "@/lib/placeholder-images";
 
-const mockJobs: any[] = [];
+const mockJobs = [
+    { 
+        id: 'job1', 
+        title: 'Software Engineer', 
+        company: 'Sokko Inc.', 
+        type: 'Full-time', 
+        location: 'Nairobi, Kenya',
+        logoUrl: placeholderImages.job1.imageUrl,
+    },
+    { 
+        id: 'job2', 
+        title: 'Marketing Manager', 
+        company: 'InnovateKE', 
+        type: 'Contract',
+        location: 'Mombasa, Kenya',
+        logoUrl: placeholderImages.job2.imageUrl,
+    },
+];
 
 export default function JobsPage() {
     return (

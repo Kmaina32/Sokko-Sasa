@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Wrench, Tv, Hammer, Droplets, Car } from "lucide-react";
 import Image from "next/image";
+import { placeholderImages } from "@/lib/placeholder-images";
 
 const serviceCategories = [
   { name: "Plumbing", icon: Droplets, hint: "plumbing tools" },
@@ -17,7 +18,24 @@ const serviceCategories = [
   { name: "Handyman", icon: Hammer, hint: "toolbox" },
 ];
 
-const mockProviders: any[] = [];
+const mockProviders = [
+    { 
+        id: 'srv1', 
+        name: 'Quick Plumbers', 
+        service: 'Plumbing', 
+        rating: 4.8, 
+        imageUrl: placeholderImages.service1.imageUrl,
+        imageHint: placeholderImages.service1.imageHint,
+    },
+    { 
+        id: 'srv2', 
+        name: 'FixIt Appliance Repair', 
+        service: 'Appliance Repair', 
+        rating: 4.9,
+        imageUrl: placeholderImages.service2.imageUrl,
+        imageHint: placeholderImages.service2.imageHint,
+    },
+];
 
 export default function ServicesPage() {
   return (

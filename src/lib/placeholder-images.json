@@ -1,76 +1,22 @@
+
 {
   "placeholderImages": [
-    {
-      "id": "1",
-      "description": "A beautiful, intricately carved wooden elephant statue, perfect for home decor.",
-      "imageUrl": "https://picsum.photos/seed/1/600/400",
-      "imageHint": "wooden elephant"
-    },
-    {
-      "id": "2",
-      "description": "Professional graphic design for logos, flyers, and more. Quick turnaround.",
-      "imageUrl": "https://picsum.photos/seed/2/600/400",
-      "imageHint": "design portfolio"
-    },
-    {
-      "id": "3",
-      "description": "Modern and spacious 2-bedroom apartment for rent in a prime location.",
-      "imageUrl": "https://picsum.photos/seed/3/600/400",
-      "imageHint": "modern apartment"
-    },
-    {
-      "id": "4",
-      "description": "We are hiring an experienced Sales Executive to join our dynamic team.",
-      "imageUrl": "https://picsum.photos/seed/4/600/400",
-      "imageHint": "office handshake"
-    },
-    {
-      "id": "5",
-      "description": "Authentic sisal Kiondo basket, durable and stylish. Available in multiple colors.",
-      "imageUrl": "https://picsum.photos/seed/5/600/400",
-      "imageHint": "sisal basket"
-    },
-    {
-      "id": "6",
-      "description": "Reliable plumbing services for residential and commercial properties.",
-      "imageUrl": "https://picsum.photos/seed/6/600/400",
-      "imageHint": "plumbing tools"
-    },
-    {
-      "id": "7",
-      "description": "Classic brown leather jacket in excellent condition. A timeless piece.",
-      "imageUrl": "https://picsum.photos/seed/7/600/400",
-      "imageHint": "leather jacket"
-    },
-    {
-      "id": "8",
-      "description": "Prime 1-acre beachfront plot with stunning ocean views. Perfect for development.",
-      "imageUrl": "https://picsum.photos/seed/8/600/400",
-      "imageHint": "beachfront property"
-    },
-    {
-      "id": "9",
-      "description": "A single, delicious-looking red apple on a plain background.",
-      "imageUrl": "https://picsum.photos/seed/9/600/400",
-      "imageHint": "red apple"
-    },
-    {
-      "id": "10",
-      "description": "A happy dog playing in a sunlit field of grass.",
-      "imageUrl": "https://picsum.photos/seed/10/600/400",
-      "imageHint": "happy dog"
-    },
-    {
-      "id": "user1",
-      "description": "Avatar for John Doe",
-      "imageUrl": "https://picsum.photos/seed/user1/100/100",
-      "imageHint": "man portrait"
-    },
-    {
-      "id": "seller1",
-      "description": "Avatar for Jane Smith",
-      "imageUrl": "https://picsum.photos/seed/seller1/100/100",
-      "imageHint": "woman portrait"
-    }
+    { "id": "product1", "description": "Hand-carved Wooden Elephant", "imageUrl": "https://picsum.photos/seed/p1/600/400", "imageHint": "wooden elephant" },
+    { "id": "product2", "description": "Sisal Kiondo Basket", "imageUrl": "https://picsum.photos/seed/p2/600/400", "imageHint": "sisal basket" },
+    { "id": "product3", "description": "Maasai Shuka Blanket", "imageUrl": "https://picsum.photos/seed/p3/600/400", "imageHint": "maasai blanket" },
+    { "id": "product4", "description": "Beaded Leather Sandals", "imageUrl": "https://picsum.photos/seed/p4/600/400", "imageHint": "leather sandals" },
+    { "id": "property1", "description": "Modern apartment exterior", "imageUrl": "https://picsum.photos/seed/re1/600/400", "imageHint": "modern apartment" },
+    { "id": "property2", "description": "Luxury townhouse with garden", "imageUrl": "https://picsum.photos/seed/re2/600/400", "imageHint": "luxury townhouse" },
+    { "id": "job1", "description": "Sokko Inc. company logo", "imageUrl": "https://picsum.photos/seed/j1/100/100", "imageHint": "tech company logo" },
+    { "id": "job2", "description": "InnovateKE company logo", "imageUrl": "https://picsum.photos/seed/j2/100/100", "imageHint": "creative agency logo" },
+    { "id": "food1", "description": "Plate of Kenyan food", "imageUrl": "https://picsum.photos/seed/f1/600/400", "imageHint": "kenyan food" },
+    { "id": "food2", "description": "Delicious looking pizza", "imageUrl": "https://picsum.photos/seed/f2/600/400", "imageHint": "pepperoni pizza" },
+    { "id": "food3", "description": "Assortment of Chinese dishes", "imageUrl": "https://picsum.photos/seed/f3/600/400", "imageHint": "chinese food" },
+    { "id": "service1", "description": "Avatar of a plumber", "imageUrl": "https://picsum.photos/seed/s1/100/100", "imageHint": "male portrait" },
+    { "id": "service2", "description": "Avatar of a repair technician", "imageUrl": "https://picsum.photos/seed/s2/100/100", "imageHint": "professional woman" },
+    { "id": "clinic1", "description": "Exterior of a modern hospital", "imageUrl": "https://picsum.photos/seed/c1/600/400", "imageHint": "hospital building" },
+    { "id": "clinic2", "description": "University hospital campus", "imageUrl": "https://picsum.photos/seed/c2/600/400", "imageHint": "university campus" },
+    { "id": "event1", "description": "Live music concert stage", "imageUrl": "https://picsum.photos/seed/e1/600/400", "imageHint": "music concert" },
+    { "id": "event2", "description": "People at a technology conference", "imageUrl": "https://picsum.photos/seed/e2/600/400", "imageHint": "tech conference" }
   ]
 }

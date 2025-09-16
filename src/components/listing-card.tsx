@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Listing } from "@/lib/types";
 
 interface ListingCardProps {
-  listing: Omit<Listing, 'seller' | 'postedAt'>;
+  listing: Omit<Listing, 'seller' | 'postedAt' | 'description'>;
 }
 
 export function ListingCard({ listing }: ListingCardProps) {

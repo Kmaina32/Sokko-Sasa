@@ -8,8 +8,26 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Ticket } from "lucide-react";
+import { placeholderImages } from "@/lib/placeholder-images";
 
-const mockEvents: any[] = [];
+const mockEvents = [
+    { 
+        id: 'evt1', 
+        name: 'Sauti Sol Live in Nairobi', 
+        location: 'KICC, Nairobi', 
+        date: '2024-10-26', 
+        imageUrl: placeholderImages.event1.imageUrl,
+        imageHint: placeholderImages.event1.imageHint,
+    },
+    { 
+        id: 'evt2', 
+        name: 'Kenya Tech Summit', 
+        location: 'Sarit Centre Expo', 
+        date: '2024-11-15',
+        imageUrl: placeholderImages.event2.imageUrl,
+        imageHint: placeholderImages.event2.imageHint,
+    },
+];
 
 export default function EventsPage() {
   return (
@@ -28,7 +46,7 @@ export default function EventsPage() {
               <div className="md:col-span-1">
                   <Image
                       src={event.imageUrl}
-                      alt={event.title || event.name}
+                      alt={event.name}
                       width={600}
                       height={400}
                       className="h-full w-full object-cover aspect-video md:aspect-auto"
@@ -37,14 +55,14 @@ export default function EventsPage() {
               </div>
               <div className="md:col-span-2 flex flex-col">
                   <CardHeader>
-                      <CardTitle className="text-2xl">{event.title || event.name}</CardTitle>
+                      <CardTitle className="text-2xl">{event.name}</CardTitle>
                       <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pt-2">
                           <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4"/> {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                           <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4"/> {event.location}</span>
                       </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1">
-                      <p className="text-muted-foreground">More details about the event will be displayed here. This could include a short description, schedule, or other relevant information to attract attendees.</p>
+                      <p className="text-muted-foreground">Join us for an unforgettable night of music with the legendary Sauti Sol. Get ready to dance to their greatest hits and new tracks. This is a concert you don't want to miss!</p>
                   </CardContent>
                   <div className="p-6 pt-0">
                       <Button>
