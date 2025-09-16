@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Wrench, Tv, Hammer, Droplets, Car } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { placeholderImages } from "@/lib/placeholder-images";
 
 const serviceCategories = [
@@ -78,7 +79,9 @@ export default function ServicesPage() {
                           <CardTitle className="text-lg">{provider.name}</CardTitle>
                           <CardDescription>{provider.service}</CardDescription>
                           <p className="font-bold text-accent mt-2">{provider.rating} ★</p>
-                          <Button className="mt-4 w-full">View Profile</Button>
+                          <Button asChild className="mt-4 w-full">
+                            <Link href={`/services/${provider.id}`}>View Profile</Link>
+                          </Button>
                       </CardContent>
                   </Card>
               ))}

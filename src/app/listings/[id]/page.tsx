@@ -37,6 +37,7 @@ A perfect decorative piece for your home or office, and a great conversation sta
             "https://picsum.photos/seed/p1-3/800/600",
         ],
         seller: {
+            id: 'seller1',
             name: 'Artisan Co.',
             avatar: 'https://picsum.photos/seed/seller1/100/100',
         },
@@ -138,7 +139,9 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
                         </Avatar>
                         <div>
                             <p className="font-bold text-lg">{listing.seller.name}</p>
-                            <Button variant="link" className="p-0 h-auto">View Profile</Button>
+                            <Button variant="link" asChild className="p-0 h-auto">
+                               <Link href={`/profile/${listing.seller.id}`}>View Profile</Link>
+                            </Button>
                         </div>
                     </div>
                     <Separator />

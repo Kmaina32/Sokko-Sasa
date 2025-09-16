@@ -20,6 +20,7 @@ import { Search, MapPin, Bed, Bath, Car, Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { placeholderImages } from "@/lib/placeholder-images";
+import Link from "next/link";
 
 const mockProperties = [
     { 
@@ -140,7 +141,9 @@ export default function RealEstatePage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full">View Details</Button>
+                    <Button asChild className="w-full">
+                        <Link href={`/real-estate/${prop.id}`}>View Details</Link>
+                    </Button>
                 </CardFooter>
               </div>
             </Card>
