@@ -18,21 +18,34 @@ import { useAuth } from "@/context/auth-context";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address."),
+  password: z.string().min(1, "Password is required."),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const { login, loginWithGoogle } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const { formState: { isSubmitting, errors } } = form;
+
+  const handleLogin = async ({ email, password }: LoginFormValues) => {
     try {
       await login(email, password);
       toast({
@@ -40,15 +53,13 @@ export default function LoginPage() {
         description: "Welcome back!",
       });
       router.push("/");
+      router.refresh();
     } catch (err: any) {
-      setError(err.message);
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: err.message,
+        description: "Invalid email or password. Please try again.",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -61,6 +72,7 @@ export default function LoginPage() {
             description: "Welcome back!",
         });
         router.push('/');
+        router.refresh();
     } catch (error: any) {
         toast({
             variant: "destructive",
@@ -84,7 +96,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -95,10 +107,10 @@ export default function LoginPage() {
                   placeholder="you@example.com"
                   required
                   className="pl-10"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...form.register("email")}
                 />
               </div>
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -114,14 +126,14 @@ export default function LoginPage() {
                   type="password"
                   required
                   className="pl-10"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...form.register("password")}
                 />
               </div>
+              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full font-bold text-base" size="lg" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            
+            <Button type="submit" className="w-full font-bold text-base" size="lg" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Log In
             </Button>
           </form>
@@ -134,7 +146,7 @@ export default function LoginPage() {
             </div>
           </div>
            <div className="grid grid-cols-1 gap-4">
-            <Button variant="outline" onClick={handleGoogleLogin} disabled={isGoogleLoading || isLoading}>
+            <Button variant="outline" onClick={handleGoogleLogin} disabled={isGoogleLoading || isSubmitting}>
                  {isGoogleLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Google
             </Button>

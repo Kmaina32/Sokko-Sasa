@@ -20,49 +20,60 @@ import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { addUserData } from "@/lib/firestore";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const signupSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email." }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  terms: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the terms and conditions." }),
+  }),
+});
+
+type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const { signup, loginWithGoogle } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!termsAccepted) {
-        setError("You must accept the terms and conditions.");
-        return;
-    }
-    setIsLoading(true);
-    setError(null);
+  const form = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      terms: false,
+    },
+  });
+
+  const { formState: { isSubmitting, errors } } = form;
+
+  const handleSignup = async (values: SignupFormValues) => {
     try {
-      const userCredential = await signup(email, password);
+      const userCredential = await signup(values.email, values.password);
       if (userCredential && userCredential.user) {
-        await addUserData(userCredential.user, { name });
+        await addUserData(userCredential.user, { name: values.name });
         toast({
           title: "Account Created!",
           description: "You have been successfully signed up.",
         });
         router.push("/");
+        router.refresh();
       } else {
         throw new Error("Signup failed, user not created.");
       }
     } catch (err: any) {
-      setError(err.message);
       toast({
         variant: "destructive",
         title: "Signup Failed",
-        description: err.code === 'auth/email-already-in-use' ? 'This email is already registered.' : err.message,
+        description: err.code === 'auth/email-already-in-use' ? 'This email is already registered.' : "An unexpected error occurred.",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -75,6 +86,7 @@ export default function SignupPage() {
             description: "You have been successfully signed up with Google.",
         });
         router.push('/');
+        router.refresh();
     } catch (error: any) {
         toast({
             variant: "destructive",
@@ -98,7 +110,7 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignup} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSignup)} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <div className="relative">
@@ -108,10 +120,10 @@ export default function SignupPage() {
                   placeholder="Jina Lako"
                   required
                   className="pl-10"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  {...form.register("name")}
                 />
               </div>
+              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -123,10 +135,10 @@ export default function SignupPage() {
                   placeholder="you@example.com"
                   required
                   className="pl-10"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...form.register("email")}
                 />
               </div>
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -137,13 +149,13 @@ export default function SignupPage() {
                   type="password"
                   required
                   className="pl-10"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...form.register("password")}
                 />
               </div>
+              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
              <div className="flex items-center space-x-2">
-              <Checkbox id="terms" checked={termsAccepted} onCheckedChange={(checked) => setTermsAccepted(checked as boolean)} />
+              <Checkbox id="terms" {...form.register("terms")} />
               <label
                 htmlFor="terms"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -151,9 +163,9 @@ export default function SignupPage() {
                 I agree to the <Link href="#" className="text-primary hover:underline">terms and conditions</Link>
               </label>
             </div>
-             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full font-bold text-base bg-accent hover:bg-accent/90" size="lg" disabled={isLoading || isGoogleLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {errors.terms && <p className="text-sm text-destructive">{errors.terms.message}</p>}
+            <Button type="submit" className="w-full font-bold text-base bg-accent hover:bg-accent/90" size="lg" disabled={isSubmitting || isGoogleLoading}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign Up
             </Button>
           </form>
@@ -166,7 +178,7 @@ export default function SignupPage() {
             </div>
           </div>
            <div className="grid grid-cols-1 gap-4">
-            <Button variant="outline" onClick={handleGoogleSignup} disabled={isGoogleLoading || isLoading}>
+            <Button variant="outline" onClick={handleGoogleSignup} disabled={isGoogleLoading || isSubmitting}>
                 {isGoogleLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Google
             </Button>
