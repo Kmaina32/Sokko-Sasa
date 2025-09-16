@@ -29,6 +29,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createListing } from "@/lib/firestore";
+import { useRouter } from "next/navigation";
+
 
 const listingSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters long."),
@@ -39,15 +42,21 @@ const listingSchema = z.object({
   ),
   location: z.string().min(3, "Location is required."),
   description: z.string().min(20, "Description must be at least 20 characters long."),
+  imageUrl: z.string().url("A valid image URL is required.").optional(),
 });
 
 type ListingFormValues = z.infer<typeof listingSchema>;
 
-export function CreateListingForm() {
+export function CreateListingForm({ userId }: { userId: string}) {
   const { toast } = useToast();
+  const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [description, setDescription] = useState("");
   const [aiKeywords, setAiKeywords] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
   const [aiImage, setAiImage] = useState<File | null>(null);
   const [aiImagePreview, setAiImagePreview] = useState<string | null>(null);
 
@@ -61,6 +70,27 @@ export function CreateListingForm() {
       description: "",
     },
   });
+  
+  const onSubmit = async (values: ListingFormValues) => {
+    setIsSubmitting(true);
+    try {
+        const newListingId = await createListing(values, userId, imageFile);
+        toast({
+            title: "Success!",
+            description: "Your ad has been posted.",
+        });
+        router.push(`/listings/${newListingId}`);
+    } catch (error) {
+        console.error("Error creating listing:", error);
+        toast({
+            variant: "destructive",
+            title: "Submission Failed",
+            description: "There was an error posting your ad. Please try again.",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
+  }
 
   const handleGenerateFromText = async () => {
     if (!aiKeywords) {
@@ -141,9 +171,17 @@ export function CreateListingForm() {
       setAiImagePreview(URL.createObjectURL(file));
     }
   };
+  
+  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+    }
+  }
 
   return (
-    <form onSubmit={form.handleSubmit(() => {})} className="space-y-8">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       <Card>
         <CardHeader>
           <CardTitle>Listing Details</CardTitle>
@@ -183,6 +221,21 @@ export function CreateListingForm() {
                {form.formState.errors.location && <p className="text-sm text-destructive">{form.formState.errors.location.message}</p>}
             </div>
           </div>
+            <div className="space-y-2">
+                <Label htmlFor="main-image">Main Image</Label>
+                <div className="flex items-center gap-4">
+                    <div className="w-full">
+                        <label htmlFor="main-image-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted hover:bg-muted/80">
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
+                                <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> main image</p>
+                            </div>
+                            <Input id="main-image-upload" type="file" className="hidden" accept="image/*" onChange={handleMainImageChange} />
+                        </label>
+                    </div>
+                    {imagePreview && <img src={imagePreview} alt="Main image preview" className="w-32 h-32 object-cover rounded-lg" />}
+                </div>
+            </div>
         </CardContent>
       </Card>
 
@@ -223,7 +276,7 @@ export function CreateListingForm() {
                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                  <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
                                  <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                 <p className="text-xs text-muted-foreground">PNG, JPG or WEBP (MAX. 800x400px)</p>
+                                 <p className="text-xs text-muted-foreground">PNG, JPG or WEBP</p>
                              </div>
                              <Input id="ai-image-upload" type="file" className="hidden" accept="image/*" onChange={handleImageFileChange} />
                          </label>
@@ -263,8 +316,11 @@ export function CreateListingForm() {
       </Card>
 
       <div className="flex justify-end gap-2">
-        <Button variant="outline" type="button">Save as Draft</Button>
-        <Button type="submit" className="bg-primary hover:bg-primary/90">Post Ad</Button>
+        <Button variant="outline" type="button" disabled={isSubmitting}>Save as Draft</Button>
+        <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+            Post Ad
+        </Button>
       </div>
     </form>
   );

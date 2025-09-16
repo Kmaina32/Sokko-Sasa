@@ -21,6 +21,10 @@ export interface User {
   id: string;
   name: string;
   avatarUrl: string;
+  location?: string;
+  memberSince?: string;
+  rating?: number;
+  reviews?: number;
 }
 
 export interface Message {

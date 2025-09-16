@@ -7,7 +7,15 @@ import {
   setDoc,
   query,
   limit as firestoreLimit,
+  addDoc,
+  where,
+  onSnapshot,
+  updateDoc,
+  increment,
+  deleteDoc,
+  serverTimestamp
 } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
@@ -61,16 +69,36 @@ const seedDatabase = async () => {
       },
     ];
 
-     await Promise.all(mockListings.map(listing => {
+     const seedPromises = mockListings.map(async (listingData) => {
         const docRef = doc(collection(db, 'listings'));
-        return setDoc(docRef, { ...listing, id: docRef.id });
-     }));
+        await setDoc(docRef, { ...listingData, id: docRef.id, createdAt: serverTimestamp() });
+     });
+
+     const mockUsers = [
+         { id: 'seller1', name: 'Artisan Co.', avatarUrl: 'https://picsum.photos/seed/seller1/100/100', location: 'Nairobi, Kenya', memberSince: '2023-05-15', rating: 4.9, reviews: 213 },
+         { id: 'seller2', name: 'Coastal Weavers', avatarUrl: 'https://picsum.photos/seed/seller2/100/100', location: 'Mombasa, Kenya', memberSince: '2022-11-20', rating: 4.7, reviews: 154 },
+     ];
+     
+     const userPromises = mockUsers.map(user => {
+         const userRef = doc(db, "users", user.id);
+         return setDoc(userRef, {
+             uid: user.id,
+             displayName: user.name,
+             photoURL: user.avatarUrl,
+             location: user.location,
+             memberSince: user.memberSince,
+             rating: user.rating,
+             reviews: user.reviews,
+         }, { merge: true });
+     })
+
+     await Promise.all([...seedPromises, ...userPromises]);
     console.log("Database seeded.");
   }
 };
 
-// Call this once somewhere in your app's initialization
 seedDatabase();
+
 
 // USERS
 export const addUserData = async (user: FirebaseUser, additionalData: any) => {
@@ -80,6 +108,7 @@ export const addUserData = async (user: FirebaseUser, additionalData: any) => {
     email: user.email,
     displayName: additionalData.name,
     photoURL: user.photoURL,
+    memberSince: new Date().toISOString(),
     ...additionalData,
   }, { merge: true });
 };
@@ -93,6 +122,10 @@ export const getUserData = async (uid: string): Promise<User | null> => {
             id: userData.uid,
             name: userData.displayName,
             avatarUrl: userData.photoURL ?? `https://picsum.photos/seed/${userData.uid}/100/100`,
+            location: userData.location,
+            memberSince: userData.memberSince,
+            rating: userData.rating,
+            reviews: userData.reviews,
         }
     }
     return null;
@@ -100,9 +133,49 @@ export const getUserData = async (uid: string): Promise<User | null> => {
 
 
 // LISTINGS
-export const getListings = async (options: { limit?: number } = {}): Promise<Listing[]> => {
-  const listingsCollection = collection(db, "listings");
-  const q = options.limit ? query(listingsCollection, firestoreLimit(options.limit)) : query(listingsCollection);
+const uploadImage = async (file: File, path: string): Promise<string> => {
+    const storage = getStorage();
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+};
+
+export const createListing = async (listingData: Omit<Listing, 'id' | 'sellerId' | 'imageUrl' | 'imageHint'>, userId: string, imageFile: File | null): Promise<string> => {
+    const docRef = doc(collection(db, 'listings'));
+    
+    let imageUrl = 'https://picsum.photos/seed/placeholder/600/400';
+    if (imageFile) {
+        imageUrl = await uploadImage(imageFile, `listings/${docRef.id}/${imageFile.name}`);
+    }
+
+    await setDoc(docRef, {
+        ...listingData,
+        id: docRef.id,
+        sellerId: userId,
+        imageUrl: imageUrl,
+        imageHint: 'user-uploaded product',
+        createdAt: serverTimestamp(),
+    });
+
+    return docRef.id;
+};
+
+interface GetListingsOptions {
+  limit?: number;
+  sellerId?: string;
+}
+
+export const getListings = async (options: GetListingsOptions = {}): Promise<Listing[]> => {
+  let q = query(collection(db, "listings"));
+
+  if (options.sellerId) {
+    q = query(q, where("sellerId", "==", options.sellerId));
+  }
+  
+  if (options.limit) {
+    q = query(q, firestoreLimit(options.limit));
+  }
   
   const snapshot = await getDocs(q);
   if (snapshot.empty) {
@@ -136,3 +209,56 @@ export const getListingById = async (id: string): Promise<Listing | null> => {
     return null;
   }
 };
+
+
+// CART
+export const addToCart = async (userId: string, listingId: string) => {
+    const cartRef = collection(db, 'users', userId, 'cart');
+    const cartItemRef = doc(cartRef, listingId);
+    const cartItemSnap = await getDoc(cartItemRef);
+
+    if(cartItemSnap.exists()){
+        await updateDoc(cartItemRef, {
+            quantity: increment(1)
+        });
+    } else {
+        await setDoc(cartItemRef, {
+            listingId: listingId,
+            quantity: 1,
+            addedAt: serverTimestamp()
+        })
+    }
+};
+
+export const getCartItems = (userId: string, callback: (items: (Listing & {quantity: number})[]) => void) => {
+    const cartRef = collection(db, 'users', userId, 'cart');
+    
+    return onSnapshot(cartRef, async (snapshot) => {
+        if(snapshot.empty) {
+            callback([]);
+            return;
+        }
+
+        const items = await Promise.all(snapshot.docs.map(async (doc) => {
+            const { listingId, quantity } = doc.data();
+            const listing = await getListingById(listingId);
+            return { ...listing, quantity } as Listing & { quantity: number };
+        }));
+
+        callback(items.filter(item => item.id)); // Filter out any items where listing might be null
+    });
+}
+
+export const updateCartItemQuantity = async (userId: string, listingId: string, quantity: number) => {
+    if(quantity < 1) {
+        await removeCartItem(userId, listingId);
+        return;
+    }
+    const cartItemRef = doc(db, 'users', userId, 'cart', listingId);
+    await updateDoc(cartItemRef, { quantity });
+};
+
+export const removeCartItem = async (userId: string, listingId: string) => {
+    const cartItemRef = doc(db, 'users', userId, 'cart', listingId);
+    await deleteDoc(cartItemRef);
+}

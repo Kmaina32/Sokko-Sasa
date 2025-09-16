@@ -1,6 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, ShoppingCart } from "lucide-react";
+import { MapPin, ShoppingCart, Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -12,12 +14,20 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { Listing } from "@/lib/types";
 import { Button } from "./ui/button";
+import { useAuth } from "@/context/auth-context";
+import { addToCart } from "@/lib/firestore";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface ListingCardProps {
   listing: Listing;
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+
   const formatPrice = (price: number) => {
     if (price === 0) return "Free";
     return new Intl.NumberFormat("en-KE", {
@@ -26,6 +36,35 @@ export function ListingCard({ listing }: ListingCardProps) {
       minimumFractionDigits: 0,
     }).format(price);
   };
+  
+  const handleAddToCart = async () => {
+    if (!user) {
+        toast({
+            variant: "destructive",
+            title: "Please log in",
+            description: "You need to be logged in to add items to your cart.",
+        });
+        return;
+    }
+    
+    setIsAddingToCart(true);
+    try {
+        await addToCart(user.uid, listing.id);
+        toast({
+            title: "Added to Cart!",
+            description: `${listing.title} has been added to your cart.`,
+        });
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not add item to cart. Please try again.",
+        });
+        console.error("Error adding to cart: ", error);
+    } finally {
+        setIsAddingToCart(false);
+    }
+  }
 
   return (
     <Card className="flex h-full flex-col overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 group">
@@ -56,8 +95,12 @@ export function ListingCard({ listing }: ListingCardProps) {
           {formatPrice(listing.price)}
         </p>
         {listing.category === 'Product' && (
-            <Button variant="outline" size="icon">
-                <ShoppingCart className="h-5 w-5"/>
+            <Button variant="outline" size="icon" onClick={handleAddToCart} disabled={isAddingToCart}>
+                {isAddingToCart ? (
+                    <Loader2 className="h-5 w-5 animate-spin"/>
+                ) : (
+                    <ShoppingCart className="h-5 w-5"/>
+                )}
                 <span className="sr-only">Add to Cart</span>
             </Button>
         )}
