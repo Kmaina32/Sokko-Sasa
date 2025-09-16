@@ -22,7 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { addUserData } from "@/lib/firestore";
 
 export default function SignupPage() {
-  const { signup } = useAuth();
+  const { signup, loginWithGoogle } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   
@@ -31,6 +31,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -62,6 +63,26 @@ export default function SignupPage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setIsGoogleLoading(true);
+    try {
+        await loginWithGoogle();
+        toast({
+            title: "Account Created!",
+            description: "You have been successfully signed up with Google.",
+        });
+        router.push('/');
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Google Sign-up Failed",
+            description: "Could not sign up with Google. Please try again.",
+        });
+    } finally {
+        setIsGoogleLoading(false);
     }
   };
 
@@ -131,7 +152,7 @@ export default function SignupPage() {
               </label>
             </div>
              {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full font-bold text-base bg-accent hover:bg-accent/90" size="lg" disabled={isLoading}>
+            <Button type="submit" className="w-full font-bold text-base bg-accent hover:bg-accent/90" size="lg" disabled={isLoading || isGoogleLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign Up
             </Button>
@@ -144,12 +165,10 @@ export default function SignupPage() {
                 <span className="bg-background px-2 text-muted-foreground">Or sign up with</span>
             </div>
           </div>
-           <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline">
+           <div className="grid grid-cols-1 gap-4">
+            <Button variant="outline" onClick={handleGoogleSignup} disabled={isGoogleLoading || isLoading}>
+                {isGoogleLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Google
-            </Button>
-             <Button variant="outline">
-                Facebook
             </Button>
           </div>
         </CardContent>

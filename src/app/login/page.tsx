@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -19,12 +20,13 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -47,6 +49,26 @@ export default function LoginPage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    try {
+        await loginWithGoogle();
+        toast({
+            title: "Login Successful",
+            description: "Welcome back!",
+        });
+        router.push('/');
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Google Login Failed",
+            description: "Could not log in with Google. Please try again.",
+        });
+    } finally {
+        setIsGoogleLoading(false);
     }
   };
 
@@ -111,12 +133,10 @@ export default function LoginPage() {
                 <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
-           <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline">
+           <div className="grid grid-cols-1 gap-4">
+            <Button variant="outline" onClick={handleGoogleLogin} disabled={isGoogleLoading || isLoading}>
+                 {isGoogleLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Google
-            </Button>
-             <Button variant="outline">
-                Facebook
             </Button>
           </div>
         </CardContent>

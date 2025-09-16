@@ -1,15 +1,18 @@
+
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, User as FirebaseUser, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { getAuth, onAuthStateChanged, User as FirebaseUser, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, signInWithPopup, getAdditionalUserInfo, UserCredential } from 'firebase/auth';
+import { auth, googleProvider } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { addUserData } from '@/lib/firestore';
 
 interface AuthContextType {
   user: FirebaseUser | null;
   loading: boolean;
   signup: typeof createUserWithEmailAndPassword;
   login: typeof signInWithEmailAndPassword;
+  loginWithGoogle: () => Promise<UserCredential>;
   logout: () => Promise<void>;
 }
 
@@ -18,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signup: createUserWithEmailAndPassword,
   login: signInWithEmailAndPassword,
+  loginWithGoogle: () => signInWithPopup(auth, googleProvider),
   logout: async () => {},
 });
 
@@ -33,12 +37,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => unsubscribe();
   }, []);
+  
+  const loginWithGoogle = async () => {
+      const result = await signInWithPopup(auth, googleProvider);
+      const additionalInfo = getAdditionalUserInfo(result);
+      if (additionalInfo?.isNewUser) {
+        await addUserData(result.user, { name: result.user.displayName });
+      }
+      return result;
+  }
 
   const value = {
     user,
     loading,
     signup: (email, password) => createUserWithEmailAndPassword(auth, email, password),
     login: (email, password) => signInWithEmailAndPassword(auth, email, password),
+    loginWithGoogle,
     logout: () => signOut(auth),
   };
 
