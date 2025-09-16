@@ -26,7 +26,7 @@ export interface User {
   memberSince?: string;
   rating?: number;
   reviews?: number;
-  type?: 'Client' | 'Vendor' | 'Driver';
+  type?: 'Client' | 'Vendor' | 'Driver' | 'Admin';
   status?: 'Active' | 'Suspended';
 }
 
