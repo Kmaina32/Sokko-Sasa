@@ -4,7 +4,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
-import { getUserData } from '@/lib/firestore';
 import { Loader2 } from 'lucide-react';
 import type { User } from '@/lib/types';
 
@@ -28,9 +27,8 @@ export default function AdminLayout({
       return;
     }
 
-    const checkAdminStatus = async () => {
-      const userData = await getUserData(user.uid);
-      if (userData?.type === 'Admin') {
+    const checkAdminStatus = () => {
+      if (user.email === 'gmaina424@gamil.com') {
         setIsAdmin(true);
       } else {
         // Not an admin, redirect to home page or an 'unauthorized' page
