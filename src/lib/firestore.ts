@@ -410,7 +410,7 @@ export const clearCart = async (userId: string) => {
 
 // ADVERTISEMENTS
 export const createAdvertisement = async (adData: Omit<Advertisement, 'id' | 'imageUrl' | 'imageHint'>, imageFile: File): Promise<string> => {
-    const docRef = await addDoc(collection(db, 'advertisements'), {});
+    const docRef = doc(collection(db, 'advertisements'));
     
     const imageUrl = await uploadImage(imageFile, `advertisements/${docRef.id}/${imageFile.name}`);
 
