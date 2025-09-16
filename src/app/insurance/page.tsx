@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -7,8 +11,29 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, Heart, Car, Home, Plane } from "lucide-react";
+import { Shield, Heart, Car, Home, Plane, Loader2 } from "lucide-react";
 import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 const insuranceTypes = [
   { name: "Health Insurance", icon: Heart, description: "Comprehensive medical coverage for you and your family.", imageHint: "family smiling" },
@@ -16,6 +41,77 @@ const insuranceTypes = [
   { name: "Home Insurance", icon: Home, description: "Secure your home and belongings from unforeseen events.", imageHint: "suburban house" },
   { name: "Travel Insurance", icon: Plane, description: "Travel with peace of mind, wherever you go.", imageHint: "airplane window" },
 ];
+
+function GetQuoteDialog({ insuranceType }: { insuranceType: string }) {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast({
+        title: "Request Received!",
+        description: "We've received your quote request and will contact you shortly.",
+      });
+      document.getElementById(`close-dialog-${insuranceType.replace(/\s/g, "")}`)?.click();
+    }, 1500);
+  };
+  
+  return (
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Get a Quote</DialogTitle>
+          <DialogDescription>
+            Fill in your details to get a personalized quote for {insuranceType}.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4 py-4">
+             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="insurance-type" className="text-right">
+                Insurance
+              </Label>
+               <Select defaultValue={insuranceType}>
+                <SelectTrigger id="insurance-type" className="col-span-3">
+                  <SelectValue placeholder="Select insurance type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {insuranceTypes.map(it => (
+                    <SelectItem key={it.name} value={it.name}>{it.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input id="name" placeholder="John Doe" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input id="email" type="email" placeholder="john@example.com" className="col-span-3" />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+                <Button id={`close-dialog-${insuranceType.replace(/\s/g, "")}`} type="button" variant="secondary">Cancel</Button>
+            </DialogClose>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Request Quote
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+  )
+}
+
 
 export default function InsurancePage() {
     return (
@@ -40,7 +136,12 @@ export default function InsurancePage() {
                                 <p className="text-muted-foreground">{insurance.description}</p>
                             </CardContent>
                             <CardFooter>
-                                <Button className="w-full">Get a Quote</Button>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button className="w-full">Get a Quote</Button>
+                                    </DialogTrigger>
+                                    <GetQuoteDialog insuranceType={insurance.name}/>
+                                </Dialog>
                             </CardFooter>
                         </Card>
                     ))}
