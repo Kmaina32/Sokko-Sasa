@@ -77,7 +77,7 @@ export default async function RealEstatePage() {
       </Card>
       
       {properties.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {properties.map((prop) => (
             <Card
               key={prop.id}
@@ -102,15 +102,16 @@ export default async function RealEstatePage() {
               <div className="md:w-3/5 flex flex-col">
                 <CardHeader>
                   <CardTitle className="group-hover:text-primary">
-                    {prop.title}
+                    <Link href={`/real-estate/${prop.id}`}>{prop.title}</Link>
                   </CardTitle>
-                  <CardDescription>
-                    <p className="text-xl font-bold text-primary mt-1">
-                      {formatPrice(prop.price, prop.type)}
-                    </p>
+                  <CardDescription className="flex items-center gap-1.5">
+                     <MapPin className="w-4 h-4"/> {prop.location}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1">
+                    <p className="text-xl font-bold text-primary mb-4">
+                      {formatPrice(prop.price, prop.type)}
+                    </p>
                   <div className="flex items-center gap-6 text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Bed className="w-5 h-5" />

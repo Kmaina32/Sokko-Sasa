@@ -109,6 +109,25 @@ export const mockEvents = [
               avatar: 'https://picsum.photos/seed/agent1/100/100',
           },
           amenities: { beds: 2, baths: 2, parking: 1 }
+      },
+      're2': {
+          id: 're2',
+          title: '4 Bedroom Townhouse for Sale in Runda',
+          description: `A magnificent 4-bedroom townhouse in the serene and secure neighborhood of Runda. This family home sits on a half-acre lot with a mature garden. It features a large living room with a fireplace, a separate dining area, a modern kitchen, and spacious en-suite bedrooms.`,
+          price: 65000000,
+          type: 'Sale',
+          location: 'Runda, Nairobi',
+          images: [
+              placeholderImages.property2.imageUrl,
+              "https://picsum.photos/seed/re2-2/800/600",
+              "https://picsum.photos/seed/re2-3/800/600",
+          ],
+          agent: {
+              id: 'agent1',
+              name: 'Property Masters',
+              avatar: 'https://picsum.photos/seed/agent1/100/100',
+          },
+          amenities: { beds: 4, baths: 4, parking: 4 }
       }
   };
   

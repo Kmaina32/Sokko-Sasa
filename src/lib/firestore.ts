@@ -83,7 +83,7 @@ const seedDatabase = async () => {
     const mockUsers = [
          { id: 'seller1', name: 'Artisan Co.', email: 'artisan.co@example.com', avatarUrl: 'https://picsum.photos/seed/seller1/100/100', location: 'Nairobi, Kenya', memberSince: '2023-05-15', rating: 4.9, reviews: 213, type: 'Vendor', status: 'Active' },
          { id: 'seller2', name: 'Coastal Weavers', email: 'coastal.weavers@example.com', avatarUrl: 'https://picsum.photos/seed/seller2/100/100', location: 'Mombasa, Kenya', memberSince: '2022-11-20', rating: 4.7, reviews: 154, type: 'Vendor', status: 'Active' },
-         { id: 'agent1', name: 'Property Masters', email: 'prop@masters.com', avatarUrl: 'https://picsum.photos/seed/agent1/100/100', location: 'Nairobi', memberSince: '2021-01-01', type: 'Vendor', status: 'Active' },
+         { id: 'agent1', name: 'Property Masters', email: 'prop@masters.com', avatarUrl: 'https://picsum.photos/seed/agent1/100/100', location: 'Nairobi', memberSince: '2021-01-01', rating: 4.8, reviews: 89, type: 'Vendor', status: 'Active' },
      ];
      const userPromises = mockUsers.map(user => {
          const userRef = doc(db, "users", user.id);
@@ -475,12 +475,21 @@ export const getPropertyById = async (id: string): Promise<any | null> => {
     const docRef = doc(db, "properties", id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return null;
+    
     const data = docSnap.data();
     let agent;
     if (data.agent?.id) {
         agent = await getUserData(data.agent.id);
     }
-    return { ...data, id: docSnap.id, agent: agent ?? data.agent };
+    
+    const propertyData = { ...data, id: docSnap.id };
+    
+    // Ensure the agent object is fully populated, even if fetched separately
+    if(agent) {
+        propertyData.agent = { ...data.agent, ...agent };
+    }
+
+    return propertyData;
 };
 
 

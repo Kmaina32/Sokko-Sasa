@@ -94,13 +94,13 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                     </p>
                     <div className="flex items-center gap-6 text-muted-foreground mt-4 border-t pt-4">
                         <div className="flex items-center gap-2">
-                            <Bed className="w-5 h-5" /><span className="font-medium">{property.amenities.beds}</span>
+                            <Bed className="w-5 h-5" /><span className="font-medium">{property.amenities.beds} Beds</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Bath className="w-5 h-5" /><span className="font-medium">{property.amenities.baths}</span>
+                            <Bath className="w-5 h-5" /><span className="font-medium">{property.amenities.baths} Baths</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Car className="w-5 h-5" /><span className="font-medium">{property.amenities.parking}</span>
+                            <Car className="w-5 h-5" /><span className="font-medium">{property.amenities.parking} Parking</span>
                         </div>
                     </div>
                 </CardContent>
