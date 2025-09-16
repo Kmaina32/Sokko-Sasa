@@ -58,7 +58,7 @@ export default function InsurancePage() {
                             </ul>
                         </div>
                         <div className="relative h-64 md:h-full">
-                            <Image src="https://picsum.photos/seed/insure-hero/800/600" alt="Family enjoying life" layout="fill" objectFit="cover" data-ai-hint="happy family outdoors"/>
+                            <Image src="https://picsum.photos/seed/insure-hero/800/600" alt="Family enjoying life" fill objectFit="cover" data-ai-hint="happy family outdoors"/>
                         </div>
                    </div>
                 </Card>
