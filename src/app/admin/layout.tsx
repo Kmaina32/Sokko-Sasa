@@ -16,7 +16,6 @@ export default function AdminLayout({
         <AdminSidebar />
       </Sidebar>
       <SidebarInset>
-        {/* We can have a specific AdminHeader or reuse the AppHeader */}
         <AppHeader />
         <main className="flex-1">{children}</main>
       </SidebarInset>

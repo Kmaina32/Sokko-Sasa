@@ -28,15 +28,15 @@ import {
 import { usePathname } from 'next/navigation';
 
 const adminLinks = [
-    { href: "/admin#advertisements", label: "Ads", icon: Megaphone },
-    { href: "/admin#users", label: "Users", icon: Users },
-    { href: "/admin#products", label: "Products", icon: Package },
-    { href: "/admin#food", label: "Food Delivery", icon: Utensils },
-    { href: "/admin#events", label: "Events", icon: Calendar },
-    { href: "/admin#real_estate", label: "Real Estate", icon: Building },
-    { href: "/admin#jobs", label: "Jobs", icon: Briefcase },
-    { href: "/admin#services", label: "Services", icon: Wrench },
-    { href: "/admin#rides", label: "Rides", icon: Car },
+    { href: "/admin/advertisements", label: "Ads", icon: Megaphone },
+    { href: "/admin/users", label: "Users", icon: Users },
+    { href: "/admin/products", label: "Products", icon: Package },
+    { href: "/admin/food", label: "Food Delivery", icon: Utensils },
+    { href: "/admin/events", label: "Events", icon: Calendar },
+    { href: "/admin/real_estate", label: "Real Estate", icon: Building },
+    { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
+    { href: "/admin/services", label: "Services", icon: Wrench },
+    { href: "/admin/rides", label: "Rides", icon: Car },
 ];
 
 export function AdminSidebar() {
@@ -61,8 +61,7 @@ export function AdminSidebar() {
               <SidebarMenuItem key={link.href}>
                 <SidebarMenuButton
                   asChild
-                  // A bit of a hack to check active state for hash links
-                  isActive={pathname === '/admin' && (typeof window !== 'undefined' ? window.location.hash === link.href.split('#')[1] : false)}
+                  isActive={pathname === link.href}
                   className="[&[data-active=true]]:bg-orange-100 [&[data-active=true]]:text-orange-600 [&[data-active=true]]:font-semibold"
                   tooltip={link.label}
                 >
