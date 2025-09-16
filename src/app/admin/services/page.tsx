@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -14,20 +15,19 @@ import {
 import {
   Trash2,
   FilePenLine,
+  Wrench,
+  PlusCircle,
 } from "lucide-react";
+import Link from "next/link";
 
-const mockServices = [
-    { id: 'srv1', name: 'Quick Plumbers', category: 'Plumbing', rating: 4.8 },
-    { id: 'srv2', name: 'FixIt Appliance Repair', category: 'Appliance Repair', rating: 4.9 },
-    { id: 'srv3', 'name': 'AutoCare Mechanics', category: 'Mechanic', rating: 4.7 }
-];
+const mockServices: any[] = [];
 
 const CrudActions = () => (
     <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
             <FilePenLine className="h-4 w-4"/>
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" disabled>
             <Trash2 className="h-4 w-4"/>
         </Button>
     </div>
@@ -37,34 +37,56 @@ const CrudActions = () => (
 export default function ManageServicesPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-        <div className="mb-4">
-            <h1 className="font-headline text-4xl font-bold">Manage Services</h1>
-            <p className="text-muted-foreground">Oversee all service providers.</p>
+        <div className="flex justify-between items-center mb-4">
+            <div>
+                <h1 className="font-headline text-4xl font-bold">Manage Services</h1>
+                <p className="text-muted-foreground">Oversee all service providers.</p>
+            </div>
+            <Button asChild disabled>
+                <Link href="#">
+                    <PlusCircle className="mr-2 h-4 w-4"/>
+                    New Provider
+                </Link>
+            </Button>
         </div>
         <Card>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Provider Name</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Rating</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {mockServices.map((service) => (
-                            <TableRow key={service.id}>
-                                <TableCell className="font-medium">{service.name}</TableCell>
-                                <TableCell>{service.category}</TableCell>
-                                <TableCell>{service.rating} ★</TableCell>
-                                <TableCell>
-                                    <CrudActions />
-                                </TableCell>
+            <CardContent className="p-0">
+                {mockServices.length > 0 ? (
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Provider Name</TableHead>
+                                <TableHead>Category</TableHead>
+                                <TableHead>Rating</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {mockServices.map((service) => (
+                                <TableRow key={service.id}>
+                                    <TableCell className="font-medium">{service.name}</TableCell>
+                                    <TableCell>{service.category}</TableCell>
+                                    <TableCell>{service.rating} ★</TableCell>
+                                    <TableCell>
+                                        <CrudActions />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <div className="text-center p-12">
+                        <Wrench className="mx-auto h-12 w-12 text-muted-foreground" />
+                        <h3 className="mt-4 text-xl font-semibold">No Service Providers Found</h3>
+                        <p className="mt-2 text-muted-foreground">Click "New Provider" to add one.</p>
+                        <Button asChild className="mt-4" disabled>
+                            <Link href="#">
+                                <PlusCircle className="mr-2 h-4 w-4"/>
+                                New Provider
+                            </Link>
+                        </Button>
+                    </div>
+                )}
             </CardContent>
         </Card>
     </div>

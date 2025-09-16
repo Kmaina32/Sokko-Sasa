@@ -138,7 +138,7 @@ export default function ManageAdvertisementsPage() {
         </div>
 
         <Card>
-            <CardContent>
+            <CardContent className="p-0">
               {loading ? (
                 <div className="flex justify-center items-center p-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -182,6 +182,12 @@ export default function ManageAdvertisementsPage() {
                   <Megaphone className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-4 text-xl font-semibold">No Advertisements Found</h3>
                   <p className="mt-2 text-muted-foreground">Click "New Advertisement" to create a promotion.</p>
+                  <Button asChild className="mt-4">
+                    <Link href="/admin/advertisements/new">
+                        <PlusCircle className="mr-2 h-4 w-4"/>
+                        New Advertisement
+                    </Link>
+                  </Button>
                 </div>
               )}
             </CardContent>

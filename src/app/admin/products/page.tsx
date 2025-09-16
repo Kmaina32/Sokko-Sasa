@@ -125,7 +125,7 @@ export default function ManageProductsPage() {
             </Button>
         </div>
         <Card>
-            <CardContent>
+            <CardContent className="p-0">
               {loading ? (
                 <div className="flex justify-center items-center p-12">
                     <Loader2 className="h-8 w-8 animate-spin text-primary"/>
@@ -157,7 +157,13 @@ export default function ManageProductsPage() {
                 <div className="text-center p-12">
                   <Package className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-4 text-xl font-semibold">No Products Found</h3>
-                  <p className="mt-2 text-muted-foreground">Listings created by users will appear here.</p>
+                  <p className="mt-2 text-muted-foreground">Click "New Product" to add a listing.</p>
+                   <Button asChild className="mt-4">
+                        <Link href="/admin/products/new">
+                            <PlusCircle className="mr-2 h-4 w-4"/>
+                            New Product
+                        </Link>
+                    </Button>
                 </div>
               )}
             </CardContent>
