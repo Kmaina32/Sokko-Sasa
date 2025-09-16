@@ -3,43 +3,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Calendar, MapPin, Ticket, Minus, Plus, ArrowLeft } from 'lucide-react';
-import { placeholderImages } from '@/lib/placeholder-images';
 import Link from 'next/link';
-
-const mockEventsData: any = {
-  evt1: {
-    id: 'evt1',
-    name: 'Sauti Sol Live in Nairobi',
-    location: 'KICC, Nairobi',
-    date: '2024-10-26',
-    time: '7:00 PM - 11:00 PM',
-    description: "Join us for an unforgettable night of music with the legendary Sauti Sol. Get ready to dance to their greatest hits and new tracks from their latest album. This is a concert you don't want to miss!",
-    imageUrl: placeholderImages.event1.imageUrl,
-    imageHint: placeholderImages.event1.imageHint,
-    tickets: [
-      { id: 't1', type: 'Regular', price: 2500 },
-      { id: 't2', type: 'VIP', price: 6000 },
-    ],
-  },
-  evt2: {
-    id: 'evt2',
-    name: 'Kenya Tech Summit',
-    location: 'Sarit Centre Expo, Nairobi',
-    date: '2024-11-15',
-    time: '9:00 AM - 5:00 PM',
-    description: "The premier technology event in Kenya, bringing together innovators, entrepreneurs, and investors. Featuring keynote speakers, panel discussions, and networking opportunities.",
-    imageUrl: placeholderImages.event2.imageUrl,
-    imageHint: placeholderImages.event2.imageHint,
-    tickets: [
-      { id: 't3', type: 'Student Pass', price: 1000 },
-      { id: 't4', type: 'Standard Pass', price: 3500 },
-      { id: 't5', type: 'Exhibitor Pass', price: 15000 },
-    ],
-  },
-};
+import { mockEvents } from '@/lib/mock-data';
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-KE', {
@@ -50,7 +18,8 @@ const formatCurrency = (amount: number) => {
 };
 
 export default function EventDetailPage({ params }: { params: { id: string } }) {
-  const event = mockEventsData[params.id];
+  const event = mockEvents.find(e => e.id === params.id);
+  
   const [ticketQuantities, setTicketQuantities] = useState<{[key: string]: number}>(
     event?.tickets.reduce((acc: any, ticket: any) => ({ ...acc, [ticket.id]: 0 }), {}) || {}
   );
@@ -100,7 +69,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"/>
         </div>
 
-        <div className="container mx-auto -mt-32 relative px-4">
+        <div className="container mx-auto -mt-32 relative px-4 py-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
                     <Card className="bg-background/90 backdrop-blur-sm p-4 md:p-6">

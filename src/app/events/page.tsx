@@ -8,27 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Ticket } from "lucide-react";
-import { placeholderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
+import { mockEvents } from "@/lib/mock-data";
 
-const mockEvents = [
-    { 
-        id: 'evt1', 
-        name: 'Sauti Sol Live in Nairobi', 
-        location: 'KICC, Nairobi', 
-        date: '2024-10-26', 
-        imageUrl: placeholderImages.event1.imageUrl,
-        imageHint: placeholderImages.event1.imageHint,
-    },
-    { 
-        id: 'evt2', 
-        name: 'Kenya Tech Summit', 
-        location: 'Sarit Centre Expo', 
-        date: '2024-11-15',
-        imageUrl: placeholderImages.event2.imageUrl,
-        imageHint: placeholderImages.event2.imageHint,
-    },
-];
 
 export default function EventsPage() {
   return (
@@ -45,13 +27,12 @@ export default function EventsPage() {
           mockEvents.map((event) => (
             <Link href={`/events/${event.id}`} key={event.id} className="block group">
               <Card className="grid grid-cols-1 md:grid-cols-3 overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:border-primary">
-                <div className="md:col-span-1">
+                <div className="md:col-span-1 relative">
                     <Image
                         src={event.imageUrl}
                         alt={event.name}
-                        width={600}
-                        height={400}
-                        className="h-full w-full object-cover aspect-video md:aspect-auto"
+                        fill
+                        className="h-full w-full object-cover"
                         data-ai-hint={event.imageHint}
                     />
                 </div>
@@ -64,7 +45,7 @@ export default function EventsPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex-1">
-                        <p className="text-muted-foreground">Join us for an unforgettable night of music with the legendary Sauti Sol. Get ready to dance to their greatest hits and new tracks. This is a concert you don't want to miss!</p>
+                        <p className="text-muted-foreground line-clamp-3">{event.description}</p>
                     </CardContent>
                     <div className="p-6 pt-0">
                         <Button>
