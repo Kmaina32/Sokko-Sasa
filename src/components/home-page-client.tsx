@@ -75,7 +75,7 @@ export function HomePageClient({ featuredListings, activeAdvertisements }: HomeP
   return (
     <div className="flex-1">
       <section className="relative bg-muted/20">
-        <div className="container mx-auto px-4 py-16 md:py-24 text-center">
+        <div className="container mx-auto px-4 pt-16 pb-12 md:pt-24 md:pb-20 text-center">
             <div className="mb-4 bg-primary/10 backdrop-blur-sm p-3 rounded-full inline-block">
                 <Package className="h-10 w-10 text-primary"/>
             </div>
@@ -92,23 +92,44 @@ export function HomePageClient({ featuredListings, activeAdvertisements }: HomeP
                     <Button className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-24 text-base" size="lg">Search</Button>
                 </div>
             </div>
-        </div>
-      </section>
-
-      <section className="py-16">
-          <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-8">Explore Sokko Sasa</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+             <div className="mt-12">
+              <h2 className="text-lg font-bold text-center mb-6">Explore Sokko Sasa</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 max-w-3xl mx-auto">
                   {categories.map((cat) => (
                       <Link href={cat.href} key={cat.name} className="group text-center">
-                          <div className={`flex items-center justify-center h-24 w-24 rounded-full mx-auto mb-2 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg ${cat.bgColor}`}>
-                              <cat.icon className={`h-10 w-10 ${cat.textColor}`} />
+                          <div className={`flex items-center justify-center h-20 w-20 rounded-full mx-auto mb-2 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg ${cat.bgColor}`}>
+                              <cat.icon className={`h-8 w-8 ${cat.textColor}`} />
                           </div>
-                          <p className="font-semibold text-muted-foreground group-hover:text-primary">{cat.name}</p>
+                          <p className="font-semibold text-sm text-muted-foreground group-hover:text-primary">{cat.name}</p>
                       </Link>
                   ))}
               </div>
           </div>
+        </div>
+      </section>
+
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold">Featured Listings</h2>
+            <Button variant="outline" asChild>
+                <Link href="/shop">View All &rarr;</Link>
+            </Button>
+          </div>
+          {featuredListings.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {featuredListings.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+                ))}
+            </div>
+          ) : (
+            <Card className="text-center p-12">
+              <Package className="mx-auto h-12 w-12 text-muted-foreground"/>
+              <h3 className="mt-4 text-xl font-semibold">No Featured Listings</h3>
+              <p className="mt-2 text-muted-foreground">Check back later to see what's new and trending.</p>
+            </Card>
+          )}
+        </div>
       </section>
 
       <section className="bg-muted/30 py-16">
@@ -145,30 +166,6 @@ export function HomePageClient({ featuredListings, activeAdvertisements }: HomeP
               <Megaphone className="mx-auto h-12 w-12 text-muted-foreground"/>
               <h3 className="mt-4 text-xl font-semibold">No Promotions Currently</h3>
               <p className="mt-2 text-muted-foreground">Check back soon for exciting deals and announcements.</p>
-            </Card>
-          )}
-        </div>
-      </section>
-      
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold">Featured Listings</h2>
-            <Button variant="outline" asChild>
-                <Link href="/shop">View All &rarr;</Link>
-            </Button>
-          </div>
-          {featuredListings.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredListings.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-                ))}
-            </div>
-          ) : (
-            <Card className="text-center p-12">
-              <Package className="mx-auto h-12 w-12 text-muted-foreground"/>
-              <h3 className="mt-4 text-xl font-semibold">No Featured Listings</h3>
-              <p className="mt-2 text-muted-foreground">Check back later to see what's new and trending.</p>
             </Card>
           )}
         </div>
