@@ -16,21 +16,90 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, XCircle, MoreVertical, User, List } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import {
+  Package,
+  Utensils,
+  Calendar,
+  Building,
+  Briefcase,
+  Wrench,
+  Car,
+  User,
+  MoreVertical,
+  Trash2,
+  FilePenLine,
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const mockListings = [
-    { id: 'L001', title: 'Hand-carved Wooden Elephant', seller: 'John Doe', status: 'Pending', category: 'Product' },
-    { id: 'L002', title: 'Graphic Design Services', seller: 'Jane Smith', status: 'Approved', category: 'Service' },
-    { id: 'L003', title: '2-Bedroom Apartment in Kilimani', seller: 'Realty Group', status: 'Rejected', category: 'Property' },
-    { id: 'L004', title: 'Sales Executive Position', seller: 'Corporate Inc.', status: 'Approved', category: 'Job' },
-];
-
+// Mock Data
 const mockUsers = [
-    { id: 'U001', name: 'John Doe', email: 'john@example.com', joined: '2023-10-26', status: 'Active' },
-    { id: 'U002', name: 'Jane Smith', email: 'jane@example.com', joined: '2023-09-15', status: 'Active' },
-    { id: 'U003', name: 'Realty Group', email: 'contact@realty.co.ke', joined: '2023-11-01', status: 'Suspended' },
-    { id: 'U004', name: 'Corporate Inc.', email: 'hr@corporate.com', joined: '2023-08-05', status: 'Active' },
+  { id: 'U001', name: 'John Doe', email: 'john@example.com', type: 'Client', status: 'Active', avatar: 'https://picsum.photos/seed/user1/100/100' },
+  { id: 'U002', name: 'Jane Smith', email: 'jane@example.com', type: 'Client', status: 'Active', avatar: 'https://picsum.photos/seed/user2/100/100' },
+  { id: 'U003', name: 'Kamau Plumbers', email: 'contact@kamau.co.ke', type: 'Vendor', status: 'Suspended', avatar: 'https://picsum.photos/seed/provider1/100/100' },
+  { id: 'U004', name: 'Peter Kariuki', email: 'pete@drivers.com', type: 'Driver', status: 'Active', avatar: 'https://picsum.photos/seed/driver1/100/100' },
 ];
+
+const mockProducts = [
+    { id: 'P001', name: 'Wooden Elephant', seller: 'Artisans Collective', price: 3500, active: true },
+    { id: 'P002', name: 'Sisal Kiondo Basket', seller: 'Mombasa Weavers', price: 1200, active: true },
+    { id: 'P003', name: 'Leather Jacket', seller: 'Nakuru Leathers', price: 4500, active: false },
+];
+
+const mockRestaurants = [
+    { id: 'R001', name: 'Java House', location: 'Nairobi', cuisine: 'Cafe', active: true },
+    { id: 'R002', name: 'Artcaffe', location: 'Nairobi', cuisine: 'Bakery', active: true },
+    { id: 'R003', name: 'Mama Oliech', location: 'Nairobi', cuisine: 'Fish', active: false },
+];
+
+const mockEvents = [
+    { id: 'E001', name: 'Safaricom Jazz Festival', location: 'Nairobi', date: '2025-02-23', active: true },
+    { id: 'E002', name: 'Hakuna Matata Festival', location: 'Naivasha', date: '2025-04-12', active: true },
+];
+
+const mockProperties = [
+    { id: 'PR001', name: 'Modern Apartment in Kilimani', type: 'Rent', price: '85,000/mo', active: true },
+    { id: 'PR002', name: 'Spacious Villa in Karen', type: 'Sale', price: '45,000,000', active: false },
+];
+
+const mockJobs = [
+    { id: 'J001', title: 'Senior Frontend Developer', company: 'Tech Solutions Ltd.', type: 'Full-time', active: true },
+    { id: 'J002', title: 'Marketing Manager', company: 'Creative Agency Inc.', type: 'Full-time', active: true },
+];
+
+const mockServices = [
+    { id: 'S001', name: 'Kamau Plumbers', category: 'Plumbing', rating: 4.8, active: true },
+    { id: 'S002', name: 'FixIt Appliance Masters', category: 'Appliance Repair', rating: 4.7, active: false },
+];
+
+const mockDrivers = [
+    { id: 'D001', name: 'Peter Kariuki', vehicle: 'Toyota Vitz KDA 123B', rating: 4.9, active: true },
+    { id: 'D002', name: 'Aisha Omar', vehicle: 'Suzuki Swift KDB 456C', rating: 4.7, active: true },
+];
+
+const AdminSection = ({ title, description, children }: { title: string, description: string, children: React.ReactNode}) => (
+    <Card>
+        <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+            {children}
+        </CardContent>
+    </Card>
+);
+
+const CrudActions = () => (
+    <div className="flex gap-2 justify-end">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+            <FilePenLine className="h-4 w-4"/>
+        </Button>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+            <Trash2 className="h-4 w-4"/>
+        </Button>
+    </div>
+);
+
 
 export default function AdminPage() {
   return (
@@ -39,94 +108,45 @@ export default function AdminPage() {
         <h1 className="font-headline text-4xl font-bold">Admin Dashboard</h1>
         <p className="text-muted-foreground">Manage your marketplace with ease.</p>
       </div>
-      <Tabs defaultValue="listings">
-        <TabsList className="mb-4">
-          <TabsTrigger value="listings"><List className="mr-2 h-4 w-4" /> Manage Listings</TabsTrigger>
-          <TabsTrigger value="users"><User className="mr-2 h-4 w-4" /> Manage Users</TabsTrigger>
+      <Tabs defaultValue="users" orientation="vertical">
+        <TabsList className="h-auto min-w-[200px] flex-col items-start justify-start p-2 gap-1 bg-muted/50 mr-6">
+          <TabsTrigger value="users" className="w-full justify-start gap-2"><User /> Users</TabsTrigger>
+          <TabsTrigger value="products" className="w-full justify-start gap-2"><Package /> Products</TabsTrigger>
+          <TabsTrigger value="food" className="w-full justify-start gap-2"><Utensils /> Food Delivery</TabsTrigger>
+          <TabsTrigger value="events" className="w-full justify-start gap-2"><Calendar /> Events</TabsTrigger>
+          <TabsTrigger value="real_estate" className="w-full justify-start gap-2"><Building /> Real Estate</TabsTrigger>
+          <TabsTrigger value="jobs" className="w-full justify-start gap-2"><Briefcase /> Jobs</TabsTrigger>
+          <TabsTrigger value="services" className="w-full justify-start gap-2"><Wrench /> Services</TabsTrigger>
+          <TabsTrigger value="rides" className="w-full justify-start gap-2"><Car /> Rides</TabsTrigger>
         </TabsList>
-        <TabsContent value="listings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Approve Listings</CardTitle>
-              <CardDescription>
-                Review and manage all submitted listings.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Seller</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockListings.map((listing) => (
-                    <TableRow key={listing.id}>
-                      <TableCell className="font-medium">{listing.title}</TableCell>
-                      <TableCell>{listing.seller}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{listing.category}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            listing.status === "Approved"
-                              ? "default"
-                              : listing.status === "Pending"
-                              ? "outline"
-                              : "destructive"
-                          }
-                          className={listing.status === 'Approved' ? 'bg-green-500/20 text-green-700 border-green-500/30' : ''}
-                        >
-                          {listing.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {listing.status === 'Pending' && (
-                            <div className="flex gap-2 justify-end">
-                                <Button variant="ghost" size="icon" className="text-green-600 hover:text-green-600 hover:bg-green-100">
-                                    <CheckCircle className="h-4 w-4"/>
-                                </Button>
-                                <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-600 hover:bg-red-100">
-                                    <XCircle className="h-4 w-4"/>
-                                </Button>
-                            </div>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        
         <TabsContent value="users">
-          <Card>
-            <CardHeader>
-              <CardTitle>Manage Users</CardTitle>
-              <CardDescription>View and manage all registered users.</CardDescription>
-            </CardHeader>
-            <CardContent>
+            <AdminSection title="Manage Users" description="Oversee all clients, vendors, and drivers on the platform.">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
+                    <TableHead>User</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Joined Date</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Kill Switch</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {mockUsers.map((user) => (
                     <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.name}</TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8">
+                                <AvatarImage src={user.avatar} alt={user.name}/>
+                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <span>{user.name}</span>
+                        </div>
+                      </TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.joined}</TableCell>
+                      <TableCell><Badge variant="secondary">{user.type}</Badge></TableCell>
                       <TableCell>
                         <Badge
                           variant={user.status === 'Active' ? 'default' : 'destructive'}
@@ -135,18 +155,204 @@ export default function AdminPage() {
                           {user.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
-                         <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4"/>
-                         </Button>
-                      </TableCell>
+                      <TableCell><Switch defaultChecked={user.status === 'Active'} /></TableCell>
+                      <TableCell className="text-right"><CrudActions /></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
+            </AdminSection>
         </TabsContent>
+
+        <TabsContent value="products">
+            <AdminSection title="Manage Products" description="Monitor and manage all product listings.">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product Name</TableHead>
+                    <TableHead>Seller</TableHead>
+                    <TableHead>Price (KSh)</TableHead>
+                    <TableHead>Kill Switch</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockProducts.map((item) => (
+                    <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.seller}</TableCell>
+                        <TableCell>{item.price.toLocaleString()}</TableCell>
+                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                        <TableCell className="text-right"><CrudActions /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </AdminSection>
+        </TabsContent>
+
+        <TabsContent value="food">
+            <AdminSection title="Manage Restaurants" description="Add, edit, or disable restaurants in the food delivery section.">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Restaurant Name</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Cuisine</TableHead>
+                    <TableHead>Kill Switch</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockRestaurants.map((item) => (
+                    <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.location}</TableCell>
+                        <TableCell>{item.cuisine}</TableCell>
+                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                        <TableCell className="text-right"><CrudActions /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </AdminSection>
+        </TabsContent>
+        
+        <TabsContent value="events">
+            <AdminSection title="Manage Events" description="Control all event listings on the platform.">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Event Name</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Kill Switch</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockEvents.map((item) => (
+                    <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.location}</TableCell>
+                        <TableCell>{item.date}</TableCell>
+                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                        <TableCell className="text-right"><CrudActions /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </AdminSection>
+        </TabsContent>
+
+        <TabsContent value="real_estate">
+            <AdminSection title="Manage Real Estate" description="Oversee property sales and rental listings.">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Property Title</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Price (KSh)</TableHead>
+                    <TableHead>Kill Switch</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockProperties.map((item) => (
+                    <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.type}</TableCell>
+                        <TableCell>{item.price}</TableCell>
+                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                        <TableCell className="text-right"><CrudActions /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </AdminSection>
+        </TabsContent>
+
+        <TabsContent value="jobs">
+            <AdminSection title="Manage Jobs" description="Review and control all job postings.">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Job Title</TableHead>
+                    <TableHead>Company</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Kill Switch</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockJobs.map((item) => (
+                    <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.title}</TableCell>
+                        <TableCell>{item.company}</TableCell>
+                        <TableCell>{item.type}</TableCell>
+                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                        <TableCell className="text-right"><CrudActions /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </AdminSection>
+        </TabsContent>
+
+        <TabsContent value="services">
+            <AdminSection title="Manage Service Providers" description="Control the directory of service professionals.">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Provider Name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Rating</TableHead>
+                    <TableHead>Kill Switch</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockServices.map((item) => (
+                    <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.category}</TableCell>
+                        <TableCell>{item.rating} ★</TableCell>
+                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                        <TableCell className="text-right"><CrudActions /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </AdminSection>
+        </TabsContent>
+
+        <TabsContent value="rides">
+            <AdminSection title="Manage Drivers" description="Monitor drivers for the ride-hailing service.">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Driver Name</TableHead>
+                    <TableHead>Vehicle</TableHead>
+                    <TableHead>Rating</TableHead>
+                    <TableHead>Kill Switch</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockDrivers.map((item) => (
+                    <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.vehicle}</TableCell>
+                        <TableCell>{item.rating} ★</TableCell>
+                        <TableCell><Switch defaultChecked={item.active} /></TableCell>
+                        <TableCell className="text-right"><CrudActions /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </AdminSection>
+        </TabsContent>
+
       </Tabs>
     </div>
   );
