@@ -10,9 +10,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Trash2, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingCart, ArrowLeft } from "lucide-react";
+import { placeholderImages } from "@/lib/placeholder-images";
+import Link from "next/link";
 
-const cartItems: any[] = [];
+
+const cartItems = [
+    {
+        id: 'prod1',
+        name: 'Hand-carved Wooden Elephant',
+        price: 2500,
+        quantity: 1,
+        imageUrl: placeholderImages.product1.imageUrl,
+        imageHint: placeholderImages.product1.imageHint,
+    },
+    {
+        id: 'prod2',
+        name: 'Sisal Kiondo Basket',
+        price: 1200,
+        quantity: 2,
+        imageUrl: placeholderImages.product2.imageUrl,
+        imageHint: placeholderImages.product2.imageHint,
+    }
+];
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -71,7 +91,12 @@ export default function CartPage() {
                             <ShoppingCart className="w-16 h-16 text-muted-foreground mb-4" />
                             <h3 className="text-xl font-semibold">Your cart is empty</h3>
                             <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
-                            <Button className="mt-6">Continue Shopping</Button>
+                             <Button asChild className="mt-6">
+                                <Link href="/shop">
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    Continue Shopping
+                                </Link>
+                            </Button>
                         </div>
                     )}
                 </CardContent>

@@ -8,10 +8,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Briefcase } from "lucide-react";
+import { Search, MapPin, Briefcase, Bookmark } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { placeholderImages } from "@/lib/placeholder-images";
+import Image from "next/image";
 
 const mockJobs = [
     { 
@@ -21,6 +22,7 @@ const mockJobs = [
         type: 'Full-time', 
         location: 'Nairobi, Kenya',
         logoUrl: placeholderImages.job1.imageUrl,
+        imageHint: placeholderImages.job1.imageHint,
     },
     { 
         id: 'job2', 
@@ -29,6 +31,7 @@ const mockJobs = [
         type: 'Contract',
         location: 'Mombasa, Kenya',
         logoUrl: placeholderImages.job2.imageUrl,
+        imageHint: placeholderImages.job2.imageHint,
     },
 ];
 
@@ -71,7 +74,7 @@ export default function JobsPage() {
                   mockJobs.map(job => (
                       <Card key={job.id} className="transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary">
                           <CardHeader className="flex flex-row items-start gap-4">
-                              <img src={job.logoUrl} alt={`${job.company} logo`} className="w-16 h-16 rounded-md"/>
+                              <Image src={job.logoUrl} alt={`${job.company} logo`} width={64} height={64} className="w-16 h-16 rounded-md border" data-ai-hint={job.imageHint}/>
                               <div className="flex-1">
                                   <CardTitle>{job.title}</CardTitle>
                                   <CardDescription className="text-base">{job.company}</CardDescription>
@@ -85,8 +88,11 @@ export default function JobsPage() {
                                   <p className="text-sm text-muted-foreground mt-2">2d ago</p>
                               </div>
                           </CardHeader>
-                          <CardFooter>
-                              <Button variant="outline" className="mr-2">Save Job</Button>
+                          <CardFooter className="justify-end gap-2">
+                              <Button variant="outline">
+                                  <Bookmark className="mr-2 h-4 w-4"/>
+                                  Save Job
+                              </Button>
                               <Button>Apply Now</Button>
                           </CardFooter>
                       </Card>
