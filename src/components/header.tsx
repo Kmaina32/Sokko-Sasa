@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Bell, Menu, LogOut, User as UserIcon } from "lucide-react";
+import { ShoppingCart, Bell, LogOut, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -14,24 +15,34 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useCart } from "@/hooks/use-cart";
+import { SokkoSasaLogo } from "./icons";
 
 export function AppHeader() {
   const { user, logout } = useAuth();
+  const { cartItems } = useCart();
+  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-4">
-           <SidebarTrigger className="md:hidden"/>
-           <div className="hidden md:block">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
-           </div>
+        <div className="flex items-center gap-2 md:gap-4">
+           <SidebarTrigger />
+           <Link href="/" className="flex items-center gap-2">
+             <SokkoSasaLogo className="h-8 w-8 text-primary" />
+             <h1 className="hidden sm:block font-bold text-lg">Sokko Sasa</h1>
+           </Link>
         </div>
 
         <div className="flex flex-1 justify-end items-center gap-2">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/cart">
+            <Link href="/cart" className="relative">
               <ShoppingCart className="h-6 w-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                  {itemCount}
+                </span>
+              )}
               <span className="sr-only">Cart</span>
             </Link>
           </Button>
