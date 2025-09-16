@@ -2,7 +2,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Wrench, Tv, Hammer, Droplets, Car } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { placeholderImages } from "@/lib/placeholder-images";
+import { getServices } from "@/lib/firestore";
 
 const serviceCategories = [
   { name: "Plumbing", icon: Droplets, hint: "plumbing tools" },
@@ -19,26 +18,10 @@ const serviceCategories = [
   { name: "Handyman", icon: Hammer, hint: "toolbox" },
 ];
 
-const mockProviders = [
-    { 
-        id: 'srv1', 
-        name: 'Quick Plumbers', 
-        service: 'Plumbing', 
-        rating: 4.8, 
-        imageUrl: placeholderImages.service1.imageUrl,
-        imageHint: placeholderImages.service1.imageHint,
-    },
-    { 
-        id: 'srv2', 
-        name: 'FixIt Appliance Repair', 
-        service: 'Appliance Repair', 
-        rating: 4.9,
-        imageUrl: placeholderImages.service2.imageUrl,
-        imageHint: placeholderImages.service2.imageHint,
-    },
-];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const providers = await getServices();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
@@ -70,9 +53,9 @@ export default function ServicesPage() {
 
       <div>
         <h2 className="text-2xl font-bold tracking-tight mb-4">Top Rated Providers</h2>
-        {mockProviders.length > 0 ? (
+        {providers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mockProviders.map((provider) => (
+              {providers.map((provider) => (
                   <Card key={provider.id} className="text-center">
                       <CardContent className="p-6">
                           <Image src={provider.imageUrl} alt={provider.name} width={100} height={100} data-ai-hint={provider.imageHint} className="rounded-full mx-auto mb-4 border-4 border-muted"/>

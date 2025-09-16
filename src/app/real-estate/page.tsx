@@ -19,35 +19,21 @@ import {
 import { Search, MapPin, Bed, Bath, Car, Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { placeholderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
+import { getProperties } from "@/lib/firestore";
 
-const mockProperties = [
-    { 
-        id: 're1', 
-        title: '2BR Apartment, Kilimani', 
-        type: 'Rent', 
-        price: "80,000",
-        beds: 2,
-        baths: 2,
-        parking: 1,
-        imageUrl: placeholderImages.property1.imageUrl,
-        imageHint: placeholderImages.property1.imageHint,
-    },
-    { 
-        id: 're2', 
-        title: '4BR Townhouse, Runda', 
-        type: 'Sale', 
-        price: "45,000,000",
-        beds: 4,
-        baths: 5,
-        parking: 4,
-        imageUrl: placeholderImages.property2.imageUrl,
-        imageHint: placeholderImages.property2.imageHint,
-    },
-];
+const formatPrice = (price: number, type: string) => {
+    return `${new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price)} ${type === 'Rent' ? '/ mo' : ''}`;
+}
 
-export default function RealEstatePage() {
+export default async function RealEstatePage() {
+  const properties = await getProperties();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -90,21 +76,21 @@ export default function RealEstatePage() {
         </div>
       </Card>
       
-      {mockProperties.length > 0 ? (
+      {properties.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-          {mockProperties.map((prop) => (
+          {properties.map((prop) => (
             <Card
               key={prop.id}
               className="flex flex-col md:flex-row overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-xl"
             >
               <div className="md:w-2/5 relative">
                 <Image
-                  src={prop.imageUrl}
+                  src={prop.images?.[0]}
                   alt={prop.title}
                   width={600}
                   height={400}
                   className="h-full w-full object-cover"
-                  data-ai-hint={prop.imageHint}
+                  data-ai-hint="property image"
                 />
                 <Badge
                   className="absolute top-2 right-2"
@@ -120,7 +106,7 @@ export default function RealEstatePage() {
                   </CardTitle>
                   <CardDescription>
                     <p className="text-xl font-bold text-primary mt-1">
-                      KSh {prop.price} {prop.type === "Rent" && "/ mo"}
+                      {formatPrice(prop.price, prop.type)}
                     </p>
                   </CardDescription>
                 </CardHeader>
@@ -128,15 +114,15 @@ export default function RealEstatePage() {
                   <div className="flex items-center gap-6 text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Bed className="w-5 h-5" />
-                      <span className="font-medium">{prop.beds}</span>
+                      <span className="font-medium">{prop.amenities.beds}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Bath className="w-5 h-5" />
-                      <span className="font-medium">{prop.baths}</span>
+                      <span className="font-medium">{prop.amenities.baths}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Car className="w-5 h-5" />
-                      <span className="font-medium">{prop.parking}</span>
+                      <span className="font-medium">{prop.amenities.parking}</span>
                     </div>
                   </div>
                 </CardContent>

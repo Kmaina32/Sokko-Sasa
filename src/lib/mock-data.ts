@@ -132,3 +132,9 @@ export const mockEvents = [
           ]
       }
   };
+  
+  export const mockRestaurants = Object.values(mockRestaurantsData);
+  export const mockProperties = Object.values(mockPropertyData);
+  export const mockProviders = Object.values(mockProviderData);
+  export const mockJobs: any[] = []; // Empty for now
+  export const mockClinics: any[] = []; // Empty for now

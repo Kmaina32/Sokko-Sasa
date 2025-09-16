@@ -22,13 +22,14 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User, Advertisement } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
+import { mockEvents, mockRestaurantsData, mockPropertyData, mockProviderData } from './mock-data';
 
-// Seed data if the listings collection is empty
+// Seed data if the collections are empty
 const seedDatabase = async () => {
   const listingsCollection = collection(db, "listings");
-  const snapshot = await getDocs(query(listingsCollection, firestoreLimit(1)));
-  if (snapshot.empty) {
-    console.log("No listings found, seeding database...");
+  const listingsSnapshot = await getDocs(query(listingsCollection, firestoreLimit(1)));
+  if (listingsSnapshot.empty) {
+    console.log("No listings found, seeding database for listings...");
     const mockListings: Omit<Listing, "id" | "seller">[] = [
       {
         title: "Hand-carved Wooden Elephant",
@@ -71,17 +72,19 @@ const seedDatabase = async () => {
         sellerId: "seller2",
       },
     ];
+     const listingPromises = mockListings.map(listingData => addDoc(collection(db, 'listings'), { ...listingData, createdAt: serverTimestamp() }));
+     await Promise.all(listingPromises);
+  }
 
-     const seedPromises = mockListings.map(async (listingData) => {
-        const docRef = doc(collection(db, 'listings'));
-        await setDoc(docRef, { ...listingData, id: docRef.id, createdAt: serverTimestamp() });
-     });
-
-     const mockUsers = [
+  const usersCollection = collection(db, "users");
+  const usersSnapshot = await getDocs(query(usersCollection, firestoreLimit(1)));
+  if (usersSnapshot.empty) {
+    console.log("Seeding users...");
+    const mockUsers = [
          { id: 'seller1', name: 'Artisan Co.', email: 'artisan.co@example.com', avatarUrl: 'https://picsum.photos/seed/seller1/100/100', location: 'Nairobi, Kenya', memberSince: '2023-05-15', rating: 4.9, reviews: 213, type: 'Vendor', status: 'Active' },
          { id: 'seller2', name: 'Coastal Weavers', email: 'coastal.weavers@example.com', avatarUrl: 'https://picsum.photos/seed/seller2/100/100', location: 'Mombasa, Kenya', memberSince: '2022-11-20', rating: 4.7, reviews: 154, type: 'Vendor', status: 'Active' },
+         { id: 'agent1', name: 'Property Masters', email: 'prop@masters.com', avatarUrl: 'https://picsum.photos/seed/agent1/100/100', location: 'Nairobi', memberSince: '2021-01-01', type: 'Vendor', status: 'Active' },
      ];
-     
      const userPromises = mockUsers.map(user => {
          const userRef = doc(db, "users", user.id);
          return setDoc(userRef, {
@@ -96,23 +99,54 @@ const seedDatabase = async () => {
              type: user.type,
              status: user.status
          }, { merge: true });
-     })
-     
-     const adsCollection = collection(db, "advertisements");
-     const adSnapshot = await getDocs(query(adsCollection, firestoreLimit(1)));
-     if (adSnapshot.empty) {
-        const mockAdvertisements: Omit<Advertisement, "id">[] = [
-            { title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad-summer/1200/400', imageHint: 'summer sale', description: 'Get up to 50% off on all summer items!', isActive: true },
-            { title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad-new/1200/400', imageHint: 'new products', description: 'Check out the latest collection of handcrafted goods.', isActive: true },
-        ];
-        const adPromises = mockAdvertisements.map(ad => addDoc(collection(db, 'advertisements'), ad));
-        await Promise.all(adPromises);
-     }
-
-
-     await Promise.all([...seedPromises, ...userPromises]);
-    console.log("Database seeded.");
+     });
+     await Promise.all(userPromises);
   }
+     
+  const adsCollection = collection(db, "advertisements");
+  const adSnapshot = await getDocs(query(adsCollection, firestoreLimit(1)));
+  if (adSnapshot.empty) {
+    console.log("Seeding advertisements...");
+    const mockAdvertisements: Omit<Advertisement, "id">[] = [
+        { title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad-summer/1200/400', imageHint: 'summer sale', description: 'Get up to 50% off on all summer items!', isActive: true },
+        { title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad-new/1200/400', imageHint: 'new products', description: 'Check out the latest collection of handcrafted goods.', isActive: true },
+    ];
+    const adPromises = mockAdvertisements.map(ad => addDoc(collection(db, 'advertisements'), ad));
+    await Promise.all(adPromises);
+  }
+
+  const eventsCollection = collection(db, "events");
+  const eventsSnapshot = await getDocs(query(eventsCollection, firestoreLimit(1)));
+  if (eventsSnapshot.empty) {
+    console.log("Seeding events...");
+    const eventPromises = mockEvents.map(event => setDoc(doc(db, "events", event.id), event));
+    await Promise.all(eventPromises);
+  }
+
+  const restaurantsCollection = collection(db, "restaurants");
+  const restaurantsSnapshot = await getDocs(query(restaurantsCollection, firestoreLimit(1)));
+  if (restaurantsSnapshot.empty) {
+    console.log("Seeding restaurants...");
+    const restaurantPromises = Object.values(mockRestaurantsData).map((resto: any) => setDoc(doc(db, "restaurants", resto.id), resto));
+    await Promise.all(restaurantPromises);
+  }
+  
+  const propertiesCollection = collection(db, "properties");
+  const propertiesSnapshot = await getDocs(query(propertiesCollection, firestoreLimit(1)));
+  if (propertiesSnapshot.empty) {
+    console.log("Seeding properties...");
+    const propertyPromises = Object.values(mockPropertyData).map((prop: any) => setDoc(doc(db, "properties", prop.id), prop));
+    await Promise.all(propertyPromises);
+  }
+  
+  const servicesCollection = collection(db, "services");
+  const servicesSnapshot = await getDocs(query(servicesCollection, firestoreLimit(1)));
+  if (servicesSnapshot.empty) {
+    console.log("Seeding services...");
+    const servicePromises = Object.values(mockProviderData).map((provider: any) => setDoc(doc(db, "services", provider.id), provider));
+    await Promise.all(servicePromises);
+  }
+
 };
 
 seedDatabase();
@@ -404,3 +438,60 @@ export const createOrder = async (userId: string, items: CartItemForOrder[], tot
     await setDoc(newOrderRef, orderData);
     return newOrderRef.id;
 }
+
+
+// GENERIC GETTERS for seeded data
+export const getEvents = async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(db, "events"));
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getEventById = async (id: string): Promise<any | null> => {
+    const docRef = doc(db, "events", id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
+};
+
+export const getRestaurants = async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(db, "restaurants"));
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getRestaurantById = async (id: string): Promise<any | null> => {
+    const docRef = doc(db, "restaurants", id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
+};
+
+export const getProperties = async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(db, "properties"));
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getPropertyById = async (id: string): Promise<any | null> => {
+    const docRef = doc(db, "properties", id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return null;
+    const data = docSnap.data();
+    let agent;
+    if (data.agent?.id) {
+        agent = await getUserData(data.agent.id);
+    }
+    return { ...data, id: docSnap.id, agent: agent ?? data.agent };
+};
+
+
+export const getServices = async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(db, "services"));
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getServiceById = async (id: string): Promise<any | null> => {
+    const docRef = doc(db, "services", id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
+};

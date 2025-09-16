@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, MapPin, Ticket, Minus, Plus, ArrowLeft } from 'lucide-react';
+import { Calendar, MapPin, Ticket, Minus, Plus, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { mockEvents } from '@/lib/mock-data';
+import { getEventById } from '@/lib/firestore';
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-KE', {
@@ -18,11 +18,25 @@ const formatCurrency = (amount: number) => {
 };
 
 export default function EventDetailPage({ params }: { params: { id: string } }) {
-  const event = mockEvents.find(e => e.id === params.id);
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+      const fetchEvent = async () => {
+          const eventData = await getEventById(params.id);
+          setEvent(eventData);
+          setLoading(false);
+      }
+      fetchEvent();
+  }, [params.id]);
   
-  const [ticketQuantities, setTicketQuantities] = useState<{[key: string]: number}>(
-    event?.tickets.reduce((acc: any, ticket: any) => ({ ...acc, [ticket.id]: 0 }), {}) || {}
-  );
+  const [ticketQuantities, setTicketQuantities] = useState<{[key: string]: number}>({});
+
+  useEffect(() => {
+    if (event?.tickets) {
+        setTicketQuantities(event.tickets.reduce((acc: any, ticket: any) => ({ ...acc, [ticket.id]: 0 }), {}));
+    }
+  }, [event]);
   
   const handleQuantityChange = (ticketId: string, delta: number) => {
     setTicketQuantities(prev => ({
@@ -35,6 +49,13 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     return acc + ticket.price * (ticketQuantities[ticket.id] || 0);
   }, 0) || 0;
 
+  if(loading) {
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <Loader2 className="h-8 w-8 animate-spin text-primary"/>
+        </div>
+    )
+  }
 
   if (!event) {
     return (

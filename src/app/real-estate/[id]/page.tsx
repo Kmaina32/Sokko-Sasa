@@ -6,55 +6,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Bed, Bath, Car, Phone, MessageSquare, Building } from "lucide-react";
-import { placeholderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
+import { getPropertyById } from "@/lib/firestore";
 
 
-// Mock data
-const mockPropertyData: any = {
-    're1': {
-        id: 're1',
-        title: 'Spacious 2BR Apartment in Kilimani',
-        description: `Experience modern living in this stunning 2-bedroom apartment located in the heart of Kilimani. This property boasts ample natural light, a spacious living area, and a contemporary kitchen with high-end finishes. Both bedrooms are en-suite, providing comfort and privacy.
-
-Key Features:
-- 2 Bedrooms, 2 Bathrooms
-- Open-plan living and dining area
-- Fully-fitted kitchen with granite countertops
-- Balcony with city views
-- 24/7 security and CCTV surveillance
-- High-speed lifts
-- Backup generator
-- Borehole water supply
-- Ample parking space
-
-Enjoy convenient access to Yaya Centre, Prestige Plaza, and numerous restaurants and international schools. Perfect for young professionals or small families.`,
-        price: 80000,
-        type: 'Rent',
-        location: 'Kilimani, Nairobi',
-        images: [
-            placeholderImages.property1.imageUrl,
-            "https://picsum.photos/seed/re1-2/800/600",
-            "https://picsum.photos/seed/re1-3/800/600",
-        ],
-        agent: {
-            id: 'agent1',
-            name: 'Property Masters',
-            avatar: 'https://picsum.photos/seed/agent1/100/100',
-        },
-        amenities: { beds: 2, baths: 2, parking: 1 }
-    }
-};
-
-
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const property = mockPropertyData[params.id];
+export default async function PropertyDetailPage({ params }: { params: { id: string } }) {
+  const property = await getPropertyById(params.id);
 
   if (!property) {
     return (
@@ -144,36 +106,38 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Contact Agent</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center gap-4">
-                        <Avatar className="h-16 w-16">
-                            <AvatarImage src={property.agent.avatar} alt={property.agent.name}/>
-                            <AvatarFallback>{property.agent.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-bold text-lg">{property.agent.name}</p>
-                             <Button variant="link" asChild className="p-0 h-auto">
-                               <Link href={`/profile/${property.agent.id}`}>View Profile</Link>
+            {property.agent && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Contact Agent</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center gap-4">
+                            <Avatar className="h-16 w-16">
+                                <AvatarImage src={property.agent.avatarUrl ?? property.agent.avatar} alt={property.agent.name}/>
+                                <AvatarFallback>{property.agent.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-bold text-lg">{property.agent.name}</p>
+                                <Button variant="link" asChild className="p-0 h-auto">
+                                <Link href={`/profile/${property.agent.id}`}>View Profile</Link>
+                                </Button>
+                            </div>
+                        </div>
+                        <Separator />
+                        <div className="space-y-2">
+                            <Button size="lg" className="w-full">
+                            <Phone className="mr-2 h-5 w-5"/> Call Agent
+                            </Button>
+                            <Button asChild size="lg" className="w-full bg-accent hover:bg-accent/90">
+                            <Link href="/messages">
+                                <MessageSquare className="mr-2 h-5 w-5"/> Message Agent
+                            </Link>
                             </Button>
                         </div>
-                    </div>
-                    <Separator />
-                    <div className="space-y-2">
-                        <Button size="lg" className="w-full">
-                           <Phone className="mr-2 h-5 w-5"/> Call Agent
-                        </Button>
-                        <Button asChild size="lg" className="w-full bg-accent hover:bg-accent/90">
-                           <Link href="/messages">
-                               <MessageSquare className="mr-2 h-5 w-5"/> Message Agent
-                           </Link>
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            )}
         </div>
       </div>
     </div>

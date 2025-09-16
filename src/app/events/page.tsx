@@ -9,10 +9,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Ticket } from "lucide-react";
 import Link from "next/link";
-import { mockEvents } from "@/lib/mock-data";
+import { getEvents } from "@/lib/firestore";
 
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const events = await getEvents();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -23,11 +25,11 @@ export default function EventsPage() {
       </div>
 
       <div className="space-y-6">
-        {mockEvents.length > 0 ? (
-          mockEvents.map((event) => (
+        {events.length > 0 ? (
+          events.map((event) => (
             <Link href={`/events/${event.id}`} key={event.id} className="block group">
               <Card className="grid grid-cols-1 md:grid-cols-3 overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:border-primary">
-                <div className="md:col-span-1 relative">
+                <div className="md:col-span-1 relative h-48 md:h-full">
                     <Image
                         src={event.imageUrl}
                         alt={event.name}

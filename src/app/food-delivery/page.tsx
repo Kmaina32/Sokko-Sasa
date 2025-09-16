@@ -10,37 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Star, Search, Utensils } from "lucide-react";
-import { placeholderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
+import { getRestaurants } from "@/lib/firestore";
 
-const mockRestaurants = [
-    { 
-        id: 'resto1', 
-        name: "Mama's Kitchen", 
-        cuisine: 'Kenyan', 
-        rating: 4.5, 
-        imageUrl: placeholderImages.food1.imageUrl,
-        imageHint: placeholderImages.food1.imageHint,
-    },
-    { 
-        id: 'resto2', 
-        name: "Pizza Inn", 
-        cuisine: 'Pizza', 
-        rating: 4.2,
-        imageUrl: placeholderImages.food2.imageUrl,
-        imageHint: placeholderImages.food2.imageHint,
-    },
-    { 
-        id: 'resto3', 
-        name: "Shanghai Kitchen", 
-        cuisine: 'Chinese', 
-        rating: 4.8,
-        imageUrl: placeholderImages.food3.imageUrl,
-        imageHint: placeholderImages.food3.imageHint,
-    },
-];
 
-export default function FoodDeliveryPage() {
+export default async function FoodDeliveryPage() {
+  const restaurants = await getRestaurants();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 text-center">
@@ -59,9 +35,9 @@ export default function FoodDeliveryPage() {
 
       <div>
         <h2 className="text-2xl font-bold tracking-tight mb-4">Popular Restaurants</h2>
-        {mockRestaurants.length > 0 ? (
+        {restaurants.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockRestaurants.map((resto) => (
+            {restaurants.map((resto) => (
               <Link href={`/food-delivery/${resto.id}`} key={resto.id}>
                 <Card className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 h-full">
                     <CardHeader className="p-0">

@@ -1,36 +1,14 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Star, MapPin, Phone, MessageSquare, Wrench } from "lucide-react";
-import { placeholderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { getServiceById } from "@/lib/firestore";
 
-// Mock data
-const mockProviderData: any = {
-    'srv1': {
-        id: 'srv1',
-        name: 'Quick Plumbers',
-        service: 'Plumbing',
-        rating: 4.8,
-        reviews: 125,
-        location: 'Nairobi & Environs',
-        imageUrl: placeholderImages.service1.imageUrl,
-        imageHint: placeholderImages.service1.imageHint,
-        bio: "With over 10 years of experience, Quick Plumbers offers reliable and professional plumbing services across Nairobi. We handle everything from leaky faucets to complete system installations. Our team is available 24/7 for emergency services.",
-        services: [
-            "Emergency Leak Repairs",
-            "Drain Unclogging",
-            "Water Heater Installation",
-            "Bathroom & Kitchen Plumbing",
-            "New Installations"
-        ]
-    }
-};
-
-export default function ServiceProviderProfilePage({ params }: { params: { id: string } }) {
-  const provider = mockProviderData[params.id];
+export default async function ServiceProviderProfilePage({ params }: { params: { id: string } }) {
+  const provider = await getServiceById(params.id);
 
   if (!provider) {
     return (
