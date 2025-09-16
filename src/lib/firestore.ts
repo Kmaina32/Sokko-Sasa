@@ -17,6 +17,7 @@ import {
   deleteDoc,
   serverTimestamp,
   writeBatch,
+  Timestamp,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User, Advertisement } from "@/lib/types";
@@ -292,12 +293,18 @@ export const getListings = async (options: GetListingsOptions = {}): Promise<Lis
   }
 
   const listings = await Promise.all(snapshot.docs.map(async (doc) => {
-    const data = doc.data() as Listing;
+    const data = doc.data();
     let seller;
     if(data.sellerId) {
        seller = await getUserData(data.sellerId);
     }
-    return { ...data, id: doc.id, seller: seller ?? undefined };
+    
+    // Ensure createdAt is a serializable string
+    if (data.createdAt && data.createdAt instanceof Timestamp) {
+      data.createdAt = data.createdAt.toDate().toISOString();
+    }
+
+    return { ...data, id: doc.id, seller: seller ?? undefined } as Listing;
   }));
 
   return listings;
