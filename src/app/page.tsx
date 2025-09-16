@@ -17,7 +17,7 @@ import { ListingCard } from "@/components/listing-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { getListings } from "@/lib/firestore";
-import type { Listing } from "@/lib/types";
+import type { Listing, Advertisement } from "@/lib/types";
 
 const categories = [
   {
@@ -64,11 +64,16 @@ const categories = [
   },
 ];
 
-const mockAdvertisements: any[] = [];
+// MOCK DATA - In a real app, this would come from a database.
+const mockAdvertisements: Advertisement[] = [
+    { id: 'ad1', title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad-summer/1200/400', imageHint: 'summer sale', description: 'Get up to 50% off on all summer items!', isActive: true },
+    { id: 'ad2', title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad-new/1200/400', imageHint: 'new products', description: 'Check out the latest collection of handcrafted goods.', isActive: true },
+];
 
 
 export default async function Home() {
   const mockFeaturedListings: Listing[] = await getListings({ limit: 4 });
+  const activeAdvertisements = mockAdvertisements.filter(ad => ad.isActive);
 
   return (
     <div className="flex-1">
@@ -112,10 +117,10 @@ export default async function Home() {
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Featured Promotions</h2>
-          {mockAdvertisements.length > 0 ? (
+          {activeAdvertisements.length > 0 ? (
             <Carousel opts={{ loop: true }}>
               <CarouselContent>
-                {mockAdvertisements.map((ad) => (
+                {activeAdvertisements.map((ad) => (
                   <CarouselItem key={ad.id}>
                     <div className="relative aspect-[16/7] w-full overflow-hidden rounded-lg">
                       <Image

@@ -75,8 +75,8 @@ const seedDatabase = async () => {
      });
 
      const mockUsers = [
-         { id: 'seller1', name: 'Artisan Co.', avatarUrl: 'https://picsum.photos/seed/seller1/100/100', location: 'Nairobi, Kenya', memberSince: '2023-05-15', rating: 4.9, reviews: 213 },
-         { id: 'seller2', name: 'Coastal Weavers', avatarUrl: 'https://picsum.photos/seed/seller2/100/100', location: 'Mombasa, Kenya', memberSince: '2022-11-20', rating: 4.7, reviews: 154 },
+         { id: 'seller1', name: 'Artisan Co.', email: 'artisan.co@example.com', avatarUrl: 'https://picsum.photos/seed/seller1/100/100', location: 'Nairobi, Kenya', memberSince: '2023-05-15', rating: 4.9, reviews: 213, type: 'Vendor', status: 'Active' },
+         { id: 'seller2', name: 'Coastal Weavers', email: 'coastal.weavers@example.com', avatarUrl: 'https://picsum.photos/seed/seller2/100/100', location: 'Mombasa, Kenya', memberSince: '2022-11-20', rating: 4.7, reviews: 154, type: 'Vendor', status: 'Active' },
      ];
      
      const userPromises = mockUsers.map(user => {
@@ -84,11 +84,14 @@ const seedDatabase = async () => {
          return setDoc(userRef, {
              uid: user.id,
              displayName: user.name,
+             email: user.email,
              photoURL: user.avatarUrl,
              location: user.location,
              memberSince: user.memberSince,
              rating: user.rating,
              reviews: user.reviews,
+             type: user.type,
+             status: user.status
          }, { merge: true });
      })
 
@@ -109,6 +112,8 @@ export const addUserData = async (user: FirebaseUser, additionalData: any) => {
     displayName: additionalData.name,
     photoURL: user.photoURL,
     memberSince: new Date().toISOString(),
+    status: 'Active',
+    type: 'Client',
     ...additionalData,
   }, { merge: true });
 };
@@ -121,15 +126,42 @@ export const getUserData = async (uid: string): Promise<User | null> => {
         return {
             id: userData.uid,
             name: userData.displayName,
+            email: userData.email,
             avatarUrl: userData.photoURL ?? `https://picsum.photos/seed/${userData.uid}/100/100`,
             location: userData.location,
             memberSince: userData.memberSince,
             rating: userData.rating,
             reviews: userData.reviews,
+            type: userData.type,
+            status: userData.status,
         }
     }
     return null;
 }
+
+export const getAllUsers = async (): Promise<User[]> => {
+    const usersCollection = collection(db, "users");
+    const snapshot = await getDocs(usersCollection);
+    if(snapshot.empty) {
+        return [];
+    }
+    const users = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: data.uid,
+            name: data.displayName,
+            email: data.email,
+            avatarUrl: data.photoURL ?? `https://picsum.photos/seed/${data.uid}/100/100`,
+            location: data.location,
+            memberSince: data.memberSince,
+            rating: data.rating,
+            reviews: data.reviews,
+            type: data.type,
+            status: data.status,
+        }
+    });
+    return users;
+};
 
 
 // LISTINGS

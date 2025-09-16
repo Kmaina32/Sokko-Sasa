@@ -14,13 +14,10 @@ import {
 import {
   Trash2,
   FilePenLine,
+  Package
 } from "lucide-react";
-
-const mockProducts = [
-    { id: 'prod1', name: 'Leather Sofa', seller: 'Jane Smith', price: 50000 },
-    { id: 'prod2', name: 'Hand-carved Elephant', seller: 'Artisan Co.', price: 2500 },
-    { id: 'prod3', name: 'Maasai Shuka', seller: 'Cultural Wears', price: 800 },
-];
+import { getListings } from "@/lib/firestore";
+import type { Listing } from "@/lib/types";
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -42,7 +39,9 @@ const CrudActions = () => (
 );
 
 
-export default function ManageProductsPage() {
+export default async function ManageProductsPage() {
+  const products: Listing[] = await getListings();
+
   return (
     <div className="container mx-auto px-4 py-8">
         <div className="mb-4">
@@ -51,6 +50,7 @@ export default function ManageProductsPage() {
         </div>
         <Card>
             <CardContent>
+              {products.length > 0 ? (
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -61,10 +61,10 @@ export default function ManageProductsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {mockProducts.map((product) => (
+                        {products.map((product) => (
                             <TableRow key={product.id}>
-                                <TableCell className="font-medium">{product.name}</TableCell>
-                                <TableCell>{product.seller}</TableCell>
+                                <TableCell className="font-medium">{product.title}</TableCell>
+                                <TableCell>{product.seller?.name ?? 'N/A'}</TableCell>
                                 <TableCell>{formatCurrency(product.price)}</TableCell>
                                 <TableCell>
                                     <CrudActions />
@@ -73,6 +73,13 @@ export default function ManageProductsPage() {
                         ))}
                     </TableBody>
                 </Table>
+              ) : (
+                <div className="text-center p-12">
+                  <Package className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-4 text-xl font-semibold">No Products Found</h3>
+                  <p className="mt-2 text-muted-foreground">Listings created by users will appear here.</p>
+                </div>
+              )}
             </CardContent>
         </Card>
     </div>

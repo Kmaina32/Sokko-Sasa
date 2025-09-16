@@ -19,15 +19,16 @@ import { Switch } from "@/components/ui/switch";
 import {
   Trash2,
   FilePenLine,
-  PlusCircle
+  PlusCircle,
+  Megaphone,
 } from "lucide-react";
 import Image from "next/image";
 
-// Mock Data to showcase the UI
+// MOCK DATA - In a real app, this would come from a database.
 const mockAdvertisements = [
-    { id: 'ad1', title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad1/100/50', imageHint: 'summer sale', isActive: true },
-    { id: 'ad2', title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad2/100/50', imageHint: 'new products', isActive: true },
-    { id: 'ad3', title: 'Holiday Discounts', imageUrl: 'https://picsum.photos/seed/ad3/100/50', imageHint: 'holiday shopping', isActive: false },
+    { id: 'ad1', title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad-summer/1200/400', imageHint: 'summer sale', description: 'Get up to 50% off on all summer items!', isActive: true },
+    { id: 'ad2', title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad-new/1200/400', imageHint: 'new products', description: 'Check out the latest collection of handcrafted goods.', isActive: true },
+    { id: 'ad3', title: 'Holiday Discounts', imageUrl: 'https://picsum.photos/seed/ad-holiday/1200/400', imageHint: 'holiday shopping', description: 'Special discounts for the upcoming holiday season.', isActive: false },
 ];
 
 
@@ -59,6 +60,7 @@ export default function ManageAdvertisementsPage() {
 
         <Card>
             <CardContent>
+              {mockAdvertisements.length > 0 ? (
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -72,7 +74,7 @@ export default function ManageAdvertisementsPage() {
                         {mockAdvertisements.map((ad) => (
                             <TableRow key={ad.id}>
                                 <TableCell>
-                                    <Image src={ad.imageUrl} alt={ad.title} width={100} height={50} className="rounded-md" data-ai-hint={ad.imageHint} />
+                                    <Image src={ad.imageUrl} alt={ad.title} width={100} height={50} className="rounded-md object-cover" data-ai-hint={ad.imageHint} />
                                 </TableCell>
                                 <TableCell className="font-medium">{ad.title}</TableCell>
                                 <TableCell>
@@ -88,6 +90,13 @@ export default function ManageAdvertisementsPage() {
                         ))}
                     </TableBody>
                 </Table>
+              ) : (
+                <div className="text-center p-12">
+                  <Megaphone className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-4 text-xl font-semibold">No Advertisements Found</h3>
+                  <p className="mt-2 text-muted-foreground">Click "New Advertisement" to create a promotion.</p>
+                </div>
+              )}
             </CardContent>
         </Card>
     </div>

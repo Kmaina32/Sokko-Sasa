@@ -20,11 +20,14 @@ export interface Listing {
 export interface User {
   id: string;
   name: string;
+  email?: string;
   avatarUrl: string;
   location?: string;
   memberSince?: string;
   rating?: number;
   reviews?: number;
+  type?: 'Client' | 'Vendor' | 'Driver';
+  status?: 'Active' | 'Suspended';
 }
 
 export interface Message {
