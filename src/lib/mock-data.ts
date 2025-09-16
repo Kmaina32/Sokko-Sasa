@@ -151,9 +151,43 @@ export const mockEvents = [
           ]
       }
   };
+
+  export const mockClinicData: any = {
+    'clinic1': {
+        id: 'clinic1',
+        name: 'Nairobi Hospital',
+        specialty: 'General Hospital',
+        imageUrl: placeholderImages.clinic1.imageUrl,
+        imageHint: placeholderImages.clinic1.imageHint,
+        location: 'Argwings Kodhek Rd, Nairobi',
+        rating: 4.6,
+        description: 'A leading private hospital in Eastern and Central Africa, providing comprehensive medical services.',
+        doctors: [
+            { id: 'doc1', name: 'Dr. John Miller', specialty: 'Cardiologist', avatarUrl: 'https://picsum.photos/seed/doc1/100/100' },
+            { id: 'doc2', name: 'Dr. Susan Wanjiku', specialty: 'Pediatrician', avatarUrl: 'https://picsum.photos/seed/doc2/100/100' },
+        ],
+        services: ['Cardiology', 'Pediatrics', 'Oncology', 'Surgery']
+    },
+    'clinic2': {
+        id: 'clinic2',
+        name: 'Aga Khan University Hospital',
+        specialty: 'Multi-Specialty',
+        imageUrl: placeholderImages.clinic2.imageUrl,
+        imageHint: placeholderImages.clinic2.imageHint,
+        location: '3rd Parklands Ave, Nairobi',
+        rating: 4.8,
+        description: 'A premier, tertiary, teaching and referral health care facility in sub-Saharan Africa.',
+         doctors: [
+            { id: 'doc3', name: 'Dr. Aisha Khan', specialty: 'Neurologist', avatarUrl: 'https://picsum.photos/seed/doc3/100/100' },
+            { id: 'doc4', name: 'Dr. David Chen', specialty: 'Orthopedic Surgeon', avatarUrl: 'https://picsum.photos/seed/doc4/100/100' },
+        ],
+        services: ['Neurology', 'Orthopedics', 'Maternity', 'Emergency Medicine']
+    }
+};
   
   export const mockRestaurants = Object.values(mockRestaurantsData);
   export const mockProperties = Object.values(mockPropertyData);
   export const mockProviders = Object.values(mockProviderData);
+  export const mockClinics = Object.values(mockClinicData);
   export const mockJobs: any[] = []; // Empty for now
-  export const mockClinics: any[] = []; // Empty for now
+  

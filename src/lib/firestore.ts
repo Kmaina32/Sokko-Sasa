@@ -22,7 +22,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User, Advertisement } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
-import { mockEvents, mockRestaurantsData, mockPropertyData, mockProviderData } from './mock-data';
+import { mockEvents, mockRestaurantsData, mockPropertyData, mockProviderData, mockClinicData } from './mock-data';
 
 // Seed data if the collections are empty
 const seedDatabase = async () => {
@@ -145,6 +145,14 @@ const seedDatabase = async () => {
     console.log("Seeding services...");
     const servicePromises = Object.values(mockProviderData).map((provider: any) => setDoc(doc(db, "services", provider.id), provider));
     await Promise.all(servicePromises);
+  }
+
+  const clinicsCollection = collection(db, "clinics");
+  const clinicsSnapshot = await getDocs(query(clinicsCollection, firestoreLimit(1)));
+  if(clinicsSnapshot.empty) {
+    console.log("Seeding clinics...");
+    const clinicPromises = Object.values(mockClinicData).map((clinic: any) => setDoc(doc(db, "clinics", clinic.id), clinic));
+    await Promise.all(clinicPromises);
   }
 
 };
@@ -527,5 +535,17 @@ export const getServiceById = async (id: string): Promise<any | null> => {
     const docSnap = await getDoc(docRef);
     return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
 };
+
+export const getClinics = async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(db, "clinics"));
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+export const getClinicById = async (id: string): Promise<any | null> => {
+    const docRef = doc(db, "clinics", id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
+}
 
 seedDatabase();

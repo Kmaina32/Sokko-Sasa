@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import {
   Card,
@@ -8,8 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Stethoscope, Pill, Microscope, HeartPulse, Hospital } from "lucide-react";
-import { placeholderImages } from "@/lib/placeholder-images";
+import { Search, Stethoscope, Pill, Microscope, HeartPulse, Hospital, Loader2 } from "lucide-react";
+import Link from 'next/link';
+import { getClinics } from '@/lib/firestore';
+
 
 const medicalServices = [
     { name: "Consult a Doctor", icon: Stethoscope },
@@ -18,24 +24,19 @@ const medicalServices = [
     { name: "Wellness Checks", icon: HeartPulse },
 ];
 
-const mockClinics = [
-    { 
-        id: 'clinic1', 
-        name: 'Nairobi Hospital', 
-        specialty: 'General Hospital', 
-        imageUrl: placeholderImages.clinic1.imageUrl,
-        imageHint: placeholderImages.clinic1.imageHint,
-    },
-    { 
-        id: 'clinic2', 
-        name: 'Aga Khan University Hospital', 
-        specialty: 'Multi-Specialty',
-        imageUrl: placeholderImages.clinic2.imageUrl,
-        imageHint: placeholderImages.clinic2.imageHint,
-    },
-];
-
 export default function MedicalPage() {
+    const [clinics, setClinics] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchClinics = async () => {
+            const data = await getClinics();
+            setClinics(data);
+            setLoading(false);
+        }
+        fetchClinics();
+    }, []);
+
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="text-center mb-8">
@@ -63,10 +64,15 @@ export default function MedicalPage() {
 
             <div>
                 <h2 className="text-2xl font-bold tracking-tight mb-4">Featured Hospitals & Clinics</h2>
-                {mockClinics.length > 0 ? (
+                {loading ? (
+                    <div className="flex justify-center items-center p-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                ) : clinics.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                      {mockClinics.map((clinic) => (
-                          <Card key={clinic.id} className="group overflow-hidden">
+                      {clinics.map((clinic) => (
+                        <Link href={`/medical/${clinic.id}`} key={clinic.id}>
+                          <Card className="group overflow-hidden h-full">
                               <CardHeader className="p-0">
                                   <Image src={clinic.imageUrl} alt={clinic.name} width={600} height={400} data-ai-hint={clinic.imageHint} className="aspect-video object-cover"/>
                               </CardHeader>
@@ -76,6 +82,7 @@ export default function MedicalPage() {
                                   <Button className="w-full mt-4">Book Appointment</Button>
                               </CardContent>
                           </Card>
+                        </Link>
                       ))}
                   </div>
                 ) : (
