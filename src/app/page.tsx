@@ -67,7 +67,7 @@ const categories = [
 
 
 export default async function Home() {
-  const mockFeaturedListings: Listing[] = await getListings({ limit: 4 });
+  const featuredListings: Listing[] = await getListings({ limit: 4 });
   const activeAdvertisements = await getAdvertisements({ activeOnly: true });
 
   return (
@@ -156,9 +156,9 @@ export default async function Home() {
                 <Link href="/shop">View All &rarr;</Link>
             </Button>
           </div>
-          {mockFeaturedListings.length > 0 ? (
+          {featuredListings.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {mockFeaturedListings.map((listing) => (
+                {featuredListings.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
                 ))}
             </div>
