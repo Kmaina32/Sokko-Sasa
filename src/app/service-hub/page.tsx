@@ -7,168 +7,88 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Bell,
-  Briefcase,
+  Utensils,
   Calendar,
-  CreditCard,
-  DollarSign,
-  Settings,
-  Users,
+  Car,
+  Wrench,
+  Building,
+  Briefcase,
+  ArrowRight,
 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 
-const upcomingAppointments: any[] = [];
-const recentJobs: any[] = [];
+const providerTypes = [
+  {
+    name: "Restaurant Owner",
+    description: "Join our food delivery network and reach more hungry customers.",
+    icon: Utensils,
+    href: "/register/restaurant",
+  },
+  {
+    name: "Event Manager",
+    description: "List your events, sell tickets, and manage your audience with ease.",
+    icon: Calendar,
+    href: "/register/event-manager",
+  },
+  {
+    name: "Driver Partner",
+    description: "Become a driver for our ride-hailing service and start earning.",
+    icon: Car,
+    href: "/register/driver",
+  },
+  {
+    name: "Service Professional",
+    description: "Offer your skills, from plumbing to tutoring, to a wide audience.",
+    icon: Wrench,
+    href: "/register/service-provider",
+  },
+  {
+    name: "Real Estate Agent",
+    description: "List properties for sale or rent and connect with potential clients.",
+    icon: Building,
+    href: "/register/real-estate",
+  },
+  {
+    name: "Job Lister / Recruiter",
+    description: "Post job openings and find the perfect candidates for your team.",
+    icon: Briefcase,
+    href: "/register/job-lister",
+  },
+];
 
 export default function ServiceHubPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="font-headline text-4xl font-bold">My Service Hub</h1>
-        <p className="text-muted-foreground">
-          Manage your business, appointments, and earnings.
-        </p>
-      </div>
+    <div className="bg-muted/20">
+        <div className="container mx-auto px-4 py-12">
+            <div className="text-center mb-12">
+                <h1 className="font-headline text-4xl font-bold">Become a Sokko Sasa Partner</h1>
+                <p className="mt-2 text-lg text-muted-foreground">
+                    Choose your business type and join our growing ecosystem of providers.
+                </p>
+            </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">KSh 0.00</div>
-            <p className="text-xs text-muted-foreground">
-              +0% from last month
-            </p>
-          </CardContent>
-        </Card>
-         <Card>
-          <CardHeader className="flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">
-              Appointments this week
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">New Leads</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">
-              Potential clients this month
-            </p>
-          </CardContent>
-        </Card>
-         <Card>
-          <CardHeader className="flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Notifications</CardTitle>
-            <Bell className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">
-              Unread messages & alerts
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-            <Card>
-                 <CardHeader>
-                    <CardTitle>Recent Jobs</CardTitle>
-                    <CardDescription>An overview of your completed work.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                     <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Job Title</TableHead>
-                                <TableHead>Earnings (KSh)</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {recentJobs.length > 0 ? (
-                                recentJobs.map(job => (
-                                    <TableRow key={job.id}>
-                                        <TableCell className="font-medium">{job.title}</TableCell>
-                                        <TableCell>{job.earnings.toLocaleString()}</TableCell>
-                                        <TableCell>
-                                            <Badge className="bg-green-500/20 text-green-700 border-green-500/30">{job.status}</Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Button variant="outline" size="sm">View</Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                             ) : (
-                                <TableRow>
-                                    <TableCell colSpan={4} className="h-24 text-center">
-                                        No recent jobs.
-                                    </TableCell>
-                                </TableRow>
-                             )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {providerTypes.map((provider) => (
+                    <Card key={provider.name} className="flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all">
+                        <CardHeader className="flex-row items-start gap-4">
+                            <div className="p-3 bg-primary/10 rounded-full">
+                                <provider.icon className="w-8 h-8 text-primary"/>
+                            </div>
+                            <div className="flex-1">
+                                <CardTitle>{provider.name}</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                            <p className="text-muted-foreground">{provider.description}</p>
+                        </CardContent>
+                        <div className="p-6 pt-0">
+                            <Button className="w-full">
+                                Get Started <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"/>
+                            </Button>
+                        </div>
+                    </Card>
+                ))}
+            </div>
         </div>
-        <div className="lg:col-span-1 space-y-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Upcoming Appointments</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {upcomingAppointments.length > 0 ? (
-                      upcomingAppointments.map(appt => (
-                          <div key={appt.id} className="flex items-center gap-4 p-2 rounded-md bg-muted/50">
-                              <div className="p-3 rounded-full bg-background">
-                                  <Calendar className="w-5 h-5 text-primary"/>
-                              </div>
-                              <div>
-                                  <p className="font-semibold">{appt.service}</p>
-                                  <p className="text-sm text-muted-foreground">{appt.client} at {appt.time}</p>
-                              </div>
-                          </div>
-                      ))
-                    ) : (
-                        <p className="text-sm text-muted-foreground text-center py-4">No upcoming appointments.</p>
-                    )}
-                     <Button className="w-full">View Full Calendar</Button>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-2">
-                    <Button variant="outline"><Briefcase className="w-4 h-4 mr-2"/> My Services</Button>
-                    <Button variant="outline"><CreditCard className="w-4 h-4 mr-2"/> Payouts</Button>
-                    <Button variant="outline"><Users className="w-4 h-4 mr-2"/> My Profile</Button>
-                    <Button variant="outline"><Settings className="w-4 h-4 mr-2"/> Settings</Button>
-                </CardContent>
-            </Card>
-        </div>
-      </div>
     </div>
   );
 }
