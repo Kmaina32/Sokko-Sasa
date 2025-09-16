@@ -12,14 +12,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Tag, MessageSquare } from "lucide-react";
+import { placeholderImages } from "@/lib/placeholder-images";
+import Link from "next/link";
+
 
 // Mock data - in a real app, this would be fetched from a database
-const mockListings: any[] = [];
-const listing = mockListings[0]; // This will be undefined, but we'll handle it
+const mockListings: any = {
+    'prod1': {
+        id: 'prod1',
+        title: 'Hand-carved Wooden Elephant',
+        description: `This beautiful hand-carved wooden elephant is a masterpiece of craftsmanship. Made from sustainably sourced jacaranda wood by skilled artisans in Kenya.
+
+- Height: 12 inches
+- Material: Jacaranda Wood
+- Finish: Natural wax polish
+
+A perfect decorative piece for your home or office, and a great conversation starter. Each piece is unique and may have slight variations in color and grain.`,
+        price: 2500,
+        category: 'Product',
+        location: 'Nairobi',
+        images: [
+            placeholderImages.product1.imageUrl,
+            "https://picsum.photos/seed/p1-2/800/600",
+            "https://picsum.photos/seed/p1-3/800/600",
+        ],
+        seller: {
+            name: 'Artisan Co.',
+            avatar: 'https://picsum.photos/seed/seller1/100/100',
+        },
+    }
+};
+
 
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
-  // In a real app, you would fetch the listing based on `params.id`
-  // const listing = await fetchListing(params.id);
+  const listing = mockListings[params.id];
 
   if (!listing) {
     return (
@@ -29,7 +55,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
                 <CardContent>
                     <p className="mt-4 text-muted-foreground">Sorry, we couldn't find the listing you're looking for.</p>
                     <Button asChild className="mt-6">
-                        <a href="/shop">Back to Marketplace</a>
+                        <Link href="/shop">Back to Marketplace</Link>
                     </Button>
                 </CardContent>
             </Card>
@@ -116,9 +142,11 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
                         </div>
                     </div>
                     <Separator />
-                    <Button size="lg" className="w-full bg-accent hover:bg-accent/90">
-                        <MessageSquare className="mr-2 h-5 w-5"/>
-                        Contact Seller
+                    <Button asChild size="lg" className="w-full bg-accent hover:bg-accent/90">
+                       <Link href="/messages">
+                           <MessageSquare className="mr-2 h-5 w-5"/>
+                           Contact Seller
+                       </Link>
                     </Button>
                 </CardContent>
             </Card>

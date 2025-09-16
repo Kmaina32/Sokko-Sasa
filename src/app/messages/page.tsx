@@ -8,8 +8,57 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Search, Send, Inbox } from "lucide-react";
 
-const conversations: any[] = [];
-const messages: any[] = [];
+const conversations = [
+    {
+        id: 'convo1',
+        name: 'Artisan Co.',
+        avatar: 'https://picsum.photos/seed/seller1/100/100',
+        listing: 'Hand-carved Wooden Elephant',
+        lastMessage: 'Is it available in a darker wood?',
+        time: '10:42 AM',
+        unread: 1,
+    },
+    {
+        id: 'convo2',
+        name: 'Jane Smith',
+        avatar: 'https://picsum.photos/seed/seller2/100/100',
+        listing: 'Leather Sofa',
+        lastMessage: 'Okay, thank you!',
+        time: 'Yesterday',
+        unread: 0,
+    },
+     {
+        id: 'convo3',
+        name: 'Music Fest',
+        avatar: 'https://picsum.photos/seed/organizer1/100/100',
+        listing: 'Sauti Sol Concert',
+        lastMessage: 'Can I buy tickets at the gate?',
+        time: '3d ago',
+        unread: 0,
+    },
+];
+
+const messages = [
+    {
+        id: 'msg1',
+        sender: 'other',
+        text: 'Hello, I was wondering if this is still available?',
+        time: '10:40 AM',
+    },
+    {
+        id: 'msg2',
+        sender: 'me',
+        text: 'Yes, it is still available.',
+        time: '10:41 AM',
+    },
+    {
+        id: 'msg3',
+        sender: 'other',
+        text: 'Great! Is it available in a darker wood?',
+        time: '10:42 AM',
+    },
+];
+
 
 export default function MessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState(
