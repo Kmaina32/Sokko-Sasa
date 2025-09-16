@@ -1,30 +1,30 @@
 export const SokkoSasaLogo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
-    viewBox="0 0 160 50"
+    viewBox="0 0 160 90"
     xmlns="http://www.w3.org/2000/svg"
     fontFamily="sans-serif"
-    fontWeight="bold"
+    fontWeight="normal"
   >
     <path
-      fill="#F97316"
-      d="M45.66 43.43c-3.1-1.63-4.3-5.2-2.68-8.3l10-18c1.62-3.1 5.2-4.3 8.3-2.68l4.42 2.33c.8.42 1.15 1.37.72 2.17l-13.8 25.5c-.42.8-1.37 1.15-2.17.72l-4.79-2.74z"
-    />
-    <path
-      stroke="#000"
+      d="M65,35 C65,30 60,25 55,25 L45,25 C40,25 35,30 35,35"
+      stroke="black"
       strokeWidth="5"
-      strokeLinecap="round"
-      d="M37.5 13.5A7.5 7.5 0 0 1 52.5 13.5"
       fill="none"
+      strokeLinecap="round"
     />
     <path
-      fill="#000"
-      d="M26.24 35.34a2.5 2.5 0 0 1-3.37-1.12L12.02 14.1a2.5 2.5 0 0 1 4.5-2.58l10.85 20.12a2.5 2.5 0 0 1-1.13 3.7z"
+      d="M30 40 H70 V55 C70,65 60,65 60,65 L53,65 C53,65 49,69 45,69 C41,69 37,65 37,65 L30,65 V40 Z"
+      fill="#F97316"
     />
-    <text x="65" y="42" fontSize="24" fill="black">
+    <path
+      d="M45,75 C45,75 55,75 55,65 L35,65 C35,75 45,75 45,75 Z"
+      fill="black"
+    />
+    <text x="35" y="90" fontSize="20" fill="black">
       Sokko
     </text>
-    <text x="122" y="42" fontSize="24" fill="#F97316">
+    <text x="95" y="90" fontSize="20" fill="#F97316">
       Sasa
     </text>
   </svg>
