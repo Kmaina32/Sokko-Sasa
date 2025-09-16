@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Ticket } from "lucide-react";
 import { placeholderImages } from "@/lib/placeholder-images";
+import Link from "next/link";
 
 const mockEvents = [
     { 
@@ -42,36 +43,38 @@ export default function EventsPage() {
       <div className="space-y-6">
         {mockEvents.length > 0 ? (
           mockEvents.map((event) => (
-            <Card key={event.id} className="grid grid-cols-1 md:grid-cols-3 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg">
-              <div className="md:col-span-1">
-                  <Image
-                      src={event.imageUrl}
-                      alt={event.name}
-                      width={600}
-                      height={400}
-                      className="h-full w-full object-cover aspect-video md:aspect-auto"
-                      data-ai-hint={event.imageHint}
-                  />
-              </div>
-              <div className="md:col-span-2 flex flex-col">
-                  <CardHeader>
-                      <CardTitle className="text-2xl">{event.name}</CardTitle>
-                      <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pt-2">
-                          <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4"/> {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                          <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4"/> {event.location}</span>
-                      </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                      <p className="text-muted-foreground">Join us for an unforgettable night of music with the legendary Sauti Sol. Get ready to dance to their greatest hits and new tracks. This is a concert you don't want to miss!</p>
-                  </CardContent>
-                  <div className="p-6 pt-0">
-                      <Button>
-                          <Ticket className="mr-2 h-4 w-4"/>
-                          Get Tickets
-                      </Button>
-                  </div>
-              </div>
-            </Card>
+            <Link href={`/events/${event.id}`} key={event.id} className="block group">
+              <Card className="grid grid-cols-1 md:grid-cols-3 overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:border-primary">
+                <div className="md:col-span-1">
+                    <Image
+                        src={event.imageUrl}
+                        alt={event.name}
+                        width={600}
+                        height={400}
+                        className="h-full w-full object-cover aspect-video md:aspect-auto"
+                        data-ai-hint={event.imageHint}
+                    />
+                </div>
+                <div className="md:col-span-2 flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="text-2xl group-hover:text-primary">{event.name}</CardTitle>
+                        <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pt-2">
+                            <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4"/> {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4"/> {event.location}</span>
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                        <p className="text-muted-foreground">Join us for an unforgettable night of music with the legendary Sauti Sol. Get ready to dance to their greatest hits and new tracks. This is a concert you don't want to miss!</p>
+                    </CardContent>
+                    <div className="p-6 pt-0">
+                        <Button>
+                            <Ticket className="mr-2 h-4 w-4"/>
+                            View Details
+                        </Button>
+                    </div>
+                </div>
+              </Card>
+            </Link>
           ))
         ) : (
           <Card className="text-center p-12">
