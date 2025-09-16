@@ -4,11 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Sparkles, UploadCloud, Image as ImageIcon, Wand2 } from "lucide-react";
-import {
-  generateDescriptionFromTextAction,
-  generateDescriptionFromImageAction,
-} from "@/app/actions";
+import { Loader2, Sparkles, UploadCloud } from "lucide-react";
+import { generateAdAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,7 +25,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createListing } from "@/lib/firestore";
 import { useRouter } from "next/navigation";
 
@@ -92,17 +88,33 @@ export function CreateListingForm({ userId }: { userId: string}) {
     }
   }
 
-  const handleGenerateFromText = async () => {
-    if (!aiKeywords) {
+  const handleGenerateDescription = async () => {
+    if (!aiKeywords && !aiImage) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please enter some keywords to generate a description.",
+        title: "Input Required",
+        description:
+          "Please provide keywords or an image to generate a description.",
       });
       return;
     }
     setIsGenerating(true);
-    const result = await generateDescriptionFromTextAction({ keywords: aiKeywords });
+
+    let dataUri: string | undefined = undefined;
+    if (aiImage) {
+        dataUri = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(aiImage);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
+    const result = await generateAdAction({
+      keywords: aiKeywords,
+      photoDataUri: dataUri,
+    });
+
     if (result.success && result.description) {
       setDescription(result.description);
       form.setValue("description", result.description);
@@ -119,52 +131,9 @@ export function CreateListingForm({ userId }: { userId: string}) {
     }
     setIsGenerating(false);
   };
-  
-  const handleGenerateFromImage = async () => {
-    if (!aiImage) {
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Please upload an image to generate a description.",
-        });
-        return;
-    }
-    setIsGenerating(true);
-
-    const reader = new FileReader();
-    reader.readAsDataURL(aiImage);
-    reader.onload = async () => {
-        const dataUri = reader.result as string;
-        const result = await generateDescriptionFromImageAction({ photoDataUris: [dataUri] });
-
-        if (result.success && result.description) {
-            setDescription(result.description);
-            form.setValue("description", result.description);
-            toast({
-              title: "Success!",
-              description: "Description generated from your image.",
-            });
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Generation Failed",
-                description: result.error,
-            });
-        }
-        setIsGenerating(false);
-    };
-    reader.onerror = () => {
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to read the image file.",
-        });
-        setIsGenerating(false);
-    }
-  };
 
 
-  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAiImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setAiImage(file);
@@ -246,49 +215,40 @@ export function CreateListingForm({ userId }: { userId: string}) {
             Ad Description Generator
           </CardTitle>
           <CardDescription>
-            Use AI to craft the perfect description for your ad. You can edit it afterwards.
+            Use AI to craft the perfect description for your ad. Provide keywords, an image, or both.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="text">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="text"><Wand2 className="mr-2 h-4 w-4"/>From Text</TabsTrigger>
-              <TabsTrigger value="image"><ImageIcon className="mr-2 h-4 w-4"/>From Image</TabsTrigger>
-            </TabsList>
-            <TabsContent value="text" className="mt-4 space-y-4">
-              <Label htmlFor="ai-keywords">Keywords or phrases</Label>
-              <Textarea
-                id="ai-keywords"
-                value={aiKeywords}
-                onChange={(e) => setAiKeywords(e.target.value)}
-                placeholder="e.g., red leather sofa, 3-seater, good condition, modern design"
-              />
-              <Button onClick={handleGenerateFromText} disabled={isGenerating} type="button">
-                {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                Generate
-              </Button>
-            </TabsContent>
-            <TabsContent value="image" className="mt-4 space-y-4">
-                 <Label htmlFor="ai-image">Upload an image</Label>
-                 <div className="flex items-center gap-4">
-                     <div className="w-full">
-                         <label htmlFor="ai-image-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted hover:bg-muted/80">
-                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                 <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
-                                 <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                 <p className="text-xs text-muted-foreground">PNG, JPG or WEBP</p>
-                             </div>
-                             <Input id="ai-image-upload" type="file" className="hidden" accept="image/*" onChange={handleImageFileChange} />
-                         </label>
-                     </div>
-                     {aiImagePreview && <img src={aiImagePreview} alt="preview" className="w-32 h-32 object-cover rounded-lg" />}
-                 </div>
-                 <Button onClick={handleGenerateFromImage} disabled={isGenerating || !aiImage} type="button">
-                     {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                     Generate
-                 </Button>
-             </TabsContent>
-          </Tabs>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="ai-keywords">Keywords or phrases (Optional)</Label>
+            <Textarea
+              id="ai-keywords"
+              value={aiKeywords}
+              onChange={(e) => setAiKeywords(e.target.value)}
+              placeholder="e.g., red leather sofa, 3-seater, good condition, modern design"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="ai-image">Upload an image (Optional)</Label>
+            <div className="flex items-center gap-4">
+                <div className="w-full">
+                    <label htmlFor="ai-image-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted hover:bg-muted/80">
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
+                            <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                        </div>
+                        <Input id="ai-image-upload" type="file" className="hidden" accept="image/*" onChange={handleAiImageFileChange} />
+                    </label>
+                </div>
+                {aiImagePreview && <img src={aiImagePreview} alt="AI image preview" className="w-32 h-32 object-cover rounded-lg" />}
+            </div>
+          </div>
+          
+          <Button onClick={handleGenerateDescription} disabled={isGenerating} type="button">
+            {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+            Generate Description
+          </Button>
         </CardContent>
       </Card>
       

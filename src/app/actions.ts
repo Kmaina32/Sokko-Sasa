@@ -1,31 +1,10 @@
 "use server";
 
-import {
-  generateAdDescriptionFromText,
-  GenerateAdDescriptionFromTextInput,
-} from "@/ai/flows/generate-ad-description-from-text";
-import {
-  generateAdDescription,
-  GenerateAdDescriptionInput,
-} from "@/ai/flows/generate-ad-description";
+import { generateAd, GenerateAdInput } from "@/ai/flows/generate-ad";
 
-export async function generateDescriptionFromTextAction(
-  input: GenerateAdDescriptionFromTextInput
-) {
+export async function generateAdAction(input: GenerateAdInput) {
   try {
-    const { description } = await generateAdDescriptionFromText(input);
-    return { success: true, description };
-  } catch (error) {
-    console.error(error);
-    return { success: false, error: "Failed to generate description." };
-  }
-}
-
-export async function generateDescriptionFromImageAction(
-  input: GenerateAdDescriptionInput
-) {
-  try {
-    const { description } = await generateAdDescription(input);
+    const { description } = await generateAd(input);
     return { success: true, description };
   } catch (error) {
     console.error(error);
