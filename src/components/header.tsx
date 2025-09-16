@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingCart, Bell, Menu, LogOut, User as UserIcon } from "lucide-react";
+import { ShoppingCart, Bell, Menu, LogOut, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/context/auth-context";
@@ -29,17 +28,7 @@ export function AppHeader() {
            </div>
         </div>
 
-        <div className="flex-1 max-w-lg">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              placeholder="Search products, properties, rides, services..."
-              className="pl-10 text-base"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
+        <div className="flex flex-1 justify-end items-center gap-2">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/cart">
               <ShoppingCart className="h-6 w-6" />
