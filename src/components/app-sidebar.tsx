@@ -62,6 +62,7 @@ export function AppSidebar() {
                   asChild
                   isActive={pathname === link.href}
                   className="[&[data-active=true]]:bg-orange-100 [&[data-active=true]]:text-orange-600 [&[data-active=true]]:font-semibold"
+                  tooltip={link.label}
                 >
                   <a href={link.href}>
                     <link.icon className="h-5 w-5" />
@@ -81,6 +82,7 @@ export function AppSidebar() {
                   asChild
                   isActive={pathname === link.href}
                   className="[&[data-active=true]]:bg-orange-100 [&[data-active=true]]:text-orange-600 [&[data-active=true]]:font-semibold"
+                  tooltip={link.label}
                 >
                   <a href={link.href}>
                     <link.icon className="h-5 w-5" />
@@ -100,6 +102,7 @@ export function AppSidebar() {
                   asChild
                   isActive={pathname === link.href}
                   className="[&[data-active=true]]:bg-orange-100 [&[data-active=true]]:text-orange-600 [&[data-active=true]]:font-semibold"
+                  tooltip={link.label}
                 >
                   <a href={link.href}>
                     <link.icon className="h-5 w-5" />

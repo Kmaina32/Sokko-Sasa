@@ -62,6 +62,7 @@ export function AdminSidebar() {
                   // A bit of a hack to check active state for hash links
                   isActive={pathname === '/admin' && (typeof window !== 'undefined' ? window.location.hash === link.href.split('#')[1] : false)}
                   className="[&[data-active=true]]:bg-orange-100 [&[data-active=true]]:text-orange-600 [&[data-active=true]]:font-semibold"
+                  tooltip={link.label}
                 >
                   <a href={link.href}>
                     <link.icon className="h-5 w-5" />
@@ -76,7 +77,7 @@ export function AdminSidebar() {
             <SidebarGroupLabel>Analytics</SidebarGroupLabel>
              <SidebarMenu>
                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton asChild tooltip="Dashboard">
                          <a href="#">
                             <BarChart2 className="h-5 w-5" />
                             <span>Dashboard</span>
@@ -89,7 +90,7 @@ export function AdminSidebar() {
       <SidebarFooter>
         <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Back to App">
                     <a href="/">
                         <Home className="h-5 w-5" />
                         <span>Back to App</span>
