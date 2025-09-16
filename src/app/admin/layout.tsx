@@ -1,4 +1,3 @@
-import { AppHeader } from "@/components/header";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { Sidebar, SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
@@ -16,7 +15,6 @@ export default function AdminLayout({
         <AdminSidebar />
       </Sidebar>
       <SidebarInset>
-        <AppHeader />
         <main className="flex-1">{children}</main>
       </SidebarInset>
     </SidebarProvider>
