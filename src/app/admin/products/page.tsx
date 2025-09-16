@@ -19,7 +19,8 @@ import {
   Trash2,
   FilePenLine,
   Package,
-  Loader2
+  Loader2,
+  PlusCircle,
 } from "lucide-react";
 import { getListings, deleteListing } from "@/lib/firestore";
 import type { Listing } from "@/lib/types";
@@ -35,6 +36,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import Link from 'next/link';
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -110,9 +112,17 @@ export default function ManageProductsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-        <div className="mb-4">
-            <h1 className="font-headline text-4xl font-bold">Manage Products</h1>
-            <p className="text-muted-foreground">Oversee all products listed on the marketplace.</p>
+        <div className="flex justify-between items-center mb-4">
+            <div>
+                <h1 className="font-headline text-4xl font-bold">Manage Products</h1>
+                <p className="text-muted-foreground">Oversee all products listed on the marketplace.</p>
+            </div>
+            <Button asChild>
+                <Link href="/admin/products/new">
+                    <PlusCircle className="mr-2 h-4 w-4"/>
+                    New Product
+                </Link>
+            </Button>
         </div>
         <Card>
             <CardContent>

@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import {
   Package,
@@ -16,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/listing-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { getListings } from "@/lib/firestore";
+import { getListings, getAdvertisements } from "@/lib/firestore";
 import type { Listing, Advertisement } from "@/lib/types";
 
 const categories = [
@@ -64,16 +65,10 @@ const categories = [
   },
 ];
 
-// MOCK DATA - In a real app, this would come from a database.
-const mockAdvertisements: Advertisement[] = [
-    { id: 'ad1', title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad-summer/1200/400', imageHint: 'summer sale', description: 'Get up to 50% off on all summer items!', isActive: true },
-    { id: 'ad2', title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad-new/1200/400', imageHint: 'new products', description: 'Check out the latest collection of handcrafted goods.', isActive: true },
-];
-
 
 export default async function Home() {
   const mockFeaturedListings: Listing[] = await getListings({ limit: 4 });
-  const activeAdvertisements = mockAdvertisements.filter(ad => ad.isActive);
+  const activeAdvertisements = await getAdvertisements({ activeOnly: true });
 
   return (
     <div className="flex-1">

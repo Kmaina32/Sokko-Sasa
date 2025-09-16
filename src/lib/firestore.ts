@@ -1,3 +1,4 @@
+
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -16,7 +17,7 @@ import {
   serverTimestamp
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import type { Listing, User } from "@/lib/types";
+import type { Listing, User, Advertisement } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
 
@@ -94,6 +95,18 @@ const seedDatabase = async () => {
              status: user.status
          }, { merge: true });
      })
+     
+     const adsCollection = collection(db, "advertisements");
+     const adSnapshot = await getDocs(query(adsCollection, firestoreLimit(1)));
+     if (adSnapshot.empty) {
+        const mockAdvertisements: Omit<Advertisement, "id">[] = [
+            { title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad-summer/1200/400', imageHint: 'summer sale', description: 'Get up to 50% off on all summer items!', isActive: true },
+            { title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad-new/1200/400', imageHint: 'new products', description: 'Check out the latest collection of handcrafted goods.', isActive: true },
+        ];
+        const adPromises = mockAdvertisements.map(ad => addDoc(collection(db, 'advertisements'), ad));
+        await Promise.all(adPromises);
+     }
+
 
      await Promise.all([...seedPromises, ...userPromises]);
     console.log("Database seeded.");
@@ -181,7 +194,7 @@ const uploadImage = async (file: File, path: string): Promise<string> => {
     return downloadURL;
 };
 
-export const createListing = async (listingData: Omit<Listing, 'id' | 'sellerId' | 'imageUrl' | 'imageHint'>, userId: string, imageFile: File | null): Promise<string> => {
+export const createListing = async (listingData: Omit<Listing, 'id' | 'imageUrl' | 'imageHint'>, userId: string | null, imageFile: File | null): Promise<string> => {
     const docRef = doc(collection(db, 'listings'));
     
     let imageUrl = 'https://picsum.photos/seed/placeholder/600/400';
@@ -307,4 +320,42 @@ export const updateCartItemQuantity = async (userId: string, listingId: string, 
 export const removeCartItem = async (userId: string, listingId: string) => {
     const cartItemRef = doc(db, 'users', userId, 'cart', listingId);
     await deleteDoc(cartItemRef);
+}
+
+
+// ADVERTISEMENTS
+export const createAdvertisement = async (adData: Omit<Advertisement, 'id' | 'imageUrl' | 'imageHint'>, imageFile: File): Promise<string> => {
+    const docRef = await addDoc(collection(db, 'advertisements'), {});
+    
+    const imageUrl = await uploadImage(imageFile, `advertisements/${docRef.id}/${imageFile.name}`);
+
+    await setDoc(docRef, {
+        ...adData,
+        id: docRef.id,
+        imageUrl,
+        imageHint: 'promotional image'
+    });
+
+    return docRef.id;
+};
+
+export const getAdvertisements = async ({ activeOnly = false }: { activeOnly?: boolean } = {}): Promise<Advertisement[]> => {
+  let q = query(collection(db, "advertisements"));
+  if (activeOnly) {
+    q = query(q, where("isActive", "==", true));
+  }
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return [];
+  
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Advertisement));
+};
+
+
+export const updateAdvertisementStatus = async (adId: string, isActive: boolean) => {
+  const adRef = doc(db, 'advertisements', adId);
+  await updateDoc(adRef, { isActive });
+}
+
+export const deleteAdvertisement = async (adId: string) => {
+  await deleteDoc(doc(db, 'advertisements', adId));
 }

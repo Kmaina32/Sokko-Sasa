@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -11,9 +15,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -21,30 +22,106 @@ import {
   FilePenLine,
   PlusCircle,
   Megaphone,
+  Loader2,
 } from "lucide-react";
 import Image from "next/image";
-
-// MOCK DATA - In a real app, this would come from a database.
-const mockAdvertisements = [
-    { id: 'ad1', title: 'Summer Sale', imageUrl: 'https://picsum.photos/seed/ad-summer/1200/400', imageHint: 'summer sale', description: 'Get up to 50% off on all summer items!', isActive: true },
-    { id: 'ad2', title: 'New Arrivals', imageUrl: 'https://picsum.photos/seed/ad-new/1200/400', imageHint: 'new products', description: 'Check out the latest collection of handcrafted goods.', isActive: true },
-    { id: 'ad3', title: 'Holiday Discounts', imageUrl: 'https://picsum.photos/seed/ad-holiday/1200/400', imageHint: 'holiday shopping', description: 'Special discounts for the upcoming holiday season.', isActive: false },
-];
-
-
-const CrudActions = () => (
-    <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-            <FilePenLine className="h-4 w-4"/>
-        </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
-            <Trash2 className="h-4 w-4"/>
-        </Button>
-    </div>
-);
+import Link from "next/link";
+import { getAdvertisements, updateAdvertisementStatus, deleteAdvertisement } from '@/lib/firestore';
+import type { Advertisement } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 
 export default function ManageAdvertisementsPage() {
+  const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchAdvertisements = async () => {
+    setLoading(true);
+    const adList = await getAdvertisements();
+    setAdvertisements(adList);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchAdvertisements();
+  }, []);
+
+  const handleStatusChange = async (adId: string, newStatus: boolean) => {
+    try {
+      await updateAdvertisementStatus(adId, newStatus);
+      setAdvertisements(prevAds => 
+        prevAds.map(ad => ad.id === adId ? { ...ad, isActive: newStatus } : ad)
+      );
+      toast({
+        title: "Success",
+        description: "Advertisement status updated.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update status.",
+      });
+    }
+  }
+  
+  const handleDelete = async (adId: string) => {
+    try {
+      await deleteAdvertisement(adId);
+      fetchAdvertisements();
+      toast({
+        title: "Success",
+        description: "Advertisement deleted.",
+      });
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete advertisement.",
+      });
+    }
+  }
+
+
+  const CrudActions = ({ ad }: { ad: Advertisement}) => (
+    <div className="flex gap-2 justify-end">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
+            <FilePenLine className="h-4 w-4"/>
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-4 w-4"/>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the ad "{ad.title}".
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleDelete(ad.id)}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+    </div>
+  );
+
+
   return (
     <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-4">
@@ -52,15 +129,21 @@ export default function ManageAdvertisementsPage() {
                 <h1 className="font-headline text-4xl font-bold">Manage Advertisements</h1>
                 <p className="text-muted-foreground">Control promotions on your homepage.</p>
             </div>
-            <Button>
-                <PlusCircle className="mr-2 h-4 w-4"/>
-                New Advertisement
+            <Button asChild>
+                <Link href="/admin/advertisements/new">
+                    <PlusCircle className="mr-2 h-4 w-4"/>
+                    New Advertisement
+                </Link>
             </Button>
         </div>
 
         <Card>
             <CardContent>
-              {mockAdvertisements.length > 0 ? (
+              {loading ? (
+                <div className="flex justify-center items-center p-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : advertisements.length > 0 ? (
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -71,7 +154,7 @@ export default function ManageAdvertisementsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {mockAdvertisements.map((ad) => (
+                        {advertisements.map((ad) => (
                             <TableRow key={ad.id}>
                                 <TableCell>
                                     <Image src={ad.imageUrl} alt={ad.title} width={100} height={50} className="rounded-md object-cover" data-ai-hint={ad.imageHint} />
@@ -79,12 +162,16 @@ export default function ManageAdvertisementsPage() {
                                 <TableCell className="font-medium">{ad.title}</TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-2">
-                                        <Switch id={`active-${ad.id}`} checked={ad.isActive} />
+                                        <Switch 
+                                          id={`active-${ad.id}`} 
+                                          checked={ad.isActive} 
+                                          onCheckedChange={(checked) => handleStatusChange(ad.id, checked)}
+                                        />
                                         <Badge variant={ad.isActive ? "default" : "secondary"}>{ad.isActive ? "Active" : "Inactive"}</Badge>
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <CrudActions />
+                                    <CrudActions ad={ad}/>
                                 </TableCell>
                             </TableRow>
                         ))}
