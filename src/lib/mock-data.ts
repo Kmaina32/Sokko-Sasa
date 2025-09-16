@@ -149,6 +149,42 @@ export const mockEvents = [
               "Bathroom & Kitchen Plumbing",
               "New Installations"
           ]
+      },
+      'srv2': {
+          id: 'srv2',
+          name: 'FixIt Appliance Repair',
+          service: 'Appliance Repair',
+          rating: 4.7,
+          reviews: 98,
+          location: 'Nairobi',
+          imageUrl: placeholderImages.service2.imageUrl,
+          imageHint: placeholderImages.service2.imageHint,
+          bio: "We fix all major home appliances. Fridges, washing machines, cookers, and more. Fast, reliable service with a guarantee on all our work.",
+          services: ["Refrigerator Repair", "Washing Machine Repair", "Oven & Cooker Repair", "Microwave Repair"]
+      },
+      'srv3': {
+          id: 'srv3',
+          name: 'AutoCare Mechanics',
+          service: 'Auto Mechanics',
+          rating: 4.9,
+          reviews: 210,
+          location: 'Industrial Area, Nairobi',
+          imageUrl: placeholderImages.service3.imageUrl,
+          imageHint: placeholderImages.service3.imageHint,
+          bio: "Expert car service and repair for all makes and models. We use the latest diagnostic equipment to ensure your vehicle is in top condition.",
+          services: ["General Service", "Engine Diagnostics", "Brake Repair", "Suspension & Steering"]
+      },
+       'srv4': {
+          id: 'srv4',
+          name: 'Sparkle Cleaners',
+          service: 'Cleaning Services',
+          rating: 4.6,
+          reviews: 75,
+          location: 'Westlands, Nairobi',
+          imageUrl: placeholderImages.service4.imageUrl,
+          imageHint: placeholderImages.service4.imageHint,
+          bio: "Professional home and office cleaning services. We leave your space sparkling clean. Book us for a one-time clean or regular maintenance.",
+          services: ["Residential Cleaning", "Commercial/Office Cleaning", "Post-Construction Cleaning", "Upholstery Cleaning"]
       }
   };
 
@@ -183,11 +219,69 @@ export const mockEvents = [
         ],
         services: ['Neurology', 'Orthopedics', 'Maternity', 'Emergency Medicine']
     }
-};
+  };
+  
+  export const mockInsuranceData: any = {
+    'ins1': {
+        id: 'ins1',
+        name: 'Jubilee Health Insurance',
+        type: 'Health Insurance',
+        icon: 'Heart',
+        description: 'Comprehensive medical coverage for you and your family.',
+        imageUrl: placeholderImages.insurance1.imageUrl,
+        imageHint: placeholderImages.insurance1.imageHint,
+    },
+    'ins2': {
+        id: 'ins2',
+        name: 'Britam Motor Insurance',
+        type: 'Motor Insurance',
+        icon: 'Car',
+        description: 'Protect your vehicle against accidents, theft, and damage.',
+        imageUrl: placeholderImages.insurance2.imageUrl,
+        imageHint: placeholderImages.insurance2.imageHint,
+    },
+    'ins3': {
+        id: 'ins3',
+        name: 'UAP Old Mutual Home Insurance',
+        type: 'Home Insurance',
+        icon: 'Home',
+        description: 'Secure your home and belongings from unforeseen events.',
+        imageUrl: placeholderImages.insurance3.imageUrl,
+        imageHint: placeholderImages.insurance3.imageHint,
+    },
+     'ins4': {
+        id: 'ins4',
+        name: 'ICEA LION Travel Insurance',
+        type: 'Travel Insurance',
+        icon: 'Plane',
+        description: 'Travel with peace of mind, wherever you go.',
+        imageUrl: placeholderImages.insurance4.imageUrl,
+        imageHint: placeholderImages.insurance4.imageHint,
+    }
+  };
+
+  export const mockPharmacyData: any = {
+    'pharm1': {
+        id: 'pharm1',
+        name: 'Goodlife Pharmacy',
+        location: 'Various Locations, Nairobi',
+        imageUrl: placeholderImages.pharmacy1.imageUrl,
+        imageHint: placeholderImages.pharmacy1.imageHint,
+    },
+    'pharm2': {
+        id: 'pharm2',
+        name: 'Pharmaplus Pharmacy',
+        location: 'Various Locations, Nairobi',
+        imageUrl: placeholderImages.pharmacy2.imageUrl,
+        imageHint: placeholderImages.pharmacy2.imageHint,
+    }
+  };
   
   export const mockRestaurants = Object.values(mockRestaurantsData);
   export const mockProperties = Object.values(mockPropertyData);
   export const mockProviders = Object.values(mockProviderData);
   export const mockClinics = Object.values(mockClinicData);
+  export const mockInsurances = Object.values(mockInsuranceData);
+  export const mockPharmacies = Object.values(mockPharmacyData);
   export const mockJobs: any[] = []; // Empty for now
   

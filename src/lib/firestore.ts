@@ -22,7 +22,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User, Advertisement } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
-import { mockEvents, mockRestaurantsData, mockPropertyData, mockProviderData, mockClinicData } from './mock-data';
+import { mockEvents, mockRestaurantsData, mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData, mockPharmacyData } from './mock-data';
 
 // Seed data if the collections are empty
 const seedDatabase = async () => {
@@ -155,6 +155,21 @@ const seedDatabase = async () => {
     await Promise.all(clinicPromises);
   }
 
+  const insuranceCollection = collection(db, "insurances");
+  const insuranceSnapshot = await getDocs(query(insuranceCollection, firestoreLimit(1)));
+  if(insuranceSnapshot.empty) {
+    console.log("Seeding insurances...");
+    const insurancePromises = Object.values(mockInsuranceData).map((insurance: any) => setDoc(doc(db, "insurances", insurance.id), insurance));
+    await Promise.all(insurancePromises);
+  }
+
+  const pharmacyCollection = collection(db, "pharmacies");
+  const pharmacySnapshot = await getDocs(query(pharmacyCollection, firestoreLimit(1)));
+  if(pharmacySnapshot.empty) {
+    console.log("Seeding pharmacies...");
+    const pharmacyPromises = Object.values(mockPharmacyData).map((pharmacy: any) => setDoc(doc(db, "pharmacies", pharmacy.id), pharmacy));
+    await Promise.all(pharmacyPromises);
+  }
 };
 
 // USERS
@@ -546,6 +561,18 @@ export const getClinicById = async (id: string): Promise<any | null> => {
     const docRef = doc(db, "clinics", id);
     const docSnap = await getDoc(docRef);
     return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
+}
+
+export const getInsurances = async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(db, "insurances"));
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+export const getPharmacies = async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(db, "pharmacies"));
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
 seedDatabase();

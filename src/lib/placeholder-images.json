@@ -14,9 +14,17 @@
     { "id": "food3", "description": "Assortment of Chinese dishes", "imageUrl": "https://picsum.photos/seed/f3/600/400", "imageHint": "chinese food" },
     { "id": "service1", "description": "Avatar of a plumber", "imageUrl": "https://picsum.photos/seed/s1/100/100", "imageHint": "male portrait" },
     { "id": "service2", "description": "Avatar of a repair technician", "imageUrl": "https://picsum.photos/seed/s2/100/100", "imageHint": "professional woman" },
+    { "id": "service3", "description": "Avatar of a mechanic", "imageUrl": "https://picsum.photos/seed/s3/100/100", "imageHint": "mechanic at work" },
+    { "id": "service4", "description": "Avatar of a cleaner", "imageUrl": "https://picsum.photos/seed/s4/100/100", "imageHint": "cleaning service" },
     { "id": "clinic1", "description": "Exterior of a modern hospital", "imageUrl": "https://picsum.photos/seed/c1/600/400", "imageHint": "hospital building" },
     { "id": "clinic2", "description": "University hospital campus", "imageUrl": "https://picsum.photos/seed/c2/600/400", "imageHint": "university campus" },
     { "id": "event1", "description": "Live music concert stage", "imageUrl": "https://picsum.photos/seed/e1/600/400", "imageHint": "music concert" },
-    { "id": "event2", "description": "People at a technology conference", "imageUrl": "https://picsum.photos/seed/e2/600/400", "imageHint": "tech conference" }
+    { "id": "event2", "description": "People at a technology conference", "imageUrl": "https://picsum.photos/seed/e2/600/400", "imageHint": "tech conference" },
+    { "id": "insurance1", "description": "Health insurance concept", "imageUrl": "https://picsum.photos/seed/ins1/800/600", "imageHint": "health insurance" },
+    { "id": "insurance2", "description": "Car insurance concept", "imageUrl": "https://picsum.photos/seed/ins2/800/600", "imageHint": "car insurance" },
+    { "id": "insurance3", "description": "Home insurance concept", "imageUrl": "https://picsum.photos/seed/ins3/800/600", "imageHint": "home insurance" },
+    { "id": "insurance4", "description": "Travel insurance concept", "imageUrl": "https://picsum.photos/seed/ins4/800/600", "imageHint": "travel insurance" },
+    { "id": "pharmacy1", "description": "Interior of a modern pharmacy", "imageUrl": "https://picsum.photos/seed/ph1/600/400", "imageHint": "modern pharmacy" },
+    { "id": "pharmacy2", "description": "Exterior of a local pharmacy", "imageUrl": "https://picsum.photos/seed/ph2/600/400", "imageHint": "local pharmacy" }
   ]
 }

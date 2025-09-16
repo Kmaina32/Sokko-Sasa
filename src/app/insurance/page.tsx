@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -33,16 +33,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getInsurances } from '@/lib/firestore';
 
+const iconMap: { [key: string]: React.ElementType } = {
+  Heart,
+  Car,
+  Home,
+  Plane,
+};
 
-const insuranceTypes = [
-  { name: "Health Insurance", icon: Heart, description: "Comprehensive medical coverage for you and your family.", imageHint: "family smiling" },
-  { name: "Motor Insurance", icon: Car, description: "Protect your vehicle against accidents, theft, and damage.", imageHint: "modern car" },
-  { name: "Home Insurance", icon: Home, description: "Secure your home and belongings from unforeseen events.", imageHint: "suburban house" },
-  { name: "Travel Insurance", icon: Plane, description: "Travel with peace of mind, wherever you go.", imageHint: "airplane window" },
-];
-
-function GetQuoteDialog({ insuranceType }: { insuranceType: string }) {
+function GetQuoteDialog({ insuranceType, insuranceProviders }: { insuranceType: string, insuranceProviders: any[] }) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,7 +79,7 @@ function GetQuoteDialog({ insuranceType }: { insuranceType: string }) {
                   <SelectValue placeholder="Select insurance type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {insuranceTypes.map(it => (
+                  {insuranceProviders.map(it => (
                     <SelectItem key={it.name} value={it.name}>{it.name}</SelectItem>
                   ))}
                 </SelectContent>
@@ -114,6 +114,26 @@ function GetQuoteDialog({ insuranceType }: { insuranceType: string }) {
 
 
 export default function InsurancePage() {
+    const [insuranceProviders, setInsuranceProviders] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchInsurances = async () => {
+            const data = await getInsurances();
+            setInsuranceProviders(data);
+            setLoading(false);
+        }
+        fetchInsurances();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
     return (
         <div className="bg-muted/20">
             <div className="container mx-auto px-4 py-12">
@@ -124,27 +144,31 @@ export default function InsurancePage() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {insuranceTypes.map(insurance => (
-                        <Card key={insurance.name} className="text-center group hover:shadow-xl hover:-translate-y-1 transition-all">
-                            <CardHeader className="items-center">
-                                <div className="p-4 bg-primary/10 rounded-full mb-4 group-hover:bg-primary transition-colors">
-                                    <insurance.icon className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors"/>
-                                </div>
-                                <CardTitle>{insurance.name}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">{insurance.description}</p>
-                            </CardContent>
-                            <CardFooter>
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button className="w-full">Get a Quote</Button>
-                                    </DialogTrigger>
-                                    <GetQuoteDialog insuranceType={insurance.name}/>
-                                </Dialog>
-                            </CardFooter>
-                        </Card>
-                    ))}
+                    {insuranceProviders.map(insurance => {
+                        const Icon = iconMap[insurance.icon] || Shield;
+                        return (
+                            <Card key={insurance.name} className="text-center group hover:shadow-xl hover:-translate-y-1 transition-all">
+                                <CardHeader className="items-center">
+                                    <div className="p-4 bg-primary/10 rounded-full mb-4 group-hover:bg-primary transition-colors">
+                                        <Icon className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors"/>
+                                    </div>
+                                    <CardTitle>{insurance.type}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="font-semibold text-lg">{insurance.name}</p>
+                                    <p className="text-muted-foreground mt-2">{insurance.description}</p>
+                                </CardContent>
+                                <CardFooter>
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button className="w-full">Get a Quote</Button>
+                                        </DialogTrigger>
+                                        <GetQuoteDialog insuranceType={insurance.type} insuranceProviders={insuranceProviders} />
+                                    </Dialog>
+                                </CardFooter>
+                            </Card>
+                        )
+                    })}
                 </div>
 
                 <Card className="mt-12 bg-primary text-primary-foreground overflow-hidden">
