@@ -1,3 +1,76 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "A beautiful, intricately carved wooden elephant statue, perfect for home decor.",
+      "imageUrl": "https://picsum.photos/seed/1/600/400",
+      "imageHint": "wooden elephant"
+    },
+    {
+      "id": "2",
+      "description": "Professional graphic design for logos, flyers, and more. Quick turnaround.",
+      "imageUrl": "https://picsum.photos/seed/2/600/400",
+      "imageHint": "design portfolio"
+    },
+    {
+      "id": "3",
+      "description": "Modern and spacious 2-bedroom apartment for rent in a prime location.",
+      "imageUrl": "https://picsum.photos/seed/3/600/400",
+      "imageHint": "modern apartment"
+    },
+    {
+      "id": "4",
+      "description": "We are hiring an experienced Sales Executive to join our dynamic team.",
+      "imageUrl": "https://picsum.photos/seed/4/600/400",
+      "imageHint": "office handshake"
+    },
+    {
+      "id": "5",
+      "description": "Authentic sisal Kiondo basket, durable and stylish. Available in multiple colors.",
+      "imageUrl": "https://picsum.photos/seed/5/600/400",
+      "imageHint": "sisal basket"
+    },
+    {
+      "id": "6",
+      "description": "Reliable plumbing services for residential and commercial properties.",
+      "imageUrl": "https://picsum.photos/seed/6/600/400",
+      "imageHint": "plumbing tools"
+    },
+    {
+      "id": "7",
+      "description": "Classic brown leather jacket in excellent condition. A timeless piece.",
+      "imageUrl": "https://picsum.photos/seed/7/600/400",
+      "imageHint": "leather jacket"
+    },
+    {
+      "id": "8",
+      "description": "Prime 1-acre beachfront plot with stunning ocean views. Perfect for development.",
+      "imageUrl": "https://picsum.photos/seed/8/600/400",
+      "imageHint": "beachfront property"
+    },
+    {
+      "id": "9",
+      "description": "A single, delicious-looking red apple on a plain background.",
+      "imageUrl": "https://picsum.photos/seed/9/600/400",
+      "imageHint": "red apple"
+    },
+    {
+      "id": "10",
+      "description": "A happy dog playing in a sunlit field of grass.",
+      "imageUrl": "https://picsum.photos/seed/10/600/400",
+      "imageHint": "happy dog"
+    },
+    {
+      "id": "user1",
+      "description": "Avatar for John Doe",
+      "imageUrl": "https://picsum.photos/seed/user1/100/100",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "seller1",
+      "description": "Avatar for Jane Smith",
+      "imageUrl": "https://picsum.photos/seed/seller1/100/100",
+      "imageHint": "woman portrait"
+    }
+  ]
 }
