@@ -315,12 +315,18 @@ export const getListingById = async (id: string): Promise<Listing | null> => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    const data = docSnap.data() as Listing;
+    const data = docSnap.data() as any;
     let seller;
     if(data.sellerId) {
        seller = await getUserData(data.sellerId);
     }
-    return { ...data, id: docSnap.id, seller: seller ?? undefined };
+    
+    // Ensure createdAt is a serializable string before returning
+    if (data.createdAt && data.createdAt instanceof Timestamp) {
+      data.createdAt = data.createdAt.toDate().toISOString();
+    }
+
+    return { ...data, id: docSnap.id, seller: seller ?? undefined } as Listing;
   } else {
     return null;
   }
