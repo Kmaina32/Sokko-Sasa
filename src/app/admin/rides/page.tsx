@@ -56,7 +56,7 @@ export default function ManageRidesPage() {
                 <p className="text-muted-foreground">Monitor driver partners and their status.</p>
             </div>
             <Button asChild>
-                <Link href="/admin/products/new">
+                <Link href="/admin/rides/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Driver
                 </Link>
@@ -101,7 +101,7 @@ export default function ManageRidesPage() {
                         <h3 className="mt-4 text-xl font-semibold">No Drivers Found</h3>
                         <p className="mt-2 text-muted-foreground">Driver partner data will appear here.</p>
                         <Button asChild className="mt-4">
-                            <Link href="/admin/products/new">
+                            <Link href="/admin/rides/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Driver
                             </Link>

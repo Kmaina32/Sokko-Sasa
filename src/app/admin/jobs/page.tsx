@@ -58,7 +58,7 @@ export default function ManageJobsPage() {
                 <p className="text-muted-foreground">Control all job postings.</p>
             </div>
             <Button asChild>
-                <Link href="/admin/products/new">
+                <Link href="/admin/jobs/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Job
                 </Link>
@@ -103,7 +103,7 @@ export default function ManageJobsPage() {
                         <h3 className="mt-4 text-xl font-semibold">No Jobs Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Job" to create a posting.</p>
                         <Button asChild className="mt-4">
-                            <Link href="/admin/products/new">
+                            <Link href="/admin/jobs/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Job
                             </Link>

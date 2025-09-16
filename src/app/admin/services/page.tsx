@@ -55,7 +55,7 @@ export default function ManageServicesPage() {
                 <p className="text-muted-foreground">Oversee all service providers.</p>
             </div>
             <Button asChild>
-                <Link href="/admin/products/new">
+                <Link href="/admin/services/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Provider
                 </Link>
@@ -96,7 +96,7 @@ export default function ManageServicesPage() {
                         <h3 className="mt-4 text-xl font-semibold">No Service Providers Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Provider" to add one.</p>
                         <Button asChild className="mt-4">
-                            <Link href="/admin/products/new">
+                            <Link href="/admin/services/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Provider
                             </Link>

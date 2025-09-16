@@ -57,7 +57,7 @@ export default function ManageFoodDeliveryPage() {
                 <p className="text-muted-foreground">Administer restaurant partners.</p>
             </div>
              <Button asChild>
-                <Link href="/admin/products/new">
+                <Link href="/admin/food/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Restaurant
                 </Link>
@@ -102,7 +102,7 @@ export default function ManageFoodDeliveryPage() {
                         <h3 className="mt-4 text-xl font-semibold">No Restaurants Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Restaurant" to add one.</p>
                         <Button asChild className="mt-4">
-                            <Link href="/admin/products/new">
+                            <Link href="/admin/food/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Restaurant
                             </Link>

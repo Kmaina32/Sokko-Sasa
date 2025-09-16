@@ -64,7 +64,7 @@ export default function ManageRealEstatePage() {
                 <p className="text-muted-foreground">Supervise all property listings.</p>
             </div>
             <Button asChild>
-                <Link href="/admin/products/new">
+                <Link href="/admin/real-estate/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Property
                 </Link>
@@ -111,7 +111,7 @@ export default function ManageRealEstatePage() {
                         <h3 className="mt-4 text-xl font-semibold">No Properties Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Property" to add a listing.</p>
                         <Button asChild className="mt-4">
-                            <Link href="/admin/products/new">
+                            <Link href="/admin/real-estate/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Property
                             </Link>

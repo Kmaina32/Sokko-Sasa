@@ -58,7 +58,7 @@ export default function ManageEventsPage() {
                 <p className="text-muted-foreground">Control all event listings.</p>
             </div>
             <Button asChild>
-                <Link href="/admin/products/new">
+                <Link href="/admin/events/new">
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Event
                 </Link>
@@ -101,7 +101,7 @@ export default function ManageEventsPage() {
                         <h3 className="mt-4 text-xl font-semibold">No Events Found</h3>
                         <p className="mt-2 text-muted-foreground">Click "New Event" to create a listing.</p>
                         <Button asChild className="mt-4">
-                            <Link href="/admin/products/new">
+                            <Link href="/admin/events/new">
                                 <PlusCircle className="mr-2 h-4 w-4"/>
                                 New Event
                             </Link>
