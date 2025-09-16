@@ -1,4 +1,3 @@
-import { AdminSidebar } from "@/components/admin-sidebar";
 
 export default function AdminLayout({
   children,
@@ -8,10 +7,5 @@ export default function AdminLayout({
   // TODO: Add authentication logic here to protect this route.
   // For example, redirect to /login if the user is not an admin.
 
-  return (
-    <>
-      <AdminSidebar />
-      <main className="flex-1">{children}</main>
-    </>
-  );
+  return <main className="flex-1">{children}</main>;
 }
