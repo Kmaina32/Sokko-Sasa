@@ -1,4 +1,5 @@
 
+
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -14,7 +15,8 @@ import {
   updateDoc,
   increment,
   deleteDoc,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User, Advertisement } from "@/lib/types";
@@ -322,6 +324,22 @@ export const removeCartItem = async (userId: string, listingId: string) => {
     await deleteDoc(cartItemRef);
 }
 
+export const clearCart = async (userId: string) => {
+    const cartRef = collection(db, 'users', userId, 'cart');
+    const snapshot = await getDocs(cartRef);
+    
+    if (snapshot.empty) {
+        return;
+    }
+
+    const batch = writeBatch(db);
+    snapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+}
+
 
 // ADVERTISEMENTS
 export const createAdvertisement = async (adData: Omit<Advertisement, 'id' | 'imageUrl' | 'imageHint'>, imageFile: File): Promise<string> => {
@@ -358,4 +376,31 @@ export const updateAdvertisementStatus = async (adId: string, isActive: boolean)
 
 export const deleteAdvertisement = async (adId: string) => {
   await deleteDoc(doc(db, 'advertisements', adId));
+}
+
+// ORDERS
+interface CartItemForOrder extends Listing {
+  quantity: number;
+}
+export const createOrder = async (userId: string, items: CartItemForOrder[], total: number) => {
+    const ordersRef = collection(db, 'orders');
+    const newOrderRef = doc(ordersRef);
+
+    const orderData = {
+        orderId: newOrderRef.id,
+        userId,
+        items: items.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            quantity: item.quantity,
+            imageUrl: item.imageUrl
+        })),
+        total,
+        status: 'Pending',
+        createdAt: serverTimestamp()
+    };
+
+    await setDoc(newOrderRef, orderData);
+    return newOrderRef.id;
 }

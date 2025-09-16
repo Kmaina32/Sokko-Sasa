@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -23,7 +24,7 @@ import {
 import { CreditCard, Smartphone, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from '@/context/auth-context';
-import { getCartItems } from '@/lib/firestore';
+import { getCartItems, createOrder, clearCart } from '@/lib/firestore';
 import type { Listing } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -113,19 +114,41 @@ export default function CheckoutPage() {
     }).format(amount);
   };
   
-  const handlePlaceOrder = () => {
-    setIsProcessing(true);
-    // In a real app, this would trigger the payment processing.
-    // For this demo, we'll just simulate a successful order.
-    setTimeout(() => {
+  const handlePlaceOrder = async () => {
+    if (!user) {
         toast({
-            title: "Order Placed!",
-            description: "Your order has been successfully placed. Thank you for shopping with us!"
+            variant: "destructive",
+            title: "Authentication Error",
+            description: "You must be logged in to place an order."
         });
-        // Here you would typically clear the cart.
+        return;
+    }
+    
+    setIsProcessing(true);
+    try {
+        await createOrder(user.uid, cartItems, total);
+
+        // In a real app, payment processing happens here.
+        // We simulate it with a delay.
+        setTimeout(async () => {
+            await clearCart(user.uid);
+            toast({
+                title: "Order Placed!",
+                description: "Your order has been successfully placed. Thank you for shopping with us!"
+            });
+            setIsProcessing(false);
+            router.push('/');
+        }, 2000);
+
+    } catch (error) {
+        console.error("Error placing order: ", error);
+        toast({
+            variant: "destructive",
+            title: "Order Failed",
+            description: "There was an error placing your order. Please try again."
+        });
         setIsProcessing(false);
-        router.push('/');
-    }, 2000);
+    }
   }
 
   return (
