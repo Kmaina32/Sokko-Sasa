@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4 bg-muted/20">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl font-bold text-primary">
@@ -34,7 +34,12 @@ export default function LoginPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Button variant="link" asChild className="p-0 h-auto text-primary text-sm">
+                  <Link href="#">Forgot password?</Link>
+                </Button>
+              </div>
                <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input id="password" type="password" required className="pl-10"/>
@@ -44,6 +49,22 @@ export default function LoginPage() {
               Log In
             </Button>
           </form>
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+           <div className="grid grid-cols-2 gap-4">
+            <Button variant="outline">
+                Google
+            </Button>
+             <Button variant="outline">
+                Facebook
+            </Button>
+          </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <p className="text-sm text-muted-foreground">

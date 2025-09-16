@@ -11,7 +11,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { SokkoSasaLogo } from "@/components/icons";
-import { Home, ShoppingBag, Utensils, Calendar, MessageSquare, Car, Wrench, Building, HeartPulse, Briefcase, Shield, Settings } from "lucide-react";
+import { Home, ShoppingBag, Utensils, Calendar, MessageSquare, Car, Wrench, Building, HeartPulse, Briefcase, Shield, Settings, User, LogIn } from "lucide-react";
 import { usePathname } from 'next/navigation';
 
 
@@ -31,6 +31,11 @@ const servicesLinks = [
     { href: "/jobs", label: "Jobs", icon: Briefcase },
     { href: "/insurance", label: "Insurance", icon: Shield },
     { href: "/service-hub", label: "Service Hub", icon: Settings },
+]
+
+const accountLinks = [
+    { href: "/admin", label: "Admin", icon: User },
+    { href: "/login", label: "Login", icon: LogIn },
 ]
 
 export function AppSidebar() {
@@ -71,6 +76,25 @@ export function AppSidebar() {
           <SidebarGroupLabel>Services</SidebarGroupLabel>
           <SidebarMenu>
             {servicesLinks.map((link) => (
+              <SidebarMenuItem key={link.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === link.href}
+                  className="[&[data-active=true]]:bg-orange-100 [&[data-active=true]]:text-orange-600 [&[data-active=true]]:font-semibold"
+                >
+                  <a href={link.href}>
+                    <link.icon className="h-5 w-5" />
+                    <span>{link.label}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+         <SidebarGroup>
+          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarMenu>
+            {accountLinks.map((link) => (
               <SidebarMenuItem key={link.href}>
                 <SidebarMenuButton
                   asChild

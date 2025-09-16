@@ -5,6 +5,7 @@ import { Search, ShoppingCart, Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "./ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 
 export function AppHeader() {
@@ -29,18 +30,22 @@ export function AppHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <ShoppingCart className="h-6 w-6" />
-            <span className="sr-only">Cart</span>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/cart">
+              <ShoppingCart className="h-6 w-6" />
+              <span className="sr-only">Cart</span>
+            </Link>
           </Button>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-6 w-6" />
-            <span className="sr-only">Notifications</span>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/notifications">
+                <Bell className="h-6 w-6" />
+                <span className="sr-only">Notifications</span>
+            </Link>
           </Button>
-           <Button variant="ghost" size="icon" className="hidden md:flex">
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Menu</span>
-          </Button>
+          <Avatar className="h-9 w-9">
+            <AvatarImage src="https://picsum.photos/seed/user1/100/100" alt="User"/>
+            <AvatarFallback>U</AvatarFallback>
+          </Avatar>
         </div>
       </div>
     </header>

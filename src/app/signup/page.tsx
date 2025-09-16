@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 export default function SignupPage() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4 bg-muted/20">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl font-bold text-primary">
@@ -54,13 +54,29 @@ export default function SignupPage() {
                 htmlFor="terms"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                I agree to the terms and conditions
+                I agree to the <Link href="#" className="text-primary hover:underline">terms and conditions</Link>
               </label>
             </div>
             <Button type="submit" className="w-full font-bold text-base bg-accent hover:bg-accent/90" size="lg">
               Sign Up
             </Button>
           </form>
+           <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or sign up with</span>
+            </div>
+          </div>
+           <div className="grid grid-cols-2 gap-4">
+            <Button variant="outline">
+                Google
+            </Button>
+             <Button variant="outline">
+                Facebook
+            </Button>
+          </div>
         </CardContent>
         <CardFooter className="flex-col gap-4">
           <p className="text-sm text-muted-foreground">
