@@ -1,24 +1,35 @@
+
+'use client';
+
 import type { Metadata } from "next";
 import { AppHeader } from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { Sidebar, SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { AdminSidebar } from "@/components/admin-sidebar";
 import { AuthProvider } from "@/context/auth-context";
+import { usePathname } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Sokko Sasa - Your Online Marketplace",
-  description: "Buy and sell anything in Kenya.",
-};
+// The metadata object is commented out because it cannot be used in a Client Component.
+// export const metadata: Metadata = {
+//   title: "Sokko Sasa - Your Online Marketplace",
+//   description: "Buy and sell anything in Kenya.",
+// };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isAdmin = pathname.startsWith('/admin');
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <title>Sokko Sasa - Your Online Marketplace</title>
+        <meta name="description" content="Buy and sell anything in Kenya." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -30,7 +41,7 @@ export default function RootLayout({
         <AuthProvider>
           <SidebarProvider>
             <Sidebar collapsible="icon">
-              <AppSidebar />
+              {isAdmin ? <AdminSidebar /> : <AppSidebar />}
             </Sidebar>
             <SidebarInset>
               <AppHeader />
