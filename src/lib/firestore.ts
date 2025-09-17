@@ -135,13 +135,23 @@ export async function getUserData(userId: string): Promise<User | null> {
     const userDoc = await getDoc(doc(db, "users", userId));
     if (userDoc.exists()) {
         const data = userDoc.data();
+        
+        let memberSince: string;
+        if (data.memberSince && typeof data.memberSince.toDate === 'function') {
+            memberSince = (data.memberSince as Timestamp).toDate().toISOString();
+        } else if (typeof data.memberSince === 'string') {
+            memberSince = data.memberSince;
+        } else {
+            memberSince = new Date().toISOString();
+        }
+
         return {
             id: userId,
             name: data.name || 'Anonymous',
             email: data.email,
             avatarUrl: data.photoURL || `https://picsum.photos/seed/${userId}/100/100`,
             location: data.location || 'Kenya',
-            memberSince: data.memberSince ? (data.memberSince as Timestamp).toDate().toISOString() : new Date().toISOString(),
+            memberSince: memberSince,
             rating: data.rating,
             reviews: data.reviews,
         } as User;
@@ -388,5 +398,7 @@ export async function sendMessage(conversationId: string, senderId: string, text
     updatedAt: serverTimestamp(),
   });
 }
+
+    
 
     
