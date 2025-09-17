@@ -60,6 +60,6 @@ To get a local copy up and running, follow these simple steps.
 ## Admin Access
 
 For testing purposes, the following email is configured with administrative privileges:
--   **Email**: `gmaina424@gmail.com`
+-   **Email**: `
 
 Log in with this account to access the Admin Dashboard located at `/admin`.
