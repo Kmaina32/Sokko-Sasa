@@ -28,7 +28,7 @@ export default function AdminLayout({
     }
 
     const checkAdminStatus = () => {
-      if (user.email === 'gmaina424@gamil.com') {
+      if (user.email === 'gmaina424@gmail.com') {
         setIsAdmin(true);
       } else {
         // Not an admin, redirect to home page or an 'unauthorized' page
