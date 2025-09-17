@@ -33,15 +33,23 @@ export interface User {
 export interface Message {
   id: string;
   text: string;
-  timestamp: Date;
-  sender: "user" | "seller";
+  senderId: string;
+  createdAt: any; // Firestore Timestamp
 }
 
 export interface Conversation {
   id: string;
-  user: User;
-  listing: Pick<Listing, "id" | "title" | "imageUrl">;
-  lastMessage: Message;
+  participantIds: string[];
+  participants: { [key: string]: Pick<User, 'name' | 'avatarUrl'> };
+  listingId: string;
+  listing: Pick<Listing, 'title'>;
+  lastMessage: {
+    text: string;
+    senderId: string;
+    createdAt: any;
+  } | null;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface AdminListing {
