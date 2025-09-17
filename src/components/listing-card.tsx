@@ -142,7 +142,7 @@ export function ListingCard({ listing }: ListingCardProps) {
 
       <Link href={`/listings/${listing.id}`} className="group/link flex flex-col flex-1">
         <CardContent className="flex-1 p-4">
-          <CardTitle className="mb-2 text-lg font-bold leading-tight tracking-tight group-hover/link:text-primary">
+          <CardTitle className="mb-2 text-lg font-bold leading-tight tracking-tight group-hover/link:text-primary min-h-[3.25rem] line-clamp-2">
             {listing.title}
           </CardTitle>
           <CardDescription className="flex items-center text-sm text-muted-foreground">
