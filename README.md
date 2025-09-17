@@ -14,7 +14,7 @@ This project is built with a modern, robust, and scalable technology stack:
 -   **Backend & Database**: [Firebase](https://firebase.google.com/) (Firestore, Authentication, Storage)
 -   **AI Integration**: [Genkit](https://firebase.google.com/docs/genkit) (for generative AI features)
 
-## Key Features
+## Key Features.    
 
 -   **Multi-Category Marketplace**: A unified platform for various services:
     -   **Shop**: Buy and sell new or used products.
