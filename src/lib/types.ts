@@ -1,3 +1,4 @@
+
 import type { User as FirebaseUser } from "firebase/auth";
 
 export type ListingCategory = "Product" | "Service" | "Job" | "Property";
@@ -14,7 +15,7 @@ export interface Listing {
   images?: string[];
   sellerId: string;
   seller?: User;
-  postedAt?: Date;
+  postedAt?: string;
 }
 
 export interface User {
@@ -77,3 +78,5 @@ export interface Advertisement {
   link?: string;
   isActive: boolean;
 }
+
+    

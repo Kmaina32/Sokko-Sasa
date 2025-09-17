@@ -1,4 +1,5 @@
 
+
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -71,15 +72,25 @@ export async function getListings(options: { limit?: number; category?: string; 
     queries.push(where("sellerId", "==", options.sellerId));
   }
 
-  const q = query(listingsCol, ...queries);
+  const q = query(listingsCol, ...queries, orderBy("postedAt", "desc"));
   const listingsSnapshot = await getDocs(q);
   const listingsList = await Promise.all(
     listingsSnapshot.docs.map(async (doc) => {
       const data = doc.data();
       const seller = await getUserData(data.sellerId);
+      
+      const postedAt = data.postedAt;
+      let postedAtString: string;
+      if (postedAt instanceof Timestamp) {
+        postedAtString = postedAt.toDate().toISOString();
+      } else {
+        postedAtString = new Date().toISOString();
+      }
+
       return {
         id: doc.id,
         ...data,
+        postedAt: postedAtString,
         seller,
       } as Listing;
     })
@@ -137,8 +148,8 @@ export async function getUserData(userId: string): Promise<User | null> {
         const data = userDoc.data();
         
         let memberSince: string;
-        if (data.memberSince && typeof data.memberSince.toDate === 'function') {
-            memberSince = (data.memberSince as Timestamp).toDate().toISOString();
+        if (data.memberSince instanceof Timestamp) {
+            memberSince = data.memberSince.toDate().toISOString();
         } else if (typeof data.memberSince === 'string') {
             memberSince = data.memberSince;
         } else {
@@ -398,6 +409,8 @@ export async function sendMessage(conversationId: string, senderId: string, text
     updatedAt: serverTimestamp(),
   });
 }
+
+    
 
     
 
