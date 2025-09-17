@@ -40,15 +40,16 @@ export default function RestaurantMenuPage({ params }: { params: { id: string } 
   const [restaurant, setRestaurant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { id } = params;
 
   useEffect(() => {
     const fetchRestaurant = async () => {
-        const data = await getRestaurantById(params.id);
+        const data = await getRestaurantById(id);
         setRestaurant(data);
         setLoading(false);
     }
     fetchRestaurant();
-  }, [params.id]);
+  }, [id]);
 
   const handleAddToCart = (item: MenuItem) => {
     setCart(prevCart => {

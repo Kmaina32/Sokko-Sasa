@@ -14,15 +14,16 @@ import { getServiceById } from "@/lib/firestore";
 export default function ServiceProviderProfilePage({ params }: { params: { id: string } }) {
   const [provider, setProvider] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { id } = params;
 
   useEffect(() => {
     const fetchProvider = async () => {
-        const data = await getServiceById(params.id);
+        const data = await getServiceById(id);
         setProvider(data);
         setLoading(false);
     }
     fetchProvider();
-  }, [params.id]);
+  }, [id]);
 
 
   if (loading) {

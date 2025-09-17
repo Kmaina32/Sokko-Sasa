@@ -21,15 +21,16 @@ const formatCurrency = (amount: number) => {
 export default function EventDetailPage({ params }: { params: { id: string } }) {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { id } = params;
 
   useEffect(() => {
       const fetchEvent = async () => {
-          const eventData = await getEventById(params.id);
+          const eventData = await getEventById(id);
           setEvent(eventData);
           setLoading(false);
       }
       fetchEvent();
-  }, [params.id]);
+  }, [id]);
   
   const [ticketQuantities, setTicketQuantities] = useState<{[key: string]: number}>({});
 

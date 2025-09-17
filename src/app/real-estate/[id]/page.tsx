@@ -22,15 +22,16 @@ import { getPropertyById } from "@/lib/firestore";
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { id } = params;
 
   useEffect(() => {
     const fetchProperty = async () => {
-      const propData = await getPropertyById(params.id);
+      const propData = await getPropertyById(id);
       setProperty(propData);
       setLoading(false);
     }
     fetchProperty();
-  }, [params.id]);
+  }, [id]);
 
 
   if (loading) {

@@ -102,15 +102,16 @@ function AppointmentDialog({ clinicName, doctors }: { clinicName: string, doctor
 export default function ClinicDetailPage({ params }: { params: { id: string } }) {
   const [clinic, setClinic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { id } = params;
 
   useEffect(() => {
     const fetchClinic = async () => {
-      const data = await getClinicById(params.id);
+      const data = await getClinicById(id);
       setClinic(data);
       setLoading(false);
     };
     fetchClinic();
-  }, [params.id]);
+  }, [id]);
 
   if (loading) {
     return (

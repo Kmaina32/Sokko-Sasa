@@ -24,14 +24,15 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const { loading: authLoading } = useAuth();
+  const { id } = params;
 
   useEffect(() => {
     const fetchUserData = async () => {
         setLoading(true);
-        const userData = await getUserData(params.id);
+        const userData = await getUserData(id);
         setUser(userData);
         if (userData) {
-            const userListings = await getListings({ sellerId: params.id });
+            const userListings = await getListings({ sellerId: id });
             setListings(userListings);
         }
         setLoading(false);
@@ -39,7 +40,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
     if (!authLoading) {
       fetchUserData();
     }
-  }, [params.id, authLoading]);
+  }, [id, authLoading]);
 
 
   if (loading || authLoading) {

@@ -24,15 +24,16 @@ import type { Listing } from '@/lib/types';
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
+  const { id } = params;
 
   useEffect(() => {
     const fetchListing = async () => {
-        const listingData = await getListingById(params.id);
+        const listingData = await getListingById(id);
         setListing(listingData);
         setLoading(false);
     };
     fetchListing();
-  }, [params.id]);
+  }, [id]);
 
 
   if (loading) {
