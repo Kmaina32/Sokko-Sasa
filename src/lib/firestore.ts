@@ -28,10 +28,10 @@ const newSeedData = [{"idx":0,"id":"3070f965-b680-4587-9db2-133c2fed08fb","name"
 
 const seedDatabase = async () => {
   const listingsRef = collection(db, "listings");
-    const snapshot = await getDocs(query(listingsRef, firestoreLimit(1)));
+    // const snapshot = await getDocs(query(listingsRef, firestoreLimit(1)));
     
     // Forcibly re-seed if the flag is set or the collection is empty.
-    const listingsExist = !snapshot.empty;
+    // const listingsExist = !snapshot.empty;
     // if (listingsExist) {
     //   console.log("Listings collection already exists, skipping seeding.");
     //   return;
@@ -351,7 +351,7 @@ export async function getEventById(id: string) {
 }
 
 export async function getRestaurants() {
-    return mockRestaurants;
+    return Object.values(mockRestaurantsData);
 }
 
 export async function getRestaurantById(id: string) {
@@ -359,7 +359,7 @@ export async function getRestaurantById(id: string) {
 }
 
 export async function getProperties() {
-    return mockProperties;
+    return Object.values(mockPropertyData);
 }
 
 export async function getPropertyById(id: string) {
@@ -367,7 +367,7 @@ export async function getPropertyById(id: string) {
 }
 
 export async function getServices() {
-    return mockProviders;
+    return Object.values(mockProviderData);
 }
 
 export async function getServiceById(id: string) {
@@ -375,7 +375,7 @@ export async function getServiceById(id: string) {
 }
 
 export async function getClinics() {
-    return mockClinics;
+    return Object.values(mockClinicData);
 }
 
 export async function getClinicById(id: string) {
@@ -383,7 +383,7 @@ export async function getClinicById(id: string) {
 }
 
 export async function getInsurances() {
-    return mockInsurances;
+    return Object.values(mockInsuranceData);
 }
 
 export async function getPharmacies() {
