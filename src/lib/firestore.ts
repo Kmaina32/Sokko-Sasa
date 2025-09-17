@@ -28,15 +28,7 @@ const newSeedData = [{"idx":0,"id":"3070f965-b680-4587-9db2-133c2fed08fb","name"
 
 const seedDatabase = async () => {
   const listingsRef = collection(db, "listings");
-    // const snapshot = await getDocs(query(listingsRef, firestoreLimit(1)));
     
-    // Forcibly re-seed if the flag is set or the collection is empty.
-    // const listingsExist = !snapshot.empty;
-    // if (listingsExist) {
-    //   console.log("Listings collection already exists, skipping seeding.");
-    //   return;
-    // }
-
     console.log("Seeding database with new product data...");
     const batch = writeBatch(db);
 
@@ -129,7 +121,7 @@ export async function getListingById(id: string): Promise<Listing | null> {
   return listing;
 }
 
-export async function createListing(data: Omit<Listing, 'id' | 'imageUrl' | 'imageHint' | 'sellerId'>, userId: string, imageFile: File | null) {
+export async function createListing(data: Omit<Listing, 'id' | 'imageUrl' | 'imageHint' | 'sellerId' | 'postedAt'>, userId: string, imageFile: File | null) {
   let imageUrl = placeholderImages.product1.imageUrl;
   if (imageFile) {
     const storage = getStorage();
@@ -155,13 +147,23 @@ export async function getUserData(userId: string): Promise<User | null> {
 
     if (userDoc.exists()) {
         const data = userDoc.data();
+        // Handle both Timestamp and string for memberSince
+        let memberSince: string;
+        if (data.memberSince && typeof data.memberSince.toDate === 'function') {
+            memberSince = (data.memberSince as Timestamp).toDate().toISOString();
+        } else if (typeof data.memberSince === 'string') {
+            memberSince = data.memberSince;
+        } else {
+            memberSince = new Date().toISOString();
+        }
+
         return {
             id: userDoc.id,
             name: data.name || 'Anonymous',
             email: data.email,
             avatarUrl: data.photoURL || `https://picsum.photos/seed/${userId}/100/100`,
             location: data.location || 'Kenya',
-            memberSince: data.memberSince ? (data.memberSince as Timestamp).toDate().toISOString() : new Date().toISOString(),
+            memberSince: memberSince,
             rating: data.rating,
             reviews: data.reviews,
         };
@@ -387,11 +389,12 @@ export async function getInsurances() {
 }
 
 export async function getPharmacies() {
-    return mockPharmacies;
+    return mockPharmacyData;
 }
 
 export async function getJobs() {
     return mockJobs;
 }
 
+    
     
