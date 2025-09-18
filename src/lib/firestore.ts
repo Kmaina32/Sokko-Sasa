@@ -113,8 +113,14 @@ export async function getListings(options: { limit?: number; category?: string; 
   }
   
   // Combine all queries
-  const q = query(listingsCol, ...queries);
-  const listingsSnapshot = await getDocs(q);
+  let combinedQuery = query(listingsCol, ...queries);
+  
+  // Add sorting if not filtering by sellerId, as that requires a different approach
+  if (!options.sellerId) {
+      combinedQuery = query(combinedQuery, orderBy("postedAt", "desc"));
+  }
+
+  const listingsSnapshot = await getDocs(combinedQuery);
   
   let listingsList = await Promise.all(
     listingsSnapshot.docs.map(async (doc) => {
@@ -141,10 +147,12 @@ export async function getListings(options: { limit?: number; category?: string; 
     })
   );
 
-  // Manually sort by date after fetching
-  listingsList.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+  // Manually sort by date after fetching if we filtered by sellerId
+  if (options.sellerId) {
+    listingsList.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+  }
 
-  // Manually apply limit after sorting
+  // Manually apply limit after fetching and sorting
   if (options.limit) {
     listingsList = listingsList.slice(0, options.limit);
   }
@@ -338,10 +346,11 @@ export async function getAdvertisements(options: { activeOnly?: boolean } = {}):
     
     let ads = snapshot.docs.map(doc => {
         const data = doc.data();
+        const createdAt = data.createdAt;
         return { 
             id: doc.id, 
             ...data,
-            createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+            createdAt: createdAt instanceof Timestamp ? createdAt.toDate().toISOString() : new Date().toISOString(),
         } as Advertisement;
     });
 
@@ -404,11 +413,13 @@ export async function getEvents(): Promise<Event[]> {
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => {
       const data = doc.data();
+      const createdAt = data.createdAt;
+      const date = data.date;
       return { 
           id: doc.id,
           ...data,
-          createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
-          date: data.date instanceof Timestamp ? data.date.toDate().toISOString() : data.date,
+          createdAt: createdAt instanceof Timestamp ? createdAt.toDate().toISOString() : new Date().toISOString(),
+          date: date instanceof Timestamp ? date.toDate().toISOString() : date,
       } as Event;
   });
 }
@@ -418,11 +429,13 @@ export async function getEventById(id: string): Promise<Event | null> {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return null;
     const data = docSnap.data();
+    const createdAt = data.createdAt;
+    const date = data.date;
     return {
         id: docSnap.id,
         ...data,
-        createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
-        date: data.date instanceof Timestamp ? data.date.toDate().toISOString() : data.date,
+        createdAt: createdAt instanceof Timestamp ? createdAt.toDate().toISOString() : new Date().toISOString(),
+        date: date instanceof Timestamp ? date.toDate().toISOString() : date,
     } as Event;
 }
 
@@ -466,10 +479,11 @@ export async function getRestaurants(): Promise<Restaurant[]> {
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
         const data = doc.data();
+        const createdAt = data.createdAt;
         return {
             id: doc.id,
             ...data,
-            createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+            createdAt: createdAt instanceof Timestamp ? createdAt.toDate().toISOString() : new Date().toISOString(),
         } as Restaurant;
     });
 }
@@ -479,10 +493,11 @@ export async function getRestaurantById(id: string): Promise<Restaurant | null> 
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return null;
     const data = docSnap.data();
+    const createdAt = data.createdAt;
     return {
         id: docSnap.id,
         ...data,
-        createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+        createdAt: createdAt instanceof Timestamp ? createdAt.toDate().toISOString() : new Date().toISOString(),
     } as Restaurant;
 }
 
