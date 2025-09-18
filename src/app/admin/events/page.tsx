@@ -19,36 +19,94 @@ import {
   FilePenLine,
   PlusCircle,
   Calendar as CalendarIcon,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import type { Event } from "@/lib/types";
+import { getEvents, deleteEvent } from "@/lib/firestore";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import Image from 'next/image';
 
-// Mock data, in a real app this would come from a database
-const mockEvents: any[] = [];
+const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
+}
 
-const CrudActions = () => (
+export default function ManageEventsPage() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchEvents = async () => {
+    setLoading(true);
+    const eventList = await getEvents();
+    setEvents(eventList);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const handleDelete = async (eventId: string) => {
+    try {
+      await deleteEvent(eventId);
+      fetchEvents();
+      toast({
+        title: "Success",
+        description: "Event has been deleted.",
+      });
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete event.",
+      });
+    }
+  };
+
+  const CrudActions = ({ event }: { event: Event }) => (
     <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
-            <FilePenLine className="h-4 w-4"/>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" asChild>
+            <Link href={`/admin/events/edit/${event.id}`}>
+              <FilePenLine className="h-4 w-4"/>
+            </Link>
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" disabled>
-            <Trash2 className="h-4 w-4"/>
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-4 w-4"/>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the event "{event.name}".
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleDelete(event.id)}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
     </div>
 );
 
-
-export default function ManageEventsPage() {
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // In a real app, you'd fetch events from Firestore here.
-    // For now, we just use the mock data.
-    setEvents(mockEvents);
-    setLoading(false);
-  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -74,22 +132,23 @@ export default function ManageEventsPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Event Name</TableHead>
+                                <TableHead>Event</TableHead>
                                 <TableHead>Location</TableHead>
                                 <TableHead>Date</TableHead>
-                                <TableHead>Organizer</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {events.map((event) => (
                                 <TableRow key={event.id}>
-                                    <TableCell className="font-medium">{event.name}</TableCell>
+                                    <TableCell className="font-medium flex items-center gap-4">
+                                        <Image src={event.imageUrl} alt={event.name} width={60} height={40} className="rounded-md object-cover" />
+                                        <span>{event.name}</span>
+                                    </TableCell>
                                     <TableCell>{event.location}</TableCell>
-                                    <TableCell>{event.date}</TableCell>
-                                    <TableCell>{event.organizer}</TableCell>
+                                    <TableCell>{formatDate(event.date)}</TableCell>
                                     <TableCell>
-                                        <CrudActions />
+                                        <CrudActions event={event} />
                                     </TableCell>
                                 </TableRow>
                             ))}

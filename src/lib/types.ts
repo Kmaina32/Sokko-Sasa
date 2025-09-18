@@ -15,7 +15,7 @@ export interface Listing {
   images?: string[];
   sellerId: string;
   seller?: User;
-  postedAt?: string;
+  postedAt: string;
 }
 
 export interface User {
@@ -80,4 +80,21 @@ export interface Advertisement {
   createdAt?: any;
 }
 
+export interface TicketType {
+  id: string;
+  type: string;
+  price: number;
+}
+
+export interface Event {
+    id: string;
+    name: string;
+    location: string;
+    date: string;
+    description: string;
+    imageUrl: string;
+    imageHint: string;
+    tickets: TicketType[];
+    createdAt: any;
+}
     

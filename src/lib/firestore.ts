@@ -22,10 +22,10 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import type { Listing, User, Advertisement, Conversation, Message } from "@/lib/types";
+import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
-import { mockEvents, mockRestaurantsData, mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
+import { mockRestaurantsData, mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
 
 
 // Seed the database
@@ -322,10 +322,76 @@ export async function deleteAdvertisement(adId: string) {
     await deleteDoc(doc(db, "advertisements", adId));
 }
 
-// MOCK DATA FETCHERS
-export async function getEvents() { return mockEvents; }
-export async function getEventById(id: string) { return mockEvents.find(e => e.id === id) || null; }
+// Event Functions
+export async function getEvents(): Promise<Event[]> {
+  const eventsCol = collection(db, "events");
+  const q = query(eventsCol, orderBy("date", "desc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return { 
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+          date: data.date instanceof Timestamp ? data.date.toDate().toISOString() : data.date,
+      } as Event;
+  });
+}
 
+export async function getEventById(id: string): Promise<Event | null> {
+    const docRef = doc(db, "events", id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return null;
+    const data = docSnap.data();
+    return {
+        id: docSnap.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+        date: data.date instanceof Timestamp ? data.date.toDate().toISOString() : data.date,
+    } as Event;
+}
+
+export async function createEvent(data: Omit<Event, 'id' | 'createdAt' | 'imageUrl' | 'imageHint'>, imageFile: File): Promise<string> {
+    const storage = getStorage();
+    const storageRef = ref(storage, `events/${Date.now()}_${imageFile.name}`);
+    const snapshot = await uploadBytes(storageRef, imageFile);
+    const imageUrl = await getDownloadURL(snapshot.ref);
+
+    const eventData = {
+        ...data,
+        date: new Date(data.date), // Ensure date is a Timestamp
+        imageUrl,
+        imageHint: 'event promotion',
+        createdAt: serverTimestamp(),
+    };
+    const docRef = await addDoc(collection(db, "events"), eventData);
+    return docRef.id;
+}
+
+export async function updateEvent(eventId: string, data: Partial<Event>, imageFile: File | null) {
+    const eventRef = doc(db, "events", eventId);
+    let updateData: Partial<Event> = { ...data };
+
+    if (imageFile) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `events/${Date.now()}_${imageFile.name}`);
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+    }
+    
+    if (data.date) {
+        updateData.date = new Date(data.date).toISOString();
+    }
+
+    await updateDoc(eventRef, updateData);
+}
+
+export async function deleteEvent(eventId: string): Promise<void> {
+    await deleteDoc(doc(db, "events", eventId));
+}
+
+
+// MOCK DATA FETCHERS
 export async function getRestaurants() { 
     return Object.values(mockRestaurantsData); 
 }

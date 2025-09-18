@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,11 +11,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Trash, PlusCircle, UploadCloud } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { createEvent } from '@/lib/firestore';
+import { getEventById, updateEvent } from '@/lib/firestore';
+import type { Event } from '@/lib/types';
+import { format } from 'date-fns';
 
 const ticketSchema = z.object({
+  id: z.string().optional(),
   type: z.string().min(1, 'Ticket type is required'),
   price: z.preprocess(
     (a) => parseFloat(z.string().parse(a)),
@@ -33,28 +36,53 @@ const eventSchema = z.object({
 
 type EventFormValues = z.infer<typeof eventSchema>;
 
-export default function AdminNewEventPage() {
+export default function AdminEditEventPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
   const { toast } = useToast();
+  
+  const [event, setEvent] = useState<Event | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
-    defaultValues: {
-      name: "",
-      location: "",
-      date: "",
-      description: "",
-      tickets: [{ type: "Regular", price: 0 }],
-    },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "tickets",
   });
+
+  useEffect(() => {
+    if (id) {
+      const fetchEvent = async () => {
+        setLoading(true);
+        const eventData = await getEventById(id);
+        if (eventData) {
+          setEvent(eventData);
+          form.reset({
+            ...eventData,
+            date: format(new Date(eventData.date), "yyyy-MM-dd'T'HH:mm"),
+            tickets: eventData.tickets.map(t => ({...t, id: t.id || Math.random().toString()}))
+          });
+          setImagePreview(eventData.imageUrl);
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Not Found",
+            description: "Event could not be found."
+          });
+          router.push('/admin/events');
+        }
+        setLoading(false);
+      };
+      fetchEvent();
+    }
+  }, [id, form, router, toast]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,40 +93,43 @@ export default function AdminNewEventPage() {
   };
 
   const onSubmit = async (values: EventFormValues) => {
-    if (!imageFile) {
-        toast({
-            variant: 'destructive',
-            title: 'Image Required',
-            description: 'Please upload an image for the event.'
-        });
-        return;
-    }
-    
     setIsSubmitting(true);
     try {
-        await createEvent(values, imageFile);
+        const submissionData = {
+          ...values,
+          tickets: values.tickets.map(({id, ...rest}) => rest), // Remove temporary ID
+        };
+        await updateEvent(id, submissionData, imageFile);
         toast({
             title: "Success!",
-            description: "New event has been created.",
+            description: "Event has been updated.",
         });
         router.push('/admin/events');
     } catch (error) {
-        console.error("Error creating event:", error);
+        console.error("Error updating event:", error);
         toast({
             variant: "destructive",
-            title: "Creation Failed",
-            description: "There was an error creating the event.",
+            title: "Update Failed",
+            description: "There was an error updating the event.",
         });
     } finally {
         setIsSubmitting(false);
     }
   };
+  
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-4">
-        <h1 className="font-headline text-4xl font-bold">Create New Event</h1>
-        <p className="text-muted-foreground">Fill in the details to add a new event listing.</p>
+        <h1 className="font-headline text-4xl font-bold">Edit Event</h1>
+        <p className="text-muted-foreground">Update the details for this event.</p>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card>
@@ -108,13 +139,13 @@ export default function AdminNewEventPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Event Name</Label>
-              <Input id="name" {...form.register("name")} placeholder="e.g., Nairobi Tech Week" />
+              <Input id="name" {...form.register("name")} />
               {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
             </div>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="location">Location</Label>
-                  <Input id="location" {...form.register("location")} placeholder="e.g., KICC, Nairobi" />
+                  <Input id="location" {...form.register("location")} />
                    {form.formState.errors.location && <p className="text-sm text-destructive">{form.formState.errors.location.message}</p>}
                 </div>
                  <div className="space-y-2">
@@ -129,7 +160,6 @@ export default function AdminNewEventPage() {
                 id="description"
                 {...form.register("description")}
                 rows={4}
-                placeholder="Describe the event..."
               />
               {form.formState.errors.description && <p className="text-sm text-destructive">{form.formState.errors.description.message}</p>}
             </div>
@@ -140,13 +170,14 @@ export default function AdminNewEventPage() {
                         <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted hover:bg-muted/80">
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                 <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
-                                <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> an image</p>
+                                <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> a new image</p>
                             </div>
-                            <Input id="image-upload" type="file" className="hidden" accept="image/*" onChange={handleImageChange} required />
+                            <Input id="image-upload" type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                         </label>
                     </div>
                     {imagePreview && <img src={imagePreview} alt="Event image preview" className="w-32 h-32 object-cover rounded-lg" />}
                 </div>
+                <p className="text-xs text-muted-foreground">Uploading a new image will replace the current one.</p>
             </div>
           </CardContent>
         </Card>
@@ -154,7 +185,7 @@ export default function AdminNewEventPage() {
         <Card>
             <CardHeader>
                 <CardTitle>Ticket Types</CardTitle>
-                <CardDescription>Add at least one ticket type for your event.</CardDescription>
+                <CardDescription>Manage the ticket types for this event.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 {fields.map((field, index) => (
@@ -162,12 +193,12 @@ export default function AdminNewEventPage() {
                         <div className="grid grid-cols-2 gap-4 flex-1">
                              <div className="space-y-2">
                                 <Label htmlFor={`tickets.${index}.type`}>Ticket Type</Label>
-                                <Input {...form.register(`tickets.${index}.type`)} placeholder="e.g., Regular, VIP" />
+                                <Input {...form.register(`tickets.${index}.type`)} />
                                 {form.formState.errors.tickets?.[index]?.type && <p className="text-sm text-destructive">{form.formState.errors.tickets[index]?.type?.message}</p>}
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor={`tickets.${index}.price`}>Price (KES)</Label>
-                                <Input type="number" {...form.register(`tickets.${index}.price`)} placeholder="e.g., 2500" />
+                                <Input type="number" {...form.register(`tickets.${index}.price`)} />
                                 {form.formState.errors.tickets?.[index]?.price && <p className="text-sm text-destructive">{form.formState.errors.tickets[index]?.price?.message}</p>}
                             </div>
                         </div>
@@ -177,7 +208,7 @@ export default function AdminNewEventPage() {
                     </div>
                 ))}
                  {form.formState.errors.tickets?.root && <p className="text-sm text-destructive">{form.formState.errors.tickets.root.message}</p>}
-                <Button type="button" variant="outline" onClick={() => append({ type: '', price: 0 })}>
+                <Button type="button" variant="outline" onClick={() => append({ type: '', price: 0, id: Math.random().toString() })}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Ticket Type
                 </Button>
             </CardContent>
@@ -187,7 +218,7 @@ export default function AdminNewEventPage() {
           <Button variant="outline" type="button" onClick={() => router.back()} disabled={isSubmitting}>Cancel</Button>
           <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Event
+              Update Event
           </Button>
         </div>
       </form>
