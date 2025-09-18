@@ -25,6 +25,7 @@ import {
   Shield,
   BarChart2,
   Megaphone,
+  LayoutDashboard,
 } from "lucide-react";
 import { usePathname } from 'next/navigation';
 
@@ -56,8 +57,16 @@ export function AdminSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupLabel>Platform Mgmt</SidebarGroupLabel>
           <SidebarMenu>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Admin Dashboard" isActive={pathname === '/admin'}>
+                      <a href="/admin">
+                        <LayoutDashboard className="h-5 w-5" />
+                        <span>Admin Dashboard</span>
+                    </a>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
             {adminLinks.map((link) => (
               <SidebarMenuItem key={link.href}>
                 <SidebarMenuButton
@@ -74,19 +83,6 @@ export function AdminSidebar() {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup>
-            <SidebarGroupLabel>Analytics</SidebarGroupLabel>
-             <SidebarMenu>
-                 <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Dashboard">
-                         <a href="/admin">
-                            <BarChart2 className="h-5 w-5" />
-                            <span>Dashboard</span>
-                        </a>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-             </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>

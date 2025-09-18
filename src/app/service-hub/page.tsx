@@ -16,7 +16,6 @@ import {
   Building,
   Briefcase,
   ArrowRight,
-  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
@@ -27,48 +26,48 @@ const providerTypes = [
     description: "Join our food delivery network and reach more hungry customers.",
     icon: Utensils,
     href: "/register/restaurant",
-    adminHref: "/admin/food",
-    adminName: "Manage Restaurants",
+    adminHref: "/dashboard/food",
+    adminName: "Restaurant Dashboard",
   },
   {
     name: "Event Manager",
     description: "List your events, sell tickets, and manage your audience with ease.",
     icon: Calendar,
     href: "/register/event-manager",
-    adminHref: "/admin/events",
-    adminName: "Manage Events",
+    adminHref: "/dashboard/events",
+    adminName: "Events Dashboard",
   },
   {
     name: "Driver Partner",
     description: "Become a driver for our ride-hailing service and start earning.",
     icon: Car,
     href: "/register/driver",
-    adminHref: "/admin/rides",
-    adminName: "Manage Drivers",
+    adminHref: "/dashboard/rides",
+    adminName: "Driver Dashboard",
   },
   {
     name: "Service Professional",
     description: "Offer your skills, from plumbing to tutoring, to a wide audience.",
     icon: Wrench,
     href: "/register/service-provider",
-    adminHref: "/admin/services",
-    adminName: "Manage Services",
+    adminHref: "/dashboard/services",
+    adminName: "Services Dashboard",
   },
   {
     name: "Real Estate Agent",
     description: "List properties for sale or rent and connect with potential clients.",
     icon: Building,
     href: "/register/real-estate",
-    adminHref: "/admin/real-estate",
-    adminName: "Manage Real Estate",
+    adminHref: "/dashboard/real-estate",
+    adminName: "Real Estate Dashboard",
   },
   {
     name: "Job Lister / Recruiter",
     description: "Post job openings and find the perfect candidates for your team.",
     icon: Briefcase,
     href: "/register/job-lister",
-    adminHref: "/admin/jobs",
-    adminName: "Manage Jobs",
+    adminHref: "/dashboard/jobs",
+    adminName: "Jobs Dashboard",
   },
 ];
 
@@ -81,11 +80,11 @@ export default function ServiceHubPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="font-headline text-4xl font-bold">
-            {isAdmin ? "Admin God Mode: Service Hub" : "Become a Sokko Sasa Partner"}
+            {isAdmin ? "Vendor Dashboards (God Mode)" : "Become a Sokko Sasa Partner"}
           </h1>
           <p className="mt-2 text-lg text-muted-foreground">
             {isAdmin 
-              ? "Bypass registration and go directly to the management dashboards." 
+              ? "Access the vendor-specific dashboards to see what a service provider sees." 
               : "Choose your business type and join our growing ecosystem of providers."}
           </p>
         </div>
@@ -107,7 +106,7 @@ export default function ServiceHubPage() {
               <div className="p-6 pt-0">
                 <Button asChild className="w-full">
                   <Link href={isAdmin ? provider.adminHref : provider.href}>
-                    {isAdmin ? "Go to Dashboard" : "Get Started"} <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                    {isAdmin ? "View Dashboard" : "Get Started"} <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
               </div>
