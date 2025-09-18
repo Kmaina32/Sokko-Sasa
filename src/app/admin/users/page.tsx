@@ -38,17 +38,22 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useAuth } from '@/context/auth-context';
+import Link from 'next/link';
 
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { loading: authLoading } = useAuth();
+  const { user: currentUser, loading: authLoading } = useAuth();
 
   const fetchUsers = async () => {
     setLoading(true);
-    const userList = await getAllUsers();
+    let userList = await getAllUsers();
+    // Filter out the current admin from the list to prevent self-actions
+    if(currentUser) {
+        userList = userList.filter(u => u.id !== currentUser.uid);
+    }
     setUsers(userList);
     setLoading(false);
   }
@@ -57,7 +62,7 @@ export default function ManageUsersPage() {
     if (!authLoading) {
       fetchUsers();
     }
-  }, [authLoading]);
+  }, [authLoading, currentUser]);
 
   const handleDelete = async (userId: string) => {
     try {
@@ -80,8 +85,10 @@ export default function ManageUsersPage() {
 
   const CrudActions = ({ user }: { user: User }) => (
     <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
-            <FilePenLine className="h-4 w-4"/>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" asChild>
+            <Link href={`/admin/users/edit/${user.id}`}>
+              <FilePenLine className="h-4 w-4"/>
+            </Link>
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -141,10 +148,10 @@ export default function ManageUsersPage() {
                                 </TableCell>
                                 <TableCell>{user.email || 'N/A'}</TableCell>
                                 <TableCell>
-                                    <Badge variant="outline">{user.type || 'Client'}</Badge>
+                                    <Badge variant={user.type === 'Admin' ? 'destructive' : 'outline'}>{user.type || 'Client'}</Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant={user.status === 'Active' ? 'default' : 'destructive'}>{user.status || 'Active'}</Badge>
+                                    <Badge variant={user.status === 'Active' ? 'default' : 'secondary'}>{user.status || 'Active'}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     <CrudActions user={user} />

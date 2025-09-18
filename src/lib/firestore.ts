@@ -226,6 +226,11 @@ export async function addUserData(user: FirebaseUser, additionalData: { name?: s
     }
 }
 
+export async function updateUserData(userId: string, data: Partial<User>) {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, data);
+}
+
 export async function deleteUserAccount(userId: string): Promise<void> {
     await deleteDoc(doc(db, "users", userId));
 }
