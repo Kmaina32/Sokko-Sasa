@@ -76,7 +76,7 @@ export async function seedDatabase() {
 export async function getListings(options: { limit?: number; category?: string; sellerId?: string } = {}): Promise<Listing[]> {
   const listingsCol = collection(db, "listings");
   const queries = [];
-  if (options.limit) {
+  if (options.limit && !options.sellerId) { // Only limit if not fetching for a specific seller
     queries.push(firestoreLimit(options.limit));
   }
   if (options.category) {
@@ -86,9 +86,15 @@ export async function getListings(options: { limit?: number; category?: string; 
     queries.push(where("sellerId", "==", options.sellerId));
   }
 
-  const q = query(listingsCol, ...queries, orderBy("postedAt", "desc"));
+  // Only order by postedAt if we are not filtering by sellerId to avoid index issues
+  if (!options.sellerId) {
+    queries.push(orderBy("postedAt", "desc"));
+  }
+
+  const q = query(listingsCol, ...queries);
   const listingsSnapshot = await getDocs(q);
-  const listingsList = await Promise.all(
+  
+  let listingsList = await Promise.all(
     listingsSnapshot.docs.map(async (doc) => {
       const data = doc.data();
       const seller = await getUserData(data.sellerId);
@@ -112,6 +118,15 @@ export async function getListings(options: { limit?: number; category?: string; 
       } as Listing;
     })
   );
+
+  // If we fetched by sellerId, sort manually in the code
+  if (options.sellerId) {
+    listingsList.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+    if (options.limit) {
+      listingsList = listingsList.slice(0, options.limit);
+    }
+  }
+
   return listingsList;
 }
 
@@ -295,7 +310,7 @@ export async function deleteUserAccount(userId: string): Promise<void> {
 // Advertisement functions
 export async function getAdvertisements(options: { activeOnly?: boolean } = {}): Promise<Advertisement[]> {
     const adsCol = collection(db, "advertisements");
-    let q = query(adsCol, orderBy('createdAt', 'desc'));
+    const q = query(adsCol, orderBy('createdAt', 'desc'));
 
     const snapshot = await getDocs(q);
     
@@ -604,8 +619,7 @@ export async function removeFromWishlist(userId: string, listingId: string) {
 export function getConversations(userId: string, callback: (conversations: Conversation[]) => void) {
   const q = query(
     collection(db, 'conversations'),
-    where('participantIds', 'array-contains', userId),
-    orderBy('updatedAt', 'desc')
+    where('participantIds', 'array-contains', userId)
   );
 
   return onSnapshot(q, async (querySnapshot) => {
@@ -639,6 +653,8 @@ export function getConversations(userId: string, callback: (conversations: Conve
         lastMessage,
       } as Conversation);
     }
+    // Sort conversations by updatedAt client-side
+    convos.sort((a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis());
     callback(convos);
   });
 }
