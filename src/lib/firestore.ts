@@ -195,10 +195,32 @@ export async function deleteListing(listingId: string): Promise<void> {
 export async function getAllUsers(): Promise<User[]> {
     const usersCol = collection(db, "users");
     const usersSnapshot = await getDocs(usersCol);
-    return Promise.all(usersSnapshot.docs.map(async (doc) => {
-        const userData = await getUserData(doc.id);
-        return userData as User;
-    }));
+    return usersSnapshot.docs.map((doc) => {
+        const data = doc.data();
+        let memberSince: string;
+        const memberSinceData = data.memberSince;
+
+        if (memberSinceData && typeof memberSinceData.toDate === 'function') {
+            memberSince = memberSinceData.toDate().toISOString();
+        } else if (typeof memberSinceData === 'string') {
+            memberSince = memberSinceData;
+        } else {
+            memberSince = new Date().toISOString();
+        }
+
+        return {
+            id: doc.id,
+            name: data.name || 'Anonymous',
+            email: data.email,
+            avatarUrl: data.photoURL || `https://picsum.photos/seed/${doc.id}/100/100`,
+            location: data.location || 'Kenya',
+            memberSince: memberSince,
+            rating: data.rating || 0,
+            reviews: data.reviews || 0,
+            status: data.status || 'Active',
+            type: data.type || 'Client',
+        } as User;
+    });
 }
 
 
