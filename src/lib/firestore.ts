@@ -23,11 +23,20 @@ import {
   arrayRemove,
   getCountFromServer,
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType, Restaurant, MenuItem, Property, ServiceProvider, Clinic, InsuranceProvider } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
 import { mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
+
+// Helper function to convert a File to a Base64 data URI
+const fileToDataUri = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+    });
+}
 
 
 // Seed the database
@@ -153,14 +162,11 @@ export async function getListingById(id: string): Promise<Listing | null> {
 
 
 export async function createListing(data: Partial<Listing>, userId: string, imageFile: File | null): Promise<string> {
-    const storage = getStorage();
     let imageUrl = placeholderImages.product1.imageUrl;
     let imageHint = placeholderImages.product1.imageHint;
 
     if (imageFile) {
-        const storageRef = ref(storage, `listings/${userId}/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(snapshot.ref);
+        imageUrl = await fileToDataUri(imageFile);
         imageHint = "product image";
     }
 
@@ -179,12 +185,9 @@ export async function updateListing(listingId: string, data: Partial<Listing>, i
     let updateData: Partial<Listing> = { ...data };
 
     if (imageFile) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `listings/${listingId}/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(storageRef, imageFile);
-        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+        updateData.imageUrl = await fileToDataUri(imageFile);
     }
-    await updateDoc(listingRef, updateData);
+    await updateDoc(listingRef, updateData as any);
 }
 
 export async function deleteListing(listingId: string): Promise<void> {
@@ -281,7 +284,7 @@ export async function addUserData(user: FirebaseUser, additionalData: { name?: s
 
 export async function updateUserData(userId: string, data: Partial<User>) {
     const userRef = doc(db, "users", userId);
-    await updateDoc(userRef, data);
+    await updateDoc(userRef, data as any);
 }
 
 export async function deleteUserAccount(userId: string): Promise<void> {
@@ -327,10 +330,7 @@ export async function getAdvertisementById(id: string): Promise<Advertisement | 
 }
 
 export async function createAdvertisement(data: Pick<Advertisement, 'title' | 'description' | 'isActive'>, imageFile: File) {
-    const storage = getStorage();
-    const storageRef = ref(storage, `advertisements/${Date.now()}_${imageFile.name}`);
-    const snapshot = await uploadBytes(storageRef, imageFile);
-    const imageUrl = await getDownloadURL(snapshot.ref);
+    const imageUrl = await fileToDataUri(imageFile);
 
     await addDoc(collection(db, 'advertisements'), {
         ...data,
@@ -345,13 +345,10 @@ export async function updateAdvertisement(adId: string, data: Partial<Advertisem
     let updateData: Partial<Advertisement> = { ...data };
 
     if (imageFile) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `advertisements/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(storageRef, imageFile);
-        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+        updateData.imageUrl = await fileToDataUri(imageFile);
     }
     
-    await updateDoc(adRef, updateData);
+    await updateDoc(adRef, updateData as any);
 }
 
 export async function updateAdvertisementStatus(adId: string, isActive: boolean) {
@@ -393,10 +390,7 @@ export async function getEventById(id: string): Promise<Event | null> {
 }
 
 export async function createEvent(data: Omit<Event, 'id' | 'createdAt' | 'imageUrl' | 'imageHint'>, imageFile: File): Promise<string> {
-    const storage = getStorage();
-    const storageRef = ref(storage, `events/${Date.now()}_${imageFile.name}`);
-    const snapshot = await uploadBytes(storageRef, imageFile);
-    const imageUrl = await getDownloadURL(snapshot.ref);
+    const imageUrl = await fileToDataUri(imageFile);
 
     const eventData = {
         ...data,
@@ -414,10 +408,7 @@ export async function updateEvent(eventId: string, data: Partial<Omit<Event, 'id
     let updateData: any = { ...data };
 
     if (imageFile) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `events/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(storageRef, imageFile);
-        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+        updateData.imageUrl = await fileToDataUri(imageFile);
     }
     
     if (data.date) {
@@ -459,10 +450,7 @@ export async function getRestaurantById(id: string): Promise<Restaurant | null> 
 }
 
 export async function createRestaurant(data: Omit<Restaurant, 'id' | 'createdAt' | 'imageUrl' | 'imageHint' | 'rating'>, imageFile: File): Promise<string> {
-    const storage = getStorage();
-    const storageRef = ref(storage, `restaurants/${Date.now()}_${imageFile.name}`);
-    const snapshot = await uploadBytes(storageRef, imageFile);
-    const imageUrl = await getDownloadURL(snapshot.ref);
+    const imageUrl = await fileToDataUri(imageFile);
 
     const restaurantData = {
         ...data,
@@ -480,10 +468,7 @@ export async function updateRestaurant(restaurantId: string, data: Partial<Omit<
     let updateData: any = { ...data };
 
     if (imageFile) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `restaurants/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(storageRef, imageFile);
-        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+        updateData.imageUrl = await fileToDataUri(imageFile);
     }
 
     await updateDoc(restaurantRef, updateData);
@@ -728,3 +713,5 @@ export async function getAdminDashboardStats() {
         };
     }
 }
+
+    
