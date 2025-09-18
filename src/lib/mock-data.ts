@@ -1,6 +1,6 @@
 
 import { placeholderImages } from '@/lib/placeholder-images';
-import type { Property, ServiceProvider, Clinic, InsuranceProvider } from '@/lib/types';
+import type { Property, ServiceProvider, Clinic, InsuranceProvider, User } from '@/lib/types';
 
 
 export const mockPropertyData: Record<string, Property> = {
@@ -145,7 +145,8 @@ export const mockClinicData: Record<string, Clinic> = {
           { id: 'doc3', name: 'Dr. Aisha Khan', specialty: 'Neurologist', avatarUrl: 'https://picsum.photos/seed/doc3/100/100' },
           { id: 'doc4', name: 'Dr. David Chen', specialty: 'Orthopedic Surgeon', avatarUrl: 'https://picsum.photos/seed/doc4/100/100' },
       ],
-      services: ['Neurology', 'Orthopedics', 'Maternity', 'Emergency Medicine']
+      services: ['Neurology', 'Orthopedics', 'Maternity', 'Emergency Medicine'],
+      drivers: []
   }
 };
 
@@ -186,4 +187,16 @@ export const mockInsuranceData: Record<string, InsuranceProvider> = {
       imageUrl: placeholderImages.insurance4.imageUrl,
       imageHint: placeholderImages.insurance4.imageHint,
   }
+};
+
+export const mockDriverData = {
+    email: 'driver@sokko.sasa',
+    name: 'Juma Kiprono',
+    photoURL: 'https://picsum.photos/seed/driver1/100/100',
+    memberSince: new Date(),
+    status: 'Active',
+    type: 'Driver',
+    location: 'Nairobi',
+    rating: 4.9,
+    reviews: 150
 };

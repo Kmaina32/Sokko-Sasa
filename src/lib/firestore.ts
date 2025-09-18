@@ -26,7 +26,7 @@ import {
 import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType, Restaurant, MenuItem, Property, ServiceProvider, Clinic, InsuranceProvider } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
-import { mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
+import { mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData, mockDriverData } from './mock-data';
 
 // Helper function to convert a File to a Base64 data URI
 const fileToDataUri = (file: File): Promise<string> => {
@@ -42,55 +42,77 @@ const fileToDataUri = (file: File): Promise<string> => {
 // Seed the database
 export async function seedDatabase() {
     const listingsRef = collection(db, "listings");
-    const listingsSnapshot = await getDocs(query(listingsRef, firestoreLimit(1)));
+    const listingsSnapshot = await getDocs(query(listingsRef, firestoreLimit(4)));
   
-    if (!listingsSnapshot.empty) {
+    if (listingsSnapshot.docs.length >= 4) {
+        console.log("Database already has sufficient listings. Skipping seed.");
         return;
     }
   
-    console.log("Seeding database with new product data...");
+    console.log("Seeding database with new data for gmaina424@gmail.com...");
     const batch = writeBatch(db);
-    
-    // Placeholder for new seed data if any
-    const newSeedData: any[] = [];
+    const adminUserId = "SeederAdminID"; // A placeholder ID for the admin user
 
-    newSeedData.forEach((product, index) => {
-      const docRef = doc(listingsRef);
+    // Create a mock admin user doc for relationships
+    const userRef = doc(db, "users", adminUserId);
+    batch.set(userRef, {
+        email: "gmaina424@gmail.com",
+        name: "G Maina (Admin)",
+        photoURL: `https://picsum.photos/seed/${adminUserId}/100/100`,
+        memberSince: serverTimestamp(),
+        status: 'Active',
+        type: 'Admin'
+    });
+    
+    // Seed Listings
+    const listingsToSeed = [
+        { title: "Hand-carved Wooden Elephant", price: 2500, image: placeholderImages.product1 },
+        { title: "Sisal Kiondo Basket", price: 1500, image: placeholderImages.product2 },
+        { title: "Maasai Shuka Blanket", price: 1800, image: placeholderImages.product3 },
+        { title: "Beaded Leather Sandals", price: 2200, image: placeholderImages.product4 },
+    ];
+
+    listingsToSeed.forEach((listing) => {
+      const docRef = doc(collection(db, "listings"));
       batch.set(docRef, {
-        title: product.name,
-        description: product.description,
-        price: parseFloat(product.price),
+        title: listing.title,
+        description: `A high-quality, authentic ${listing.title.toLowerCase()}. Perfect as a gift or for personal use. Handcrafted with care by local artisans.`,
+        price: listing.price,
         category: "Product",
         location: "Nairobi",
-        imageUrl: `https://picsum.photos/seed/seed${index}/600/400`,
-        imageHint: "product image",
-        sellerId: "gmaina424@gmail.com",
+        imageUrl: listing.image.imageUrl,
+        imageHint: listing.image.imageHint,
+        sellerId: adminUserId, // Link to the admin seeder ID
         postedAt: serverTimestamp(),
       });
     });
+
+    // Seed Services
+    Object.values(mockProviderData).forEach(provider => {
+        const docRef = doc(collection(db, "services"));
+         batch.set(docRef, provider);
+    });
+
+    // Seed a Driver user
+    const driverRef = doc(collection(db, 'users'));
+    batch.set(driverRef, mockDriverData);
   
     await batch.commit();
-    console.log(`Seeded ${newSeedData.length} listings.`);
+    console.log(`Seeded ${listingsToSeed.length} listings and other data.`);
 }
 
 export async function getListings(options: { limit?: number; category?: string; sellerId?: string } = {}): Promise<Listing[]> {
   const listingsCol = collection(db, "listings");
   const queries = [];
-  if (options.limit && !options.sellerId) { // Only limit if not fetching for a specific seller
-    queries.push(firestoreLimit(options.limit));
-  }
+  
   if (options.category) {
     queries.push(where("category", "==", options.category));
   }
-   if (options.sellerId) {
+  if (options.sellerId) {
     queries.push(where("sellerId", "==", options.sellerId));
   }
-
-  // Only order by postedAt if we are not filtering by sellerId to avoid index issues
-  if (!options.sellerId) {
-    queries.push(orderBy("postedAt", "desc"));
-  }
-
+  
+  // Combine all queries
   const q = query(listingsCol, ...queries);
   const listingsSnapshot = await getDocs(q);
   
@@ -119,12 +141,12 @@ export async function getListings(options: { limit?: number; category?: string; 
     })
   );
 
-  // If we fetched by sellerId, sort manually in the code
-  if (options.sellerId) {
-    listingsList.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
-    if (options.limit) {
-      listingsList = listingsList.slice(0, options.limit);
-    }
+  // Manually sort by date after fetching
+  listingsList.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+
+  // Manually apply limit after sorting
+  if (options.limit) {
+    listingsList = listingsList.slice(0, options.limit);
   }
 
   return listingsList;
@@ -497,8 +519,21 @@ export async function deleteRestaurant(restaurantId: string): Promise<void> {
 export async function getProperties(): Promise<Property[]> { return Object.values(mockPropertyData) }
 export async function getPropertyById(id: string): Promise<Property | null> { return mockPropertyData[id] || null; }
 
-export async function getServices(): Promise<ServiceProvider[]> { return Object.values(mockProviderData) }
-export async function getServiceById(id: string): Promise<ServiceProvider | null> { return mockProviderData[id] || null; }
+export async function getServices(): Promise<ServiceProvider[]> { 
+    const servicesCol = collection(db, "services");
+    const snapshot = await getDocs(servicesCol);
+    if (snapshot.empty) {
+        return Object.values(mockProviderData);
+    }
+    return snapshot.docs.map(doc => doc.data() as ServiceProvider);
+}
+export async function getServiceById(id: string): Promise<ServiceProvider | null> { 
+    const serviceDoc = await getDoc(doc(db, "services", id));
+    if (serviceDoc.exists()) {
+        return serviceDoc.data() as ServiceProvider;
+    }
+    return mockProviderData[id] || null;
+}
 
 export async function getClinics(): Promise<Clinic[]> { return Object.values(mockClinicData); }
 export async function getClinicById(id: string): Promise<Clinic | null> { return mockClinicData[id] || null; }
@@ -623,7 +658,7 @@ export function getConversations(userId: string, callback: (conversations: Conve
   );
 
   return onSnapshot(q, async (querySnapshot) => {
-    const convos: Conversation[] = [];
+    let convos: Conversation[] = [];
     for (const convDoc of querySnapshot.docs) {
       const data = convDoc.data();
       
@@ -653,8 +688,9 @@ export function getConversations(userId: string, callback: (conversations: Conve
         lastMessage,
       } as Conversation);
     }
+    
     // Sort conversations by updatedAt client-side
-    convos.sort((a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis());
+    convos.sort((a, b) => (b.updatedAt?.toMillis() ?? 0) - (a.updatedAt?.toMillis() ?? 0));
     callback(convos);
   });
 }
@@ -729,5 +765,3 @@ export async function getAdminDashboardStats() {
         };
     }
 }
-
-    

@@ -10,6 +10,8 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AuthProvider } from "@/context/auth-context";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { seedDatabase } from "@/lib/firestore";
 
 // The metadata object is commented out because it cannot be used in a Client Component.
 // export const metadata: Metadata = {
@@ -24,6 +26,13 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
+
+  useEffect(() => {
+    // This is for development purposes to easily seed the database.
+    // In a production app, you would have a more secure, admin-only interface to trigger this.
+    seedDatabase();
+  }, []);
+
 
   return (
     <html lang="en" suppressHydrationWarning>

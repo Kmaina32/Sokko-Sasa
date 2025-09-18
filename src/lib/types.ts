@@ -1,4 +1,5 @@
 
+
 import type { User as FirebaseUser } from "firebase/auth";
 
 export type ListingCategory = "Product" | "Service" | "Job" | "Property";
@@ -167,6 +168,7 @@ export interface Clinic {
         avatarUrl: string;
     }[];
     services: string[];
+    drivers: any[];
 }
 
 export interface InsuranceProvider {
