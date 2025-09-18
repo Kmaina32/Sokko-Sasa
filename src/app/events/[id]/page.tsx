@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { Calendar, MapPin, Ticket, Minus, Plus, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { getEventById } from '@/lib/firestore';
+import type { Event as EventType } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-KE', {
@@ -19,9 +21,10 @@ const formatCurrency = (amount: number) => {
 };
 
 export default function EventDetailPage({ params }: { params: { id: string } }) {
-  const [event, setEvent] = useState<any>(null);
+  const [event, setEvent] = useState<EventType | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = params;
+  const { toast } = useToast();
 
   useEffect(() => {
       const fetchEvent = async () => {
@@ -36,20 +39,28 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
 
   useEffect(() => {
     if (event?.tickets) {
-        setTicketQuantities(event.tickets.reduce((acc: any, ticket: any) => ({ ...acc, [ticket.id]: 0 }), {}));
+        setTicketQuantities(event.tickets.reduce((acc: any, ticket: any) => ({ ...acc, [ticket.id || ticket.type]: 0 }), {}));
     }
   }, [event]);
   
-  const handleQuantityChange = (ticketId: string, delta: number) => {
+  const handleQuantityChange = (ticketIdentifier: string, delta: number) => {
     setTicketQuantities(prev => ({
         ...prev,
-        [ticketId]: Math.max(0, (prev[ticketId] || 0) + delta)
+        [ticketIdentifier]: Math.max(0, (prev[ticketIdentifier] || 0) + delta)
     }));
   }
   
   const total = event?.tickets.reduce((acc: number, ticket: any) => {
-    return acc + ticket.price * (ticketQuantities[ticket.id] || 0);
+    const ticketId = ticket.id || ticket.type;
+    return acc + ticket.price * (ticketQuantities[ticketId] || 0);
   }, 0) || 0;
+
+  const handleBuyTickets = () => {
+      toast({
+          title: "Coming Soon!",
+          description: "Event ticket purchasing will be available shortly."
+      })
+  }
 
   if(loading) {
     return (
@@ -115,25 +126,28 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                           {event.tickets.map((ticket: any) => (
-                               <div key={ticket.id} className="p-3 border rounded-lg">
+                           {event.tickets.map((ticket: any) => {
+                                const ticketId = ticket.id || ticket.type;
+                                return (
+                                <div key={ticketId} className="p-3 border rounded-lg">
                                    <div className="flex justify-between items-center">
                                        <div>
                                            <p className="font-semibold">{ticket.type}</p>
                                            <p className="text-primary font-bold">{formatCurrency(ticket.price)}</p>
                                        </div>
                                        <div className="flex items-center gap-2 border rounded-md p-1">
-                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleQuantityChange(ticket.id, -1)} disabled={(ticketQuantities[ticket.id] || 0) === 0}>
+                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleQuantityChange(ticketId, -1)} disabled={(ticketQuantities[ticketId] || 0) === 0}>
                                                 <Minus className="w-4 h-4"/>
                                             </Button>
-                                            <span className="w-8 text-center font-bold">{ticketQuantities[ticket.id] || 0}</span>
-                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleQuantityChange(ticket.id, 1)}>
+                                            <span className="w-8 text-center font-bold">{ticketQuantities[ticketId] || 0}</span>
+                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleQuantityChange(ticketId, 1)}>
                                                 <Plus className="w-4 h-4"/>
                                             </Button>
                                         </div>
                                    </div>
                                </div>
-                           ))}
+                               )
+                           })}
                            <Separator />
                             <div className="flex justify-between font-bold text-xl">
                                 <span>Total</span>
@@ -141,7 +155,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                             </div>
                         </CardContent>
                         <div className="p-6 pt-0">
-                           <Button size="lg" className="w-full font-bold" disabled={total === 0}>
+                           <Button size="lg" className="w-full font-bold" disabled={total === 0} onClick={handleBuyTickets}>
                                 Buy Tickets
                             </Button>
                         </div>

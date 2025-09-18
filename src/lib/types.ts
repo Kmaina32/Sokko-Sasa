@@ -116,4 +116,65 @@ export interface Restaurant {
   menu: MenuItem[];
   createdAt: any;
 }
-    
+
+export interface Property {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    type: 'Rent' | 'Sale';
+    location: string;
+    images: string[];
+    imageHint?: string;
+    agent: {
+        id: string;
+        name: string;
+        avatar: string;
+    };
+    amenities: {
+        beds: number;
+        baths: number;
+        parking: number;
+    };
+}
+
+export interface ServiceProvider {
+    id: string;
+    name: string;
+    service: string;
+    rating: number;
+    reviews: number;
+    location: string;
+    imageUrl: string;
+    imageHint: string;
+    bio: string;
+    services: string[];
+}
+
+export interface Clinic {
+    id: string;
+    name: string;
+    specialty: string;
+    imageUrl: string;
+    imageHint: string;
+    location: string;
+    rating: number;
+    description: string;
+    doctors: {
+        id: string;
+        name: string;
+        specialty: string;
+        avatarUrl: string;
+    }[];
+    services: string[];
+}
+
+export interface InsuranceProvider {
+    id: string;
+    name: string;
+    type: string;
+    icon: string;
+    description: string;
+    imageUrl: string;
+    imageHint: string;
+}

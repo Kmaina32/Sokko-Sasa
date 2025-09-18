@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
+import type { Clinic } from '@/lib/types';
 
 function AppointmentDialog({ clinicName, doctors }: { clinicName: string, doctors: any[] }) {
   const { toast } = useToast();
@@ -100,7 +101,7 @@ function AppointmentDialog({ clinicName, doctors }: { clinicName: string, doctor
 }
 
 export default function ClinicDetailPage({ params }: { params: { id: string } }) {
-  const [clinic, setClinic] = useState<any>(null);
+  const [clinic, setClinic] = useState<Clinic | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = params;
 

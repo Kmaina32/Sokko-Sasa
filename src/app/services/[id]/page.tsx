@@ -10,9 +10,10 @@ import { Star, MapPin, Phone, MessageSquare, Wrench, Loader2 } from "lucide-reac
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getServiceById } from "@/lib/firestore";
+import type { ServiceProvider } from '@/lib/types';
 
 export default function ServiceProviderProfilePage({ params }: { params: { id: string } }) {
-  const [provider, setProvider] = useState<any>(null);
+  const [provider, setProvider] = useState<ServiceProvider | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = params;
 

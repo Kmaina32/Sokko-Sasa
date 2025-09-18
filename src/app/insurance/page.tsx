@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getInsurances } from '@/lib/firestore';
+import type { InsuranceProvider } from '@/lib/types';
 
 const iconMap: { [key: string]: React.ElementType } = {
   Heart,
@@ -42,7 +43,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   Plane,
 };
 
-function GetQuoteDialog({ insuranceType, insuranceProviders }: { insuranceType: string, insuranceProviders: any[] }) {
+function GetQuoteDialog({ insuranceType, insuranceProviders }: { insuranceType: string, insuranceProviders: InsuranceProvider[] }) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -114,7 +115,7 @@ function GetQuoteDialog({ insuranceType, insuranceProviders }: { insuranceType: 
 
 
 export default function InsurancePage() {
-    const [insuranceProviders, setInsuranceProviders] = useState<any[]>([]);
+    const [insuranceProviders, setInsuranceProviders] = useState<InsuranceProvider[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

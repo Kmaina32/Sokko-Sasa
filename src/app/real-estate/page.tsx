@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import {
   Card,
@@ -90,7 +91,7 @@ export default async function RealEstatePage() {
                   width={600}
                   height={400}
                   className="h-full w-full object-cover"
-                  data-ai-hint="property image"
+                  data-ai-hint={prop.imageHint || "property image"}
                 />
                 <Badge
                   className="absolute top-2 right-2"

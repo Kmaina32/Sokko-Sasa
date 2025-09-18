@@ -24,7 +24,7 @@ import {
   getCountFromServer,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType, Restaurant, MenuItem } from "@/lib/types";
+import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType, Restaurant, MenuItem, Property, ServiceProvider, Clinic, InsuranceProvider } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
 import { mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
@@ -112,6 +112,22 @@ export async function getListingById(id: string): Promise<Listing | null> {
     const listingDoc = await getDoc(listingDocRef);
 
     if (!listingDoc.exists()) {
+        const foodListingId = Object.keys(placeholderImages).find(key => key.startsWith('food') && id.includes(placeholderImages[key].description.replace(/\s+/g, '-')));
+        if (foodListingId) {
+             const foodItem = placeholderImages[foodListingId];
+             return {
+                id,
+                title: foodItem.description,
+                price: Math.floor(Math.random() * 500) + 200,
+                category: "Product",
+                imageUrl: foodItem.imageUrl,
+                imageHint: foodItem.imageHint,
+                description: `A delicious ${foodItem.description}.`,
+                location: 'Nairobi',
+                sellerId: 'system',
+                postedAt: new Date().toISOString(),
+             } as Listing;
+        }
         return null;
     }
     const data = listingDoc.data();
@@ -254,7 +270,8 @@ export async function deleteUserAccount(userId: string): Promise<void> {
 // Advertisement functions
 export async function getAdvertisements(options: { activeOnly?: boolean } = {}): Promise<Advertisement[]> {
     const adsCol = collection(db, "advertisements");
-    const q = query(adsCol, orderBy('createdAt', 'desc'));
+    let q = query(adsCol, orderBy('createdAt', 'desc'));
+
     const snapshot = await getDocs(q);
     
     let ads = snapshot.docs.map(doc => {
@@ -454,17 +471,17 @@ export async function deleteRestaurant(restaurantId: string): Promise<void> {
     await deleteDoc(doc(db, "restaurants", restaurantId));
 }
 
-// MOCK DATA FETCHERS
-export async function getProperties() { return Object.values(mockPropertyData) }
-export async function getPropertyById(id: string) { return mockPropertyData[id] || null; }
+// REAL DATA FETCHERS
+export async function getProperties(): Promise<Property[]> { return Object.values(mockPropertyData) }
+export async function getPropertyById(id: string): Promise<Property | null> { return mockPropertyData[id] || null; }
 
-export async function getServices() { return Object.values(mockProviderData) }
-export async function getServiceById(id: string) { return mockProviderData[id] || null; }
+export async function getServices(): Promise<ServiceProvider[]> { return Object.values(mockProviderData) }
+export async function getServiceById(id: string): Promise<ServiceProvider | null> { return mockProviderData[id] || null; }
 
-export async function getClinics() { return Object.values(mockClinicData); }
-export async function getClinicById(id: string) { return mockClinicData[id] || null; }
+export async function getClinics(): Promise<Clinic[]> { return Object.values(mockClinicData); }
+export async function getClinicById(id: string): Promise<Clinic | null> { return mockClinicData[id] || null; }
 
-export async function getInsurances() { return Object.values(mockInsuranceData); }
+export async function getInsurances(): Promise<InsuranceProvider[]> { return Object.values(mockInsuranceData); }
 
 // Cart Functions
 export function getCartItems(userId: string, callback: (items: (Listing & { quantity: number })[]) => void) {
@@ -473,9 +490,18 @@ export function getCartItems(userId: string, callback: (items: (Listing & { quan
     return onSnapshot(cartRef, async (snapshot) => {
         const items: (Listing & { quantity: number })[] = [];
         for (const cartDoc of snapshot.docs) {
-            const listing = await getListingById(cartDoc.id);
-            if (listing) {
-                items.push({ ...listing, quantity: cartDoc.data().quantity });
+            // This is a temporary ID for a food item that is not a real listing
+            if (cartDoc.id.includes('-')) {
+                 items.push({
+                    id: cartDoc.id,
+                    ...cartDoc.data().itemDetails,
+                    quantity: cartDoc.data().quantity,
+                 } as Listing & { quantity: number });
+            } else {
+                const listing = await getListingById(cartDoc.id);
+                if (listing) {
+                    items.push({ ...listing, quantity: cartDoc.data().quantity });
+                }
             }
         }
         callback(items);
@@ -498,10 +524,19 @@ export async function addToCart(userId: string, listingId: string) {
     }
 }
 
-export async function updateCartItemQuantity(userId: string, listingId: string, quantity: number) {
+export async function updateCartItemQuantity(userId: string, listingId: string, quantity: number, itemDetails?: Partial<Listing>) {
     const cartItemRef = doc(db, "users", userId, "cart", listingId);
     if (quantity > 0) {
-        await updateDoc(cartItemRef, { quantity });
+        const docSnap = await getDoc(cartItemRef);
+        if (docSnap.exists()) {
+            await updateDoc(cartItemRef, { quantity });
+        } else {
+             await setDoc(cartItemRef, { 
+                quantity, 
+                itemDetails, // Store details for non-listing items
+                addedAt: serverTimestamp()
+            });
+        }
     } else {
         await deleteDoc(cartItemRef);
     }

@@ -17,10 +17,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Bed, Bath, Car, Phone, MessageSquare, Building, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { getPropertyById } from "@/lib/firestore";
+import type { Property } from '@/lib/types';
 
 
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const [property, setProperty] = useState<any>(null);
+  const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = params;
 
@@ -139,7 +140,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                     <CardContent className="space-y-4">
                         <div className="flex items-center gap-4">
                             <Avatar className="h-16 w-16">
-                                <AvatarImage src={property.agent.avatarUrl ?? property.agent.avatar} alt={property.agent.name}/>
+                                <AvatarImage src={property.agent.avatar} alt={property.agent.name}/>
                                 <AvatarFallback>{property.agent.name.charAt(0)}</AvatarFallback>
                             </Avatar>
                             <div>

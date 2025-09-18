@@ -14,8 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, Utensils, PlusCircle, ArrowLeft, MinusCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { getRestaurantById } from "@/lib/firestore";
+import { getRestaurantById, addToCart, removeFromCart, getListingById, updateCartItemQuantity } from "@/lib/firestore";
 import { Separator } from '@/components/ui/separator';
+import type { Restaurant as RestaurantType, MenuItem, Listing } from '@/lib/types';
+import { useAuth } from '@/context/auth-context';
+import { useToast } from '@/hooks/use-toast';
+import { useCart } from '@/hooks/use-cart';
+
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -25,23 +30,19 @@ const formatCurrency = (amount: number) => {
     }).format(amount);
 }
 
-interface MenuItem {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-}
-
-interface CartItem extends MenuItem {
+interface CartItem extends Listing {
     quantity: number;
 }
 
-export default function RestaurantMenuPage({ params }: { params: { id: string } }) {
-  const [restaurant, setRestaurant] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const { id } = params;
 
+export default function RestaurantMenuPage({ params }: { params: { id: string } }) {
+  const [restaurant, setRestaurant] = useState<RestaurantType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { id } = params;
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { cartItems } = useCart();
+  
   useEffect(() => {
     const fetchRestaurant = async () => {
         const data = await getRestaurantById(id);
@@ -51,39 +52,33 @@ export default function RestaurantMenuPage({ params }: { params: { id: string } 
     fetchRestaurant();
   }, [id]);
 
-  const handleAddToCart = (item: MenuItem) => {
-    setCart(prevCart => {
-        const existingItem = prevCart.find(cartItem => cartItem.id === item.id);
-        if (existingItem) {
-            return prevCart.map(cartItem => 
-                cartItem.id === item.id 
-                ? { ...cartItem, quantity: cartItem.quantity + 1 }
-                : cartItem
-            );
-        }
-        return [...prevCart, { ...item, quantity: 1 }];
+
+  const handleQuantityChange = async (item: MenuItem, change: number) => {
+    if (!user) {
+        toast({ variant: 'destructive', title: "Please log in to add items."});
+        return;
+    }
+    // We treat each menu item as a unique "listing" for cart purposes
+    const listingId = `${id}-${item.name.replace(/\s+/g, '-')}`; 
+    const quantity = (cartItems.find(ci => ci.id === listingId)?.quantity || 0) + change;
+
+    await updateCartItemQuantity(user.uid, listingId, quantity, {
+        title: item.name,
+        price: item.price,
+        category: 'Product', // Representing food as a product
+        imageUrl: restaurant?.imageUrl || '',
+        location: restaurant?.location || '',
     });
   }
 
-  const handleRemoveFromCart = (itemId: string) => {
-      setCart(prevCart => {
-          const existingItem = prevCart.find(cartItem => cartItem.id === itemId);
-          if (existingItem && existingItem.quantity > 1) {
-              return prevCart.map(cartItem => 
-                  cartItem.id === itemId
-                  ? { ...cartItem, quantity: cartItem.quantity - 1 }
-                  : cartItem
-              );
-          }
-          return prevCart.filter(cartItem => cartItem.id !== itemId);
-      });
+  const getCartItemQuantity = (itemName: string) => {
+    const listingId = `${id}-${itemName.replace(/\s+/g, '-')}`;
+    return cartItems.find(item => item.id === listingId)?.quantity || 0;
   }
 
-  const getCartItemQuantity = (itemId: string) => {
-    return cart.find(item => item.id === itemId)?.quantity || 0;
-  }
-
-  const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const subtotal = cartItems
+    .filter(item => item.id.startsWith(id)) // Only include items from this restaurant
+    .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
 
   if (loading) {
@@ -142,9 +137,10 @@ export default function RestaurantMenuPage({ params }: { params: { id: string } 
                 <h2 className="text-3xl font-bold mb-6">Menu</h2>
                 <div className="divide-y divide-border rounded-lg border">
                     {restaurant.menu.map((item: any, index: number) => {
-                        const quantityInCart = getCartItemQuantity(item.id);
+                        const quantityInCart = getCartItemQuantity(item.name);
+                        const listingId = `${id}-${item.name.replace(/\s+/g, '-')}`;
                         return (
-                            <div key={item.id} className="grid grid-cols-[1fr_auto] items-center p-4 gap-4">
+                            <div key={listingId} className="grid grid-cols-[1fr_auto] items-center p-4 gap-4">
                                 <div>
                                     <h3 className="font-semibold text-lg">{item.name}</h3>
                                     <p className="text-muted-foreground text-sm">{item.description}</p>
@@ -153,13 +149,13 @@ export default function RestaurantMenuPage({ params }: { params: { id: string } 
                                 <div className="flex items-center gap-2">
                                     {quantityInCart > 0 && (
                                         <>
-                                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleRemoveFromCart(item.id)}>
+                                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleQuantityChange(item, -1)}>
                                                 <MinusCircle className="h-4 w-4" />
                                             </Button>
                                             <span className="font-bold text-lg w-4 text-center">{quantityInCart}</span>
                                         </>
                                     )}
-                                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleAddToCart(item)}>
+                                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleQuantityChange(item, 1)}>
                                         <PlusCircle className="h-4 w-4"/>
                                     </Button>
                                 </div>
@@ -174,12 +170,12 @@ export default function RestaurantMenuPage({ params }: { params: { id: string } 
                         <CardTitle>Your Order</CardTitle>
                     </CardHeader>
                     <CardContent>
-                       {cart.length > 0 ? (
+                       {subtotal > 0 ? (
                            <div className="space-y-4">
-                               {cart.map(item => (
+                               {cartItems.filter(item => item.id.startsWith(id)).map(item => (
                                    <div key={item.id} className="flex justify-between items-center">
                                        <div>
-                                           <p className="font-semibold">{item.quantity} x {item.name}</p>
+                                           <p className="font-semibold">{item.quantity} x {item.title}</p>
                                        </div>
                                        <p>{formatCurrency(item.price * item.quantity)}</p>
                                    </div>
@@ -194,9 +190,11 @@ export default function RestaurantMenuPage({ params }: { params: { id: string } 
                            <p className="text-muted-foreground text-center">Your cart is empty. Add items from the menu to get started.</p>
                        )}
                     </CardContent>
-                    {cart.length > 0 && (
+                    {subtotal > 0 && (
                         <CardFooter>
-                            <Button className="w-full" size="lg">Go to Checkout</Button>
+                            <Button className="w-full" size="lg" asChild>
+                                <Link href="/cart">Go to Cart</Link>
+                            </Button>
                         </CardFooter>
                     )}
                 </Card>

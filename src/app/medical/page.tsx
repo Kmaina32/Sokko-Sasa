@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Stethoscope, Pill, Microscope, HeartPulse, Hospital, Loader2 } from "lucide-react";
 import Link from 'next/link';
 import { getClinics } from '@/lib/firestore';
+import type { Clinic } from '@/lib/types';
 
 
 const medicalServices = [
@@ -25,7 +26,7 @@ const medicalServices = [
 ];
 
 export default function MedicalPage() {
-    const [clinics, setClinics] = useState<any[]>([]);
+    const [clinics, setClinics] = useState<Clinic[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
