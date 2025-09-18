@@ -3,6 +3,8 @@
 import type { User as FirebaseUser } from "firebase/auth";
 
 export type ListingCategory = "Product" | "Service" | "Job" | "Property";
+export type UserType = 'Client' | 'Vendor' | 'Driver' | 'Admin' | 'Food' | 'Events' | 'RealEstate' | 'Jobs' | 'Services';
+
 
 export interface Listing {
   id: string;
@@ -28,7 +30,7 @@ export interface User {
   memberSince?: string;
   rating?: number;
   reviews?: number;
-  type?: 'Client' | 'Vendor' | 'Driver' | 'Admin';
+  type?: UserType;
   status?: 'Active' | 'Suspended';
 }
 

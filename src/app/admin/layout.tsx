@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import type { User } from '@/lib/types';
+import { AdminSidebar } from '@/components/admin-sidebar';
 
 export default function AdminLayout({
   children,
@@ -54,5 +54,12 @@ export default function AdminLayout({
     return null;
   }
 
-  return <main className="flex-1">{children}</main>;
+  return (
+    <div className="flex">
+      <AdminSidebar />
+      <main className="flex-1 pl-64"> {/* Add padding to account for sidebar width */}
+        {children}
+      </main>
+    </div>
+  );
 }
