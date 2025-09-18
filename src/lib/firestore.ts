@@ -1,4 +1,5 @@
 
+
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -20,6 +21,7 @@ import {
   orderBy,
   arrayUnion,
   arrayRemove,
+  getCountFromServer,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType, Restaurant, MenuItem } from "@/lib/types";
@@ -635,4 +637,37 @@ export async function sendMessage(conversationId: string, senderId: string, text
     },
     updatedAt: now,
   });
+}
+
+
+// Admin Dashboard Functions
+export async function getAdminDashboardStats() {
+    try {
+        const usersCol = collection(db, "users");
+        const listingsCol = collection(db, "listings");
+        const eventsCol = collection(db, "events");
+        const restaurantsCol = collection(db, "restaurants");
+
+        const [userCount, listingCount, eventCount, restaurantCount] = await Promise.all([
+            getCountFromServer(usersCol),
+            getCountFromServer(listingsCol),
+            getCountFromServer(eventsCol),
+            getCountFromServer(restaurantsCol),
+        ]);
+
+        return {
+            users: userCount.data().count,
+            listings: listingCount.data().count,
+            events: eventCount.data().count,
+            restaurants: restaurantCount.data().count,
+        };
+    } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+        return {
+            users: 0,
+            listings: 0,
+            events: 0,
+            restaurants: 0,
+        };
+    }
 }
