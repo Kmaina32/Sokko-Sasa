@@ -10,7 +10,7 @@ import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   "projectId": "studio-4244987249-1f3ac",
   "appId": "1:909303382851:web:6e55b575562205dae1e5f6",
-  "storageBucket": "studio-4244987249-1f3ac.firebasestorage.app",
+  "storageBucket": "studio-4244987249-1f3ac.appspot.com",
   "apiKey": "AIzaSyBeiC1fLWb-zoh_lSS1j-qal8f3LX5VelM",
   "authDomain": "studio-4244987249-1f3ac.firebaseapp.com",
   "measurementId": "",
@@ -24,4 +24,3 @@ const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 export { app, auth, db, googleProvider };
-
