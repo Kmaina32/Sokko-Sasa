@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import {
   Card,
@@ -68,7 +69,7 @@ export default async function FoodDeliveryPage() {
           <Card className="text-center p-12">
             <Utensils className="mx-auto h-12 w-12 text-muted-foreground"/>
             <h3 className="mt-4 text-xl font-semibold">No Restaurants Found</h3>
-            <p className="mt-2 text-muted-foreground">We couldn't find any restaurants. Please try a different search or check back later.</p>
+            <p className="mt-2 text-muted-foreground">We couldn't find any restaurants. Please check back later or add one in the admin panel.</p>
           </Card>
         )}
       </div>

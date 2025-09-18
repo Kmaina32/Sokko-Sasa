@@ -24,30 +24,84 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import type { Restaurant } from "@/lib/types";
+import { deleteRestaurant, getRestaurants } from "@/lib/firestore";
+import Image from "next/image";
 
-const mockRestaurants: any[] = [];
-
-const CrudActions = () => (
+const CrudActions = ({ restaurant, onDelete }: { restaurant: Restaurant; onDelete: () => void }) => (
     <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
-            <FilePenLine className="h-4 w-4"/>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" asChild>
+            <Link href={`/admin/food/edit/${restaurant.id}`}>
+              <FilePenLine className="h-4 w-4"/>
+            </Link>
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" disabled>
-            <Trash2 className="h-4 w-4"/>
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-4 w-4"/>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the restaurant "{restaurant.name}".
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
     </div>
 );
 
 
 export default function ManageFoodDeliveryPage() {
-    const [restaurants, setRestaurants] = useState<any[]>([]);
+    const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+
+    const fetchRestaurants = async () => {
+        setLoading(true);
+        const restaurantList = await getRestaurants();
+        setRestaurants(restaurantList);
+        setLoading(false);
+    }
 
     useEffect(() => {
-        // In a real app, you'd fetch data from Firestore.
-        setRestaurants(mockRestaurants);
-        setLoading(false);
+        fetchRestaurants();
     }, []);
+
+    const handleDelete = async (restaurantId: string) => {
+      try {
+        await deleteRestaurant(restaurantId);
+        fetchRestaurants();
+        toast({
+          title: "Success",
+          description: "Restaurant has been deleted.",
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to delete restaurant.",
+        });
+      }
+    }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -76,21 +130,24 @@ export default function ManageFoodDeliveryPage() {
                                 <TableHead>Restaurant Name</TableHead>
                                 <TableHead>Location</TableHead>
                                 <TableHead>Cuisine</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>Rating</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {restaurants.map((resto) => (
                                 <TableRow key={resto.id}>
-                                    <TableCell className="font-medium">{resto.name}</TableCell>
+                                    <TableCell className="font-medium flex items-center gap-4">
+                                      <Image src={resto.imageUrl} alt={resto.name} width={40} height={40} className="rounded-md object-cover" />
+                                      <span>{resto.name}</span>
+                                    </TableCell>
                                     <TableCell>{resto.location}</TableCell>
                                     <TableCell>{resto.cuisine}</TableCell>
                                     <TableCell>
-                                        <Badge variant={resto.status === 'Approved' ? 'default' : 'secondary'}>{resto.status}</Badge>
+                                        <Badge variant="default">{resto.rating} ★</Badge>
                                     </TableCell>
                                     <TableCell>
-                                        <CrudActions />
+                                        <CrudActions restaurant={resto} onDelete={() => handleDelete(resto.id)}/>
                                     </TableCell>
                                 </TableRow>
                             ))}

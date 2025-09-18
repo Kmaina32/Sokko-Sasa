@@ -1,3 +1,4 @@
+
 import { placeholderImages } from '@/lib/placeholder-images';
 
 export const mockEvents = [
@@ -31,51 +32,6 @@ export const mockEvents = [
       ],
     },
   ];
-  
-  export const mockRestaurantsData: any = {
-      resto1: { 
-          id: 'resto1', 
-          name: "Mama's Kitchen", 
-          cuisine: 'Kenyan', 
-          rating: 4.5, 
-          imageUrl: placeholderImages.food1.imageUrl,
-          imageHint: placeholderImages.food1.imageHint,
-          menu: [
-              { id: 'm1-1', name: 'Nyama Choma (1/2 Kg)', description: 'Grilled goat meat served with kachumbari.', price: 800 },
-              { id: 'm1-2', name: 'Ugali and Sukuma Wiki', description: 'A staple Kenyan meal.', price: 350 },
-              { id: 'm1-3', name: 'Chapati (2 pcs)', description: 'Soft, layered flatbread.', price: 100 },
-              { id: 'm1-4', name: 'Mukimo', description: 'Mashed potatoes, maize, beans, and greens.', price: 400 },
-          ]
-      },
-      resto2: {
-          id: 'resto2', 
-          name: "Pizza Inn", 
-          cuisine: 'Pizza', 
-          rating: 4.2,
-          imageUrl: placeholderImages.food2.imageUrl,
-          imageHint: placeholderImages.food2.imageHint,
-          menu: [
-              { id: 'm2-1', name: 'Medium BBQ Steak Pizza', description: 'Classic BBQ steak pizza with all the toppings.', price: 1200 },
-              { id: 'm2-2', name: 'Large Chicken Tikka Pizza', description: 'Spicy chicken tikka on a delicious crust.', price: 1500 },
-              { id: 'm2-3', name: 'Garlic Bread', description: 'Toasted bread with garlic butter.', price: 300 },
-              { id: 'm2-4', name: '2L Soda', description: 'Your choice of Coca-cola, Fanta, or Sprite.', price: 250 },
-          ]
-      },
-      resto3: { 
-          id: 'resto3', 
-          name: "Shanghai Kitchen", 
-          cuisine: 'Chinese', 
-          rating: 4.8,
-          imageUrl: placeholderImages.food3.imageUrl,
-          imageHint: placeholderImages.food3.imageHint,
-          menu: [
-              { id: 'm3-1', name: 'Sweet & Sour Pork', description: 'Crispy pork in a sweet and sour sauce.', price: 950 },
-              { id: 'm3-2', name: 'Egg Fried Rice', description: 'A classic side dish.', price: 500 },
-              { id: 'm3-3', name: 'Chicken Cashew Nuts', description: 'Stir-fried chicken with crunchy cashews.', price: 1100 },
-              { id: 'm3-4', name: 'Vegetable Spring Rolls (3 pcs)', description: 'Crispy rolls filled with fresh vegetables.', price: 450 },
-          ]
-      },
-  };
   
   export const mockPropertyData: any = {
       're1': {

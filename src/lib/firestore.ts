@@ -22,10 +22,10 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType } from "@/lib/types";
+import type { Listing, User, Advertisement, Conversation, Message, Event, TicketType, Restaurant, MenuItem } from "@/lib/types";
 import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
-import { mockRestaurantsData, mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
+import { mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
 
 
 // Seed the database
@@ -368,9 +368,9 @@ export async function createEvent(data: Omit<Event, 'id' | 'createdAt' | 'imageU
     return docRef.id;
 }
 
-export async function updateEvent(eventId: string, data: Partial<Event>, imageFile: File | null) {
+export async function updateEvent(eventId: string, data: Partial<Omit<Event, 'id'>>, imageFile: File | null) {
     const eventRef = doc(db, "events", eventId);
-    let updateData: Partial<Event> = { ...data };
+    let updateData: any = { ...data };
 
     if (imageFile) {
         const storage = getStorage();
@@ -380,7 +380,7 @@ export async function updateEvent(eventId: string, data: Partial<Event>, imageFi
     }
     
     if (data.date) {
-        updateData.date = new Date(data.date).toISOString();
+        updateData.date = new Date(data.date);
     }
 
     await updateDoc(eventRef, updateData);
@@ -390,13 +390,69 @@ export async function deleteEvent(eventId: string): Promise<void> {
     await deleteDoc(doc(db, "events", eventId));
 }
 
+// Restaurant Functions
+export async function getRestaurants(): Promise<Restaurant[]> {
+    const col = collection(db, "restaurants");
+    const q = query(col, orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+        } as Restaurant;
+    });
+}
+
+export async function getRestaurantById(id: string): Promise<Restaurant | null> {
+    const docRef = doc(db, "restaurants", id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return null;
+    const data = docSnap.data();
+    return {
+        id: docSnap.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+    } as Restaurant;
+}
+
+export async function createRestaurant(data: Omit<Restaurant, 'id' | 'createdAt' | 'imageUrl' | 'imageHint' | 'rating'>, imageFile: File): Promise<string> {
+    const storage = getStorage();
+    const storageRef = ref(storage, `restaurants/${Date.now()}_${imageFile.name}`);
+    const snapshot = await uploadBytes(storageRef, imageFile);
+    const imageUrl = await getDownloadURL(snapshot.ref);
+
+    const restaurantData = {
+        ...data,
+        imageUrl,
+        imageHint: 'restaurant food',
+        rating: Math.round((Math.random() * (5 - 3.5) + 3.5) * 10) / 10, // Random rating between 3.5 and 5
+        createdAt: serverTimestamp(),
+    };
+    const docRef = await addDoc(collection(db, "restaurants"), restaurantData);
+    return docRef.id;
+}
+
+export async function updateRestaurant(restaurantId: string, data: Partial<Omit<Restaurant, 'id'>>, imageFile: File | null) {
+    const restaurantRef = doc(db, "restaurants", restaurantId);
+    let updateData: any = { ...data };
+
+    if (imageFile) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `restaurants/${Date.now()}_${imageFile.name}`);
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+    }
+
+    await updateDoc(restaurantRef, updateData);
+}
+
+export async function deleteRestaurant(restaurantId: string): Promise<void> {
+    await deleteDoc(doc(db, "restaurants", restaurantId));
+}
 
 // MOCK DATA FETCHERS
-export async function getRestaurants() { 
-    return Object.values(mockRestaurantsData); 
-}
-export async function getRestaurantById(id: string) { return mockRestaurantsData[id] || null; }
-
 export async function getProperties() { return Object.values(mockPropertyData) }
 export async function getPropertyById(id: string) { return mockPropertyData[id] || null; }
 

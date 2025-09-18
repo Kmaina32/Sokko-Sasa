@@ -81,7 +81,7 @@ export interface Advertisement {
 }
 
 export interface TicketType {
-  id: string;
+  id?: string;
   type: string;
   price: number;
 }
@@ -96,5 +96,24 @@ export interface Event {
     imageHint: string;
     tickets: TicketType[];
     createdAt: any;
+}
+
+export interface MenuItem {
+  id?: string;
+  name: string;
+  description: string;
+  price: number;
+}
+
+export interface Restaurant {
+  id: string;
+  name: string;
+  cuisine: string;
+  location: string;
+  rating: number;
+  imageUrl: string;
+  imageHint: string;
+  menu: MenuItem[];
+  createdAt: any;
 }
     
