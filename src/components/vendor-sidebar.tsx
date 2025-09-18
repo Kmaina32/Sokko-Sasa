@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -14,46 +15,48 @@ import {
   Building,
   Briefcase,
   Wrench,
-  LayoutDashboard
+  LayoutDashboard,
+  History,
+  FileText,
+  UserCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { SokkoSasaLogo } from './icons';
-import { Separator } from './ui/separator';
 
 const sidebarConfig = {
   food: [
-    { href: '/dashboard/food', label: 'Overview', icon: LayoutDashboard },
+    { href: '/dashboard/food', label: 'Overview', icon: LayoutDashboard, exact: true },
     { href: '/dashboard/food/orders', label: 'Orders', icon: ClipboardList },
     { href: '/dashboard/food/menu', label: 'Menu Management', icon: Utensils },
     { href: '/dashboard/food/analytics', label: 'Analytics', icon: BarChart2 },
   ],
   rides: [
-    { href: '/dashboard/rides', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/dashboard/rides/history', label: 'Ride History', icon: Car },
+    { href: '/dashboard/rides', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+    { href: '/dashboard/rides/history', label: 'Ride History', icon: History },
     { href: '/dashboard/rides/earnings', label: 'Earnings', icon: DollarSign },
   ],
   events: [
-    { href: '/dashboard/events', label: 'Overview', icon: LayoutDashboard },
+    { href: '/dashboard/events', label: 'Overview', icon: LayoutDashboard, exact: true },
     { href: '/dashboard/events/manage', label: 'Manage Events', icon: Calendar },
     { href: '/dashboard/events/tickets', label: 'Ticket Sales', icon: Ticket },
     { href: '/dashboard/events/attendees', label: 'Attendees', icon: Users },
   ],
   services: [
-    { href: '/dashboard/services', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard/services', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { href: '/dashboard/services/requests', label: 'Job Requests', icon: Wrench },
     { href: '/dashboard/services/profile', label: 'My Profile', icon: Settings },
   ],
   'real-estate': [
-    { href: '/dashboard/real-estate', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard/real-estate', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { href: '/dashboard/real-estate/listings', label: 'My Listings', icon: Building },
     { href: '/dashboard/real-estate/inquiries', label: 'Inquiries', icon: Users },
   ],
   jobs: [
-    { href: '/dashboard/jobs', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard/jobs', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { href: '/dashboard/jobs/postings', label: 'My Postings', icon: Briefcase },
-    { href: '/dashboard/jobs/applicants', label: 'Applicants', icon: Users },
+    { href: '/dashboard/jobs/applicants', label: 'Applicants', icon: UserCheck },
   ],
 };
 
@@ -88,26 +91,33 @@ export function VendorSidebar({ dashboardType }: { dashboardType: string }) {
         </div>
       <nav className="flex-1 px-4 py-4">
         <ul className="space-y-1">
-          {links.map((link: any) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted',
-                  pathname === link.href && 'bg-muted text-primary font-semibold'
-                )}
-              >
-                <link.icon className="h-5 w-5" />
-                {link.label}
-              </Link>
-            </li>
-          ))}
+          {links.map((link: any) => {
+            const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);
+            return (
+                <li key={link.href}>
+                <Link
+                    href={link.href}
+                    className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted',
+                    isActive && 'bg-muted text-primary font-semibold'
+                    )}
+                >
+                    <link.icon className="h-5 w-5" />
+                    {link.label}
+                </Link>
+                </li>
+            )
+          })}
         </ul>
       </nav>
       <div className="mt-auto p-4 border-t">
+        <Link href="/service-hub" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted">
+            <Settings className="h-5 w-5"/>
+            Back to Service Hub
+        </Link>
         <Link href="/" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted">
             <Home className="h-5 w-5"/>
-            Back to Sokko Sasa
+            Back to App Home
         </Link>
       </div>
     </aside>
