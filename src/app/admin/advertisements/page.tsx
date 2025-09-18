@@ -101,8 +101,10 @@ export default function ManageAdvertisementsPage() {
 
   const CrudActions = ({ ad }: { ad: Advertisement}) => (
     <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" disabled>
-            <FilePenLine className="h-4 w-4"/>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" asChild>
+            <Link href={`/admin/advertisements/edit/${ad.id}`}>
+              <FilePenLine className="h-4 w-4"/>
+            </Link>
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>

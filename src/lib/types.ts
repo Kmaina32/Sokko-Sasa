@@ -77,6 +77,7 @@ export interface Advertisement {
   imageHint: string;
   link?: string;
   isActive: boolean;
+  createdAt?: any;
 }
 
     

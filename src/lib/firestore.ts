@@ -1,5 +1,4 @@
 
-
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -28,22 +27,22 @@ import { placeholderImages } from "@/lib/placeholder-images";
 import type { User as FirebaseUser } from "firebase/auth";
 import { mockEvents, mockRestaurantsData, mockPropertyData, mockProviderData, mockClinicData, mockInsuranceData } from './mock-data';
 
-const newSeedData = [{"idx":0,"id":"3070f965-b680-4587-9db2-133c2fed08fb","name":"PowerA Advantage Wired Controller for Xbox Series X|S","description":"Illuminate the possibilities with the PowerA Advantage Wired Controller for Xbox Series X|S with Lumectra + RGB LED Strip. Licensed by Xbox, this controller features Multi-Zone RGB with 4 individual lighting zones and 3 modes for thousands of color combinations.","price":"5675.00","original_price":null,"category":"Video Games","brand":"PowerA","vendor":null,"image_url":"https://picsum.photos/seed/p1/600/400","rating":"0.0","reviews_count":0,"in_stock":true,"stock_quantity":20,"make":null,"model":null,"year":null,"created_at":"2025-08-07 07:26:28.365625+00","updated_at":"2025-08-07 07:33:04.552364+00","tags":null,"condition":"new","location":null,"vendor_id":null,"views_count":0},{"idx":1,"id":"2cd9e0b0-cc55-485e-a93e-ee565eaa23d5","name":"Nature's Bounty Ginkgo Biloba Capsules 120mg","description":"Product Description Nature‚Äôs Bounty Ginkgo Biloba Standardized Extract 120 mg supports healthy brain function and mental alertness to continue to help you feel your best.","price":"1288.00","original_price":null,"category":"Health & Household","brand":"Nature's Bounty","vendor":null,"image_url":"https://picsum.photos/seed/p2/600/400","rating":"0.0","reviews_count":0,"in_stock":true,"stock_quantity":77,"make":null,"model":null,"year":null,"created_at":"2025-08-07 07:26:28.365625+00","updated_at":"2025-08-07 08:17:46.791234+00","tags":null,"condition":"new","location":null,"vendor_id":null,"views_count":0}];
 
 // Seed the database
 export async function seedDatabase() {
     const listingsRef = collection(db, "listings");
     const listingsSnapshot = await getDocs(query(listingsRef, firestoreLimit(1)));
   
-    // Do not re-seed if data already exists
     if (!listingsSnapshot.empty) {
-        // console.log("Database already seeded. Skipping.");
         return;
     }
   
     console.log("Seeding database with new product data...");
     const batch = writeBatch(db);
     
+    // Placeholder for new seed data if any
+    const newSeedData: any[] = [];
+
     newSeedData.forEach((product, index) => {
       const docRef = doc(listingsRef);
       batch.set(docRef, {
@@ -51,10 +50,10 @@ export async function seedDatabase() {
         description: product.description,
         price: parseFloat(product.price),
         category: "Product",
-        location: "Nairobi", // Default location
+        location: "Nairobi",
         imageUrl: `https://picsum.photos/seed/seed${index}/600/400`,
         imageHint: "product image",
-        sellerId: "gmaina424@gmail.com", // Default seller
+        sellerId: "gmaina424@gmail.com",
         postedAt: serverTimestamp(),
       });
     });
@@ -87,8 +86,10 @@ export async function getListings(options: { limit?: number; category?: string; 
       let postedAtString: string;
       if (postedAt instanceof Timestamp) {
         postedAtString = postedAt.toDate().toISOString();
-      } else {
-        // Fallback for cases where it might already be a string or undefined
+      } else if (typeof postedAt === 'string') {
+        postedAtString = postedAt;
+      }
+      else {
         postedAtString = new Date().toISOString();
       }
 
@@ -118,6 +119,8 @@ export async function getListingById(id: string): Promise<Listing | null> {
     const postedAt = data.postedAt;
     if (postedAt instanceof Timestamp) {
         postedAtString = postedAt.toDate().toISOString();
+    } else if (typeof postedAt === 'string') {
+        postedAtString = postedAt;
     } else {
         postedAtString = new Date().toISOString();
     }
@@ -176,11 +179,12 @@ export async function getUserData(userId: string): Promise<User | null> {
         if (userDoc.exists()) {
             const data = userDoc.data();
             let memberSince: string;
+            const memberSinceData = data.memberSince;
 
-            if (data.memberSince instanceof Timestamp) {
-                memberSince = data.memberSince.toDate().toISOString();
-            } else if (typeof data.memberSince === 'string') {
-                memberSince = data.memberSince;
+            if (memberSinceData instanceof Timestamp) {
+                memberSince = memberSinceData.toDate().toISOString();
+            } else if (typeof memberSinceData === 'string') {
+                memberSince = memberSinceData;
             } else {
                 memberSince = new Date().toISOString();
             }
@@ -223,7 +227,6 @@ export async function addUserData(user: FirebaseUser, additionalData: { name?: s
 }
 
 export async function deleteUserAccount(userId: string): Promise<void> {
-    // This is a simplified version. In a real app, this should be a secure backend function.
     await deleteDoc(doc(db, "users", userId));
 }
 
@@ -235,9 +238,18 @@ export async function getAdvertisements(options: { activeOnly?: boolean } = {}):
     if(options.activeOnly) {
         queries.push(where("isActive", "==", true));
     }
-    const q = query(adsCol, ...queries);
+    const q = query(adsCol, ...queries, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Advertisement));
+}
+
+export async function getAdvertisementById(id: string): Promise<Advertisement | null> {
+    const docRef = doc(db, 'advertisements', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Advertisement;
+    }
+    return null;
 }
 
 export async function createAdvertisement(data: Pick<Advertisement, 'title' | 'description' | 'isActive'>, imageFile: File) {
@@ -252,6 +264,20 @@ export async function createAdvertisement(data: Pick<Advertisement, 'title' | 'd
         imageHint: 'promotional banner',
         createdAt: serverTimestamp()
     });
+}
+
+export async function updateAdvertisement(adId: string, data: Partial<Advertisement>, imageFile: File | null) {
+    const adRef = doc(db, 'advertisements', adId);
+    let updateData: Partial<Advertisement> = { ...data };
+
+    if (imageFile) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `advertisements/${Date.now()}_${imageFile.name}`);
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+    }
+    
+    await updateDoc(adRef, updateData);
 }
 
 export async function updateAdvertisementStatus(adId: string, isActive: boolean) {
