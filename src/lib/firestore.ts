@@ -194,7 +194,7 @@ export async function getUserData(userId: string): Promise<User | null> {
             let memberSince: string;
             const memberSinceData = data.memberSince;
 
-            if (memberSinceData instanceof Timestamp) {
+            if (memberSinceData && typeof memberSinceData.toDate === 'function') {
                 memberSince = memberSinceData.toDate().toISOString();
             } else if (typeof memberSinceData === 'string') {
                 memberSince = memberSinceData;
@@ -252,13 +252,23 @@ export async function deleteUserAccount(userId: string): Promise<void> {
 // Advertisement functions
 export async function getAdvertisements(options: { activeOnly?: boolean } = {}): Promise<Advertisement[]> {
     const adsCol = collection(db, "advertisements");
-    const queries = [];
-    if(options.activeOnly) {
-        queries.push(where("isActive", "==", true));
-    }
-    const q = query(adsCol, ...queries, orderBy('createdAt', 'desc'));
+    const q = query(adsCol, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Advertisement));
+    
+    let ads = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return { 
+            id: doc.id, 
+            ...data,
+            createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+        } as Advertisement;
+    });
+
+    if (options.activeOnly) {
+        ads = ads.filter(ad => ad.isActive);
+    }
+
+    return ads;
 }
 
 export async function getAdvertisementById(id: string): Promise<Advertisement | null> {
