@@ -277,11 +277,5 @@ export const mockEvents = [
     }
   };
   
-  export const mockRestaurants = Object.values(mockRestaurantsData);
-  export const mockProperties = Object.values(mockPropertyData);
-  export const mockProviders = Object.values(mockProviderData);
-  export const mockClinics = Object.values(mockClinicData);
-  export const mockInsurances = Object.values(mockInsuranceData);
-  export const mockPharmacies = Object.values(mockPharmacyData);
   export const mockJobs: any[] = []; // Empty for now
   
