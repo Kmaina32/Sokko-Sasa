@@ -156,6 +156,19 @@ export async function createListing(data: Partial<Listing>, userId: string, imag
     return docRef.id;
 }
 
+export async function updateListing(listingId: string, data: Partial<Listing>, imageFile: File | null) {
+    const listingRef = doc(db, "listings", listingId);
+    let updateData: Partial<Listing> = { ...data };
+
+    if (imageFile) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `listings/${listingId}/${Date.now()}_${imageFile.name}`);
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        updateData.imageUrl = await getDownloadURL(snapshot.ref);
+    }
+    await updateDoc(listingRef, updateData);
+}
+
 export async function deleteListing(listingId: string): Promise<void> {
     await deleteDoc(doc(db, "listings", listingId));
 }
@@ -252,7 +265,12 @@ export async function getAdvertisementById(id: string): Promise<Advertisement | 
     const docRef = doc(db, 'advertisements', id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as Advertisement;
+        const data = docSnap.data();
+        return {
+            id: docSnap.id,
+            ...data,
+            createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+        } as Advertisement;
     }
     return null;
 }
